@@ -48,6 +48,10 @@ export function addonsByType(type) {
   return ADDONS[type] || {}
 }
 
+export function getBudgetRanges() {
+  return config.budgetRanges
+}
+
 // Helper functions to get config data
 export function getEventTypes() {
   return config.eventTypes
@@ -97,8 +101,4 @@ export function getPackages(type) {
 
 export function getSettings() {
   return config.settings
-}
-
-export function getBudgetRanges() {
-  return config.budgetRanges
 }

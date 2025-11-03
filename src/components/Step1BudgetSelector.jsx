@@ -1,11 +1,12 @@
 import React from 'react';
 import { useStore } from '../store';
-import { getBudgetRanges, getTranslations } from '../data';
+import { useTranslations } from '../i18n';
+import { getBudgetRanges } from '../data';
 
 export default function BudgetSelector() {
     const { budget, setBudget, language } = useStore();
     const budgetRanges = getBudgetRanges();
-    const configTranslations = getTranslations(language);
+    const translations = useTranslations();
 
     const handleBudgetSelect = (budgetId) => {
         setBudget(budgetId);
@@ -22,8 +23,8 @@ export default function BudgetSelector() {
         <div className="space-y-6">
             {/* Step Header */}
             <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">{configTranslations.step2Title}</h2>
-                <p className="text-gray-600">{configTranslations.step2Description}</p>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">{translations.step2Title}</h2>
+                <p className="text-gray-600">{translations.step2Description}</p>
             </div>
 
             {/* Budget Options */}

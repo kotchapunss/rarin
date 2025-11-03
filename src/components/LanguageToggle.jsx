@@ -1,7 +1,7 @@
 import React from 'react'
 import { Globe } from 'lucide-react'
 import { useStore } from '../store'
-import { useTranslations } from '../translations'
+import { useTranslations } from '../i18n'
 
 export default function LanguageToggle() {
   const { language, setLanguage } = useStore()

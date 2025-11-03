@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store'
 import { getPackages, getTranslations, getSettings, getBudget4TimeOptions, getAddonCategories } from '../data'
-import { useTranslations } from '../translations'
+import { useTranslations } from '../i18n'
 
 function calcTotal(type, packageId, addons, people, dayType, period) {
   const pkg = getPackages(type).find(p=>p.id===packageId)

@@ -2,7 +2,7 @@
 import React from 'react'
 import { Check } from 'lucide-react'
 import { useStore } from '../store'
-import { useTranslations } from '../translations'
+import { useTranslations } from '../i18n'
 import { getTranslations } from '../data'
 
 export default function PackageCard({ item, isPopular = false }) {

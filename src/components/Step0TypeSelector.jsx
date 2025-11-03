@@ -2,7 +2,7 @@
 import React from 'react'
 import { Heart, Calendar, Camera } from 'lucide-react'
 import { useStore } from '../store'
-import { useTranslations } from '../translations'
+import { useTranslations } from '../i18n'
 import { getEventTypes, getTranslations } from '../data'
 
 export default function TypeSelector() {

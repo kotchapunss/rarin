@@ -1,0 +1,91 @@
+{
+  "title": "ราริณ คำนวณต้นทุน",
+  "subtitle": "น้ำตาลมินิมอล",
+  "demoText": "Demo UI • React + Tailwind",
+  "steps": ["ประเภท", "แพ็กเกจ", "รายละเอียด", "เสริม"],
+  "back": "ย้อนกลับ",
+  "next": "ถัดไป",
+  "step1Title": "ขั้นตอนที่ 1",
+  "step1Description": "เลือกประเภทงานของคุณ",
+  "step2Title": "ขั้นตอนที่ 2",
+  "step2Description": "เลือกแพ็กเกจที่เหมาะสมกับงานของคุณ",
+  "step3Title": "ขั้นตอนที่ 3",
+  "step3Description": "กรอกรายละเอียดงาน",
+  "step4Title": "ขั้นตอนที่ 4",
+  "step4Description": "เลือกบริการเสริม",
+  "wedding": "งานแต่งงาน",
+  "event": "งานอีเวนต์",
+  "photo": "ถ่ายภาพ",
+  "typeDescription": "สไตล์น้ำตาลพาสเทลมินิมอล",
+  "packages": {
+    "wedding": {
+      "w1": { "name": "PACKAGE A : THE VENUE", "details": ["จุดโปรแกรมงาน", "เก้าอี้ Chiavari 200 ตัว", "ระบบเสียงพื้นฐาน"] },
+      "w2": { "name": "PACKAGE B : THE FINEST", "details": ["สำหรับงานแต่งแบบพิเศษ", "มีบริการครบครัน", "ระบบเสียงและแสง"] },
+      "w3": { "name": "PACKAGE C : THE TOTAL LOOK", "details": ["จัดงานครบวงจร", "ทีม Organizer", "บริการ VARAVELA"] },
+      "w4": { "name": "PACKAGE D : THE ELEGANCE", "details": ["ตกแต่งหรูหรา", "ระบบ AV พรีเมียม", "ครอบคลุมทั้งวัน"] },
+      "w5": { "name": "PACKAGE E : THE PRESTIGE", "details": ["หรูหราสุดขีด", "บริการครบครัน", "ครอบคลุมหลายวัน"] }
+    },
+    "event": {
+      "e1": { "name": "รวมตัว ไลท์", "details": ["ฉากหลัง", "เสียงพื้นฐาน", "โต๊ะพิธีกร"] },
+      "e2": { "name": "รวมตัว โปร", "details": ["ฉากหลัง + เวที", "ชุดเสียง", "ผู้ประสานงาน"] }
+    },
+    "photo": {
+      "p1": { "name": "สตูดิโอ มินิ", "details": ["1 ชม.", "รูปแต่ง 10 รูป", "แกลเลอรี่ออนไลน์"] },
+      "p2": { "name": "สตูดิโอ พลัส", "details": ["2 ชม.", "รูปแต่ง 25 รูป", "ชุดอุปกรณ์ประกอบ"] }
+    }
+  },
+  "addons": {
+    "wedding": {
+      "a1": "ซุ้มดอกไม้เสริม",
+      "a2": "ดนตรีสดคู่กีตาร์",
+      "a3": "บาร์ขนม"
+    },
+    "event": {
+      "a4": "จอ LED (3 เมตร)",
+      "a5": "ช่างภาพสด"
+    },
+    "photo": {
+      "a6": "ช่างแต่งหน้า",
+      "a7": "เพิ่มเวลา 1 ชม."
+    }
+  },
+  "select": "เลือก",
+  "selected": "เลือกแล้ว",
+  "details": "รายละเอียด",
+  "numberOfGuests": "จำนวนแขก",
+  "periodTime": "ช่วงเวลา",
+  "morning": "ช่วงเช้า",
+  "afternoon": "บ่ายเวลา",
+  "evening": "เต็มวัน",
+  "specialRequests": "ความต้องการพิเศษ",
+  "placeholder": "เช่น ธีมสีน้ำตาลพาสเทล, มุมอาหารเจ…",
+  "summary": "สรุปรายการ",
+  "themeText": "ธีมสีน้ำตาลพาสเทล",
+  "basePackage": "แพ็กเกจพื้นฐาน",
+  "addOns": "บริการเสริม",
+  "extraGuests": "แขกเพิ่มเติม",
+  "subtotal": "ราคาก่อน VAT",
+  "vat": "ราคารวม VAT (7%)",
+  "totalWithVat": "ราคารวม VAT (7%)",
+  "estimatedTotal": "ราคารวมประมาณ",
+  "bookInquiry": "สอบถามการจอง",
+  "footerText": "* นี่คือ UI ตัวอย่างคำนวณต้นทุนที่ได้แรงบันดาลใจจากเว็บไซต์อ้างอิง ออกแบบใหม่ด้วยธีมสีน้ำตาลพาสเทลมินิมอล",
+  "language": "ภาษา",
+  "thai": "ไทย",
+  "english": "English",
+  "estimationSummary": "สรุปการคำนวณ",
+  "estimationDescription": "สรุปราคาสำหรับการใช้งานเดีย",
+  "serviceSummary": "สรุปราคาการ",
+  "packageType": "ค่าแพ็กเกจ",
+  "beforeVat": "ราคาก่อน VAT",
+  "priceDisclaimer": "* ราคานี้เป็นการประเมินเบื้องต้นที่อาจมีการเปลี่ยนแปลง เมื่อดำเนินการตามระบบนี้จริงขึ้นอยู่",
+  "submitRequest": "ส่งยื่น",
+  "backToEdit": "กลับไปแก้ไข",
+  "lineOA": "Line OA",
+  "quotation": "ใบประเมินราคา",
+  "quotationPreview": "ใบประเมินราคา (ตัวอย่าง)",
+  "close": "ปิด",
+  "downloadPdf": "ดาวน์โหลด PDF",
+  "quotationFilename": "ใบประเมินราคา",
+  "pdfGenerationError": "เกิดข้อผิดพลาดในการสร้าง PDF กรุณาลองใหม่อีกครั้ง"
+}

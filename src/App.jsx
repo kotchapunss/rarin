@@ -8,11 +8,10 @@ import AddonsSelect from "./components/Step4AddonsSelect";
 import Summary from "./components/Summary";
 import LanguageToggle from "./components/LanguageToggle";
 import { useStore } from "./store";
-import { getTranslations } from "./data";
+import { useTranslations } from "./i18n";
 
 function Header() {
-  const { language } = useStore();
-  const t = getTranslations(language);
+  const t = useTranslations();
   
   return (
     <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-stone-200">

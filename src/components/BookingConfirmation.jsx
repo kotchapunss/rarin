@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useStore } from '../store'
-import { useTranslations } from '../translations'
+import { useTranslations } from '../i18n'
 import { getPackages, getAddons, getSettings, getBudget4TimeOptions, getAddonCategories } from '../data'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'

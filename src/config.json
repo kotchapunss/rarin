@@ -103,7 +103,10 @@
         "wedding": [
             {
                 "id": "w1",
-                "name": "Mini Moonlight Package",
+                "name": {
+                    "en": "Mini Moonlight Package",
+                    "th": "แพ็คเกจมินิมูนไลท์"
+                },
                 "price": 69900,
                 "budgetId": "budget1",
                 "weekdayDiscountEligible": false,
@@ -111,20 +114,50 @@
                     "th": "สำหรับงานแต่งขนาดเล็กไม่เกิน 50 ท่าน ( จำกัดการใช้พื้นที่ )",
                     "en": "For small wedding not over 50 guests"
                 },
-                "area": "Moonlight Room",
+                "area": {
+                    "th": "ห้องมูนไลท์",
+                    "en": "Moonlight Room"
+                },
                 "timeSlots": "06:00 - 14:00 / 16:00 - 22:00",
                 "features": [
-                    "พิธีแลกแหวน - เวที พรม เก้าอี้ พาน 4 อัน",
-                    "ห้องแต่งตัวสำหรับบ่าวสาว"
+                    {
+                        "th": "พิธีแลกแหวน - เวที พรม เก้าอี้ พาน 4 อัน",
+                        "en": "Ring exchange ceremony - Stage, carpet, chairs, 4 ceremonial trays"
+                    },
+                    {
+                        "th": "ห้องแต่งตัวสำหรับบ่าวสาว",
+                        "en": "Bride and groom preparation room"
+                    }
                 ],
                 "equipmentServices": [
-                    "ขาตั้งดอกไม้ 6 จุด ( 3 คู่ )",
-                    "โต๊ะลงทะเบียน",
-                    "กล่องใส่ซอง",
-                    "ช่อดอกไม้เจ้าสาว",
-                    "ขาตั้งกรอบรูป 6 อัน",
-                    "ช่อติดอกญาติผู้ใหญ่ 6 อัน",
-                    "แจกันตกแต่งโต๊ะอาหาร 20 แจกัน"
+                    {
+                        "th": "ขาตั้งดอกไม้ 6 จุด ( 3 คู่ )",
+                        "en": "6 flower stands (3 pairs)"
+                    },
+                    {
+                        "th": "โต๊ะลงทะเบียน",
+                        "en": "Registration table"
+                    },
+                    {
+                        "th": "กล่องใส่ซอง",
+                        "en": "Envelope box"
+                    },
+                    {
+                        "th": "ช่อดอกไม้เจ้าสาว",
+                        "en": "Bridal bouquet"
+                    },
+                    {
+                        "th": "ขาตั้งกรอบรูป 6 อัน",
+                        "en": "6 photo frame stands"
+                    },
+                    {
+                        "th": "ช่อติดอกญาติผู้ใหญ่ 6 อัน",
+                        "en": "6 corsages for elders"
+                    },
+                    {
+                        "th": "แจกันตกแต่งโต๊ะอาหาร 20 แจกัน",
+                        "en": "20 dining table flower vases"
+                    }
                 ],
                 "food": [
                     "อาหารเบสิคไทยบุฟเฟ่ห์ 20 ท่าน",
@@ -134,7 +167,10 @@
             },
             {
                 "id": "w2",
-                "name": "Cozy Morning Package ( Indoor )",
+                "name": {
+                    "en": "Cozy Morning Package (Indoor)",
+                    "th": "แพ็คเกจคอซี่มอร์นิ่ง (ในร่ม)"
+                },
                 "price": 169900,
                 "budgetId": "budget2",
                 "weekdayDiscountEligible": true,
@@ -172,7 +208,10 @@
             },
             {
                 "id": "w3",
-                "name": "Sunset Garden Package ( Outdoor )",
+                "name": {
+                    "en": "Sunset Garden Package (Outdoor)",
+                    "th": "แพ็คเกจซันเซ็ทการ์เด้น (กลางแจ้ง)"
+                },
                 "price": 169900,
                 "budgetId": "budget2",
                 "weekdayDiscountEligible": true,
@@ -209,7 +248,10 @@
             },
             {
                 "id": "w4",
-                "name": "Ballad Riverside Wedding ( Indoor )",
+                "name": {
+                    "en": "Ballad Riverside Wedding (Indoor)",
+                    "th": "แพ็คเกจบัลลาดริเวอร์ไซด์ (ในร่ม)"
+                },
                 "price": 169900,
                 "budgetId": "budget2",
                 "weekdayDiscountEligible": true,
@@ -244,7 +286,10 @@
             },
             {
                 "id": "w5",
-                "name": "Rainy Inclusive Package",
+                "name": {
+                    "en": "Rainy Inclusive Package",
+                    "th": "แพ็คเกจเรนนี่ อินคลูซีฟ"
+                },
                 "price": 299900,
                 "budgetId": "budget3",
                 "weekdayDiscountEligible": false,
@@ -411,7 +456,10 @@
         "event": [
             {
                 "id": "e1",
-                "name": "SMALL",
+                "name": {
+                    "en": "SMALL",
+                    "th": "ขนาดเล็ก"
+                },
                 "price": 30000,
                 "description": {
                     "th": "ขั้นต่ำในการใช้สถานที่ ฿30,000",
@@ -427,7 +475,10 @@
             },
             {
                 "id": "e2",
-                "name": "MEDIUM",
+                "name": {
+                    "en": "MEDIUM",
+                    "th": "ขนาดกลาง"
+                },
                 "price": 80000,
                 "description": {
                     "th": "ขั้นต่ำในการใช้สถานที่ ฿80,000",
@@ -448,7 +499,10 @@
             },
             {
                 "id": "e3",
-                "name": "LARGE",
+                "name": {
+                    "en": "LARGE",
+                    "th": "ขนาดใหญ่"
+                },
                 "price": "100,000-120,000",
                 "weekdayPrice": 100000,
                 "weekendPrice": 120000,
@@ -470,7 +524,10 @@
             },
             {
                 "id": "e4",
-                "name": "RARIN VENUE ( Except Ballad)",
+                "name": {
+                    "en": "RARIN VENUE (Except Ballad)",
+                    "th": "สถานที่ราริณ (ยกเว้น Ballad)"
+                },
                 "price": "200,000-250,000",
                 "weekdayPrice": 200000,
                 "weekendPrice": 250000,
@@ -692,7 +749,10 @@
                             "th": "Breakfast Bar",
                             "en": "Breakfast Bar"
                         },
-                        "description": "(ข้อมูล เมนู 3 รายการ, ชา/กาแฟ) ต้นมีน 50 ท่าน",
+                        "description": {
+                            "th": "(ข้อมูล เมนู 3 รายการ, ชา/กาแฟ) ต้นมีน 50 ท่าน",
+                            "en": "(3 menu items, tea/coffee) Starting from 50 guests"
+                        },
                         "price": 25000,
                         "type": "checkbox"
                     },
@@ -702,7 +762,10 @@
                             "th": "Afternoon Coffee Break",
                             "en": "Afternoon Coffee Break"
                         },
-                        "description": "(เมนู 6 รายการ, ชา/กาแฟ) ต้นมีน 50 ท่าน",
+                        "description": {
+                            "th": "(เมนู 6 รายการ, ชา/กาแฟ) ต้นมีน 50 ท่าน",
+                            "en": "(6 menu items, tea/coffee) Starting from 50 guests"
+                        },
                         "price": 25000,
                         "type": "checkbox"
                     }
@@ -850,11 +913,17 @@
                             "th": "อาหารบุฟเฟ่ต์ไทยสุดหรู",
                             "en": "Deluxe Thai Buffet"
                         },
-                        "description": "10 รายการ  (อาหาร 7 อย่าง,ของหวาน 2 เครื่องดื่ม 3 รายการ) ",
+                        "description": {
+                            "th": "10 รายการ (อาหาร 7 อย่าง, ของหวาน 2, เครื่องดื่ม 3 รายการ)",
+                            "en": "10 items (7 main dishes, 2 desserts, 3 beverages)"
+                        },
                         "minGuests": 100,
                         "price": 1500,
                         "type": "grid",
-                        "unit": "ท่าน"
+                        "unit": {
+                            "th": "ท่าน",
+                            "en": "guests"
+                        }
                     },
                     {
                         "id": "a4",
