@@ -11,6 +11,7 @@ export default function BookingConfirmation() {
   const location = useLocation()
   const t = useTranslations()
   const state = useStore()
+  const { language } = state
   const hiddenInvoiceRef = useRef()
   const [showPDFPreview, setShowPDFPreview] = useState(false)
 
@@ -184,6 +185,15 @@ export default function BookingConfirmation() {
 
   const { basePrice, addonsTotal, extraGuestsCost, subtotal, vat, total, weekdayDiscount, weekdayDiscountLabel, isEligibleForDiscount, selectedPackage, timeSurcharge, timeSurchargeLabel, marketingDiscounts, subtotalBeforeDiscounts } = calculateTotal()
 
+  // Get package name in correct language
+  const getPackageName = () => {
+    if (!selectedPackage) return 'ไม่ได้เลือกแพ็กเกจ'
+    if (typeof selectedPackage.name === 'object') {
+      return selectedPackage.name[language] || selectedPackage.name.th || selectedPackage.name.en || 'ไม่ได้เลือกแพ็กเกจ'
+    }
+    return selectedPackage.name || 'ไม่ได้เลือกแพ็กเกจ'
+  }
+
   // Get selected addons details
   const getSelectedAddons = () => {
     const selectedAddons = []
@@ -222,9 +232,14 @@ export default function BookingConfirmation() {
         let unitPrice = addon.price || Math.abs(addon.discount || 0)
         let totalPrice = value
 
+        // Extract unit text from object if needed
+        const unitText = typeof addon.unit === 'object' 
+          ? (addon.unit[state.language] || addon.unit.th || addon.unit.en || '')
+          : (addon.unit || '')
+
         if (addon.type === 'auto') {
           quantity = state.people || 1
-          if (addon.unit === '10 ท่าน') {
+          if (unitText === '10 ท่าน' || unitText === '10 people') {
             quantity = Math.ceil((state.people || 1) / 10)
           }
         } else if (addon.type === 'input') {
@@ -235,9 +250,11 @@ export default function BookingConfirmation() {
 
         selectedAddons.push({
           id: addonId,
-          name: addon.name[state.language] || addon.name.th,
+          name: typeof addon.name === 'object' 
+            ? (addon.name[state.language] || addon.name.th || addon.name.en || '')
+            : (addon.name || ''),
           type: addon.type,
-          unit: addon.unit || '',
+          unit: unitText,
           quantity: quantity,
           unitPrice: unitPrice,
           totalPrice: totalPrice
@@ -268,9 +285,14 @@ export default function BookingConfirmation() {
         let unitPrice = addon.price || 0
         let totalPrice = value
 
+        // Extract unit text from object if needed
+        const unitText = typeof addon.unit === 'object' 
+          ? (addon.unit[state.language] || addon.unit.th || addon.unit.en || '')
+          : (addon.unit || '')
+
         if (addon.type === 'grid') {
           quantity = state.people || 1
-          if (addon.unit === 'โต๊ะ') {
+          if (unitText === 'โต๊ะ' || unitText === 'table') {
             quantity = Math.ceil((state.people || 1) / 10)
           }
         } else if (addon.type === 'input') {
@@ -281,9 +303,11 @@ export default function BookingConfirmation() {
 
         selectedAddons.push({
           id: addonId,
-          name: addon.name[state.language] || addon.name.th,
+          name: typeof addon.name === 'object' 
+            ? (addon.name[state.language] || addon.name.th || addon.name.en || '')
+            : (addon.name || ''),
           type: addon.type,
-          unit: addon.unit || '',
+          unit: unitText,
           quantity: quantity,
           unitPrice: unitPrice,
           totalPrice: totalPrice
@@ -336,7 +360,7 @@ export default function BookingConfirmation() {
                     </div>
                     <div className="text-right">
                       <div className="text-2xl font-bold mb-1" style={{ fontFamily: 'cursive' }}>
-                        Varavela
+                        Rarin
                       </div>
                     </div>
                   </div>
@@ -354,7 +378,7 @@ export default function BookingConfirmation() {
                   </div>
                   <div className="text-right">
                     <div className="text-sm space-y-1">
-                      <div>เลขที่: VARAVELA-20251029-2349</div>
+                      <div>เลขที่: RARIN-20251029-2349</div>
                       <div>วันที่: 29/10/2568</div>
                       <div className="text-[#B8846B] font-semibold">ร่าง</div>
                     </div>
@@ -383,7 +407,7 @@ export default function BookingConfirmation() {
                     )}
                     <div className="grid grid-cols-2 gap-4 text-sm mt-2">
                       <div>เบอร์โทร: 02666626</div>
-                      <div>อีเมล: hello@varavela.com</div>
+                      <div>อีเมล: hello@rarin.com</div>
                     </div>
                   </div>
                 </div>
@@ -403,7 +427,7 @@ export default function BookingConfirmation() {
                     <tbody>
                       <tr>
                         <td className="border border-gray-300 p-3 text-sm">001</td>
-                        <td className="border border-gray-300 p-3 text-sm">{selectedPackage?.name || 'ไม่ได้เลือกแพ็กเกจ'}</td>
+                        <td className="border border-gray-300 p-3 text-sm">{getPackageName()}</td>
                         <td className="border border-gray-300 p-3 text-center text-sm">1</td>
                         <td className="border border-gray-300 p-3 text-right text-sm">{basePrice.toLocaleString()}</td>
                         <td className="border border-gray-300 p-3 text-right text-sm">{basePrice.toLocaleString()}</td>
@@ -534,7 +558,7 @@ export default function BookingConfirmation() {
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '24px', fontWeight: 'bold', fontFamily: 'cursive' }}>
-                    Varavela
+                    Rarin
                   </div>
                 </div>
               </div>
@@ -552,7 +576,7 @@ export default function BookingConfirmation() {
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-                  <div>เลขที่: VARAVELA-20251029-2349</div>
+                  <div>เลขที่: RARIN-20251029-2349</div>
                   <div>วันที่: 29/10/2568</div>
                   <div style={{ color: '#B8846B', fontWeight: 'bold' }}>ร่าง</div>
                 </div>
@@ -581,7 +605,7 @@ export default function BookingConfirmation() {
                 )}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', fontSize: '12px' }}>
                   <div>เบอร์โทร: 02666626</div>
-                  <div>อีเมล: hello@varavela.com</div>
+                  <div>อีเมล: hello@rarin.com</div>
                 </div>
               </div>
             </div>
@@ -600,7 +624,7 @@ export default function BookingConfirmation() {
               <tbody>
                 <tr>
                   <td style={{ border: '1px solid #ccc', padding: '12px', fontSize: '12px' }}>001</td>
-                  <td style={{ border: '1px solid #ccc', padding: '12px', fontSize: '12px' }}>{selectedPackage?.name || 'ไม่ได้เลือกแพ็กเกจ'}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '12px', fontSize: '12px' }}>{getPackageName()}</td>
                   <td style={{ border: '1px solid #ccc', padding: '12px', textAlign: 'center', fontSize: '12px' }}>1</td>
                   <td style={{ border: '1px solid #ccc', padding: '12px', textAlign: 'right', fontSize: '12px' }}>{basePrice.toLocaleString()}</td>
                   <td style={{ border: '1px solid #ccc', padding: '12px', textAlign: 'right', fontSize: '12px' }}>{basePrice.toLocaleString()}</td>
@@ -694,10 +718,10 @@ export default function BookingConfirmation() {
         <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
           {/* Header Background */}
           <div className="relative h-32 bg-gradient-to-r from-gray-100 to-gray-200">
-            {/* Varavela Logo */}
+            {/* Rarin Logo */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-[#B8846B] text-4xl font-bold" style={{ fontFamily: 'cursive' }}>
-                Varavela
+                Rarin
               </div>
             </div>
           </div>
@@ -709,10 +733,10 @@ export default function BookingConfirmation() {
                 <span>📞 TEL 02-946-5625</span>
               </div>
               <div className="flex items-center justify-center">
-                <span>📧 hello@varavela.com</span>
+                <span>📧 hello@rarin.com</span>
               </div>
               <div className="flex items-center justify-center">
-                <span>💬 Line Official: @varavela</span>
+                <span>💬 Line Official: @rarin</span>
               </div>
               <div className="flex items-center justify-center text-center">
                 <span>🕒 Office Time 10:00-19:00<br />Monday - Sunday</span>
@@ -739,7 +763,7 @@ export default function BookingConfirmation() {
               </h3>
               <div className="bg-gray-50 p-4 rounded-lg">
                 <div className="flex justify-between items-center mb-2">
-                  <span>{t.packageType || 'ค่าแพ็กเกจ'} ({selectedPackage?.name || 'ไม่ได้เลือกแพ็กเกจ'})</span>
+                  <span>{t.packageType || 'ค่าแพ็กเกจ'} ({getPackageName()})</span>
                   <span className="font-semibold">฿{basePrice.toLocaleString()}</span>
                 </div>
                 {positiveSelectedAddons.length > 0 && (
@@ -757,7 +781,7 @@ export default function BookingConfirmation() {
                 {/* Discounts Section (marketing discounts + weekday discount) */}
                 {(negativeSelectedAddons.length > 0 || weekdayDiscount > 0) && (
                   <div className="mt-3 border-t pt-3">
-                    <div className="font-medium text-orange-600 mt-2">{state.language === 'th' ? 'ส่วนลดทั้งหมด' : 'Total Discounts'}</div>
+                    <div className="font-medium text-orange-600 mt-2">{language === 'th' ? 'ส่วนลดทั้งหมด' : 'Total Discounts'}</div>
                     {negativeSelectedAddons.map((addon, index) => (
                       <div key={addon.id} className="flex justify-between text-sm ml-4 text-orange-600">
                         <span>• {addon.name}</span>
@@ -774,7 +798,7 @@ export default function BookingConfirmation() {
 
                     <div className="mt-2">
                       <div className="flex justify-between text-sm text-orange-600 font-medium ml-4">
-                        <span>{state.language === 'th' ? 'รวมส่วนลด' : 'Total Discount'}</span>
+                        <span>{language === 'th' ? 'รวมส่วนลด' : 'Total Discount'}</span>
                         <span>-฿{totalDiscounts.toLocaleString()}</span>
                       </div>
                     </div>
@@ -793,14 +817,6 @@ export default function BookingConfirmation() {
                     <div className="flex justify-between items-center text-sm">
                       <span>แขกเพิ่มเติม ({state.people - 50} ท่าน)</span>
                       <span>฿{extraGuestsCost.toLocaleString()}</span>
-                    </div>
-                  </div>
-                )}
-                {weekdayDiscount > 0 && (
-                  <div className="mt-3 border-t pt-3">
-                    <div className="flex justify-between items-center text-sm text-orange-600">
-                      <span>{weekdayDiscountLabel}</span>
-                      <span>-฿{weekdayDiscount.toLocaleString()}</span>
                     </div>
                   </div>
                 )}

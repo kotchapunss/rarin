@@ -3,13 +3,12 @@ import React from 'react'
 import { Heart, Calendar, Camera } from 'lucide-react'
 import { useStore } from '../store'
 import { useTranslations } from '../i18n'
-import { getEventTypes, getTranslations } from '../data'
+import { getEventTypes } from '../data'
 
 export default function TypeSelector() {
   const { type, setType, step, setStep, language } = useStore()
-  const t = useTranslations()
+  const translations = useTranslations()
   const eventTypes = getEventTypes()
-  const configTranslations = getTranslations(language)
   
   const iconMap = {
     Heart,
@@ -20,11 +19,11 @@ export default function TypeSelector() {
   return (
     <div className="space-y-6">
       {/* Step 1 Header */}
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">{configTranslations.step1Title}</h2>
-        <p className="text-gray-600">{configTranslations.step1Description}</p>
+      <div className="text-left">
+        <h2 className="text-xl font-bold text-gray-800 mb-2">{translations.step1Title}</h2>
+        <p className="text-gray-600">พร้อมต้อนรับทุกความทรงจำที่สวยงามของคุณ</p>
       </div>
-
+ <p className="text-gray-600">{translations.step1Description}</p>
       {/* Type Selection */}
       <div className="grid grid-cols-1 gap-4">
         {eventTypes.map(eventType => {
@@ -41,8 +40,18 @@ export default function TypeSelector() {
               <div className="flex items-center gap-4">
                 <span className="p-3 rounded-xl bg-brand-100 text-brand-700"><Icon className="w-6 h-6"/></span>
                 <div>
-                  <div className="font-semibold text-lg">{eventType.name[language] || eventType.name.th}</div>
-                  <div className="text-sm text-stone-500 mt-1">{eventType.description[language] || eventType.description.th}</div>
+                  <div className="font-semibold text-lg">
+                    {typeof eventType.name === 'object' 
+                      ? (eventType.name[language] || eventType.name.th || eventType.name.en || '')
+                      : (eventType.name || '')
+                    }
+                  </div>
+                  <div className="text-sm text-stone-500 mt-1">
+                    {typeof eventType.description === 'object'
+                      ? (eventType.description[language] || eventType.description.th || eventType.description.en || '')
+                      : (eventType.description || '')
+                    }
+                  </div>
                 </div>
               </div>
             </button>

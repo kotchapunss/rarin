@@ -3,24 +3,52 @@ import React from 'react'
 import { getPackages } from '../data'
 import PackageCard from './PackageCard'
 import { useStore } from '../store'
-import { getTranslations } from '../data'
+import { useTranslations } from '../i18n'
 
 export default function PackageSelect() {
   const { type, budget, language } = useStore()
-  const configTranslations = getTranslations(language)
+  const translations = useTranslations()
   const allPackages = getPackages(type)
+  
+  // Check if we're in wedding flow (5 steps) or other flow (4 steps)
+  const isWeddingFlow = type === 'wedding'
   
   // Filter packages by selected budget
   const filteredPackages = budget 
     ? allPackages.filter(pkg => pkg.budgetId === budget)
     : allPackages
   
+  // Get event-type-specific content
+  const getStepTitle = () => {
+    const titleObj = isWeddingFlow ? translations.step3Title : translations.step2Title
+    return typeof titleObj === 'object' ? (titleObj[type] || '') : titleObj
+  }
+
+  const getStepDescription = () => {
+    const descObj = isWeddingFlow ? translations.step3Description : translations.step2Description
+    return typeof descObj === 'object' ? (descObj[type] || '') : descObj
+  }
+
+  const getSubDescription = () => {
+    const subDescObj = isWeddingFlow ? translations.step3SubDescription : translations.step2SubDescription
+    return typeof subDescObj === 'object' ? (subDescObj[type] || '') : ''
+  }
+
   return (
     <div className="space-y-6">
-      {/* Step 2 Header */}
+      {/* Step Header - Wedding Step 3, Others Step 2 */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">{configTranslations.step3Title}</h2>
-        <p className="text-gray-600">{configTranslations.step3Description}</p>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          {getStepTitle()}
+        </h2>
+        <p className="text-gray-600 mb-2">
+          {getStepDescription()}
+        </p>
+        {getSubDescription() && (
+          <p className="text-sm text-gray-500 max-w-2xl mx-auto">
+            {getSubDescription()}
+          </p>
+        )}
       </div>
 
       {/* Package Cards */}

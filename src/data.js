@@ -69,10 +69,6 @@ export function getGuestRanges() {
   return config.guestRanges
 }
 
-export function getTranslations(language = 'th') {
-  return config.translations[language] || config.translations.th
-}
-
 export function getAddons(type) {
   // Flatten the addons structure to match original format
   const addons = {}

@@ -5,14 +5,65 @@
   "steps": ["Type", "Package", "Details", "Add‑ons"],
   "back": "Back",
   "next": "Next",
-  "step1Title": "Step 1",
+  "reset": "Reset",
+  "done": "Done",
+  "recommend": "Recommend",
+  "over": "Over",
+  "notOver": "Not over",
+  "step1Title": "Welcome to Rarin, your riverside celebration space",
   "step1Description": "Choose your event type",
-  "step2Title": "Step 2",
-  "step2Description": "Choose the package that suits your event",
-  "step3Title": "Step 3",
-  "step3Description": "Enter event details",
+  "step1WeddingTitle": "Select Wedding Budget",
+  "step1WeddingDescription": "Please choose a budget range that suits you",
+  "step1WeddingSubDescription": "Select a budget range so we can recommend the most suitable package for your wedding",
+  "step2Title": {
+    "wedding": "Select Wedding Package",
+    "event": "Select Event Space Size",
+    "photo": "Select Photo/Video Package"
+  },
+  "step2Description": {
+    "wedding": "Choose a package that fits your budget and guest count",
+    "event": "Choose the space and package suitable for your event",
+    "photo": "Choose a package that matches your shoot type and duration"
+  },
+  "step2SubDescription": {
+    "wedding": "Including decoration, ceremony services, and venue with weekday discounts available",
+    "event": "Perfect for seminars, parties, celebrations, and corporate events",
+    "photo": "Can set up before 00:00 on the previous day if the venue is available (check availability again). No additional charges for decoration or lighting setup."
+  },
+  "step3Title": {
+    "wedding": "Wedding Event Details",
+    "event": "Event Details",
+    "photo": "Location Rental Details"
+  },
+  "step3Description": {
+    "wedding": "Enter guest count and event timing information",
+    "event": "Enter attendee count and event timing information",
+    "photo": "Enter crew size and shooting schedule information"
+  },
+  "step3SubDescription": {
+    "wedding": "Please specify guest count, time period, and day type for accurate pricing",
+    "event": "Please specify attendee count, time period, and day type to calculate costs",
+    "photo": "Please specify crew size, time period, and day type for your booking"
+  },
+  "step4WeddingTitle": {
+    "wedding": "Wedding Event Details",
+    "event": "Event Details",
+    "photo": "Location Rental Details"
+  },
+  "step4WeddingDescription": {
+    "wedding": "Enter guest count and event timing information",
+    "event": "Enter attendee count and event timing information",
+    "photo": "Enter crew size and shooting schedule information"
+  },
+  "step4SubDescription": {
+    "wedding": "Please specify guest count, time period, day type, and any special requirements",
+    "event": "Please specify attendee count, time period, day type, and any special requirements",
+    "photo": "Please specify crew size, time period, day type, and any special requirements"
+  },
   "step4Title": "Step 4",
   "step4Description": "Select additional services",
+  "step5WeddingTitle": "Step 5",
+  "step5WeddingDescription": "Select additional services",
   "wedding": "Wedding",
   "event": "Event",
   "photo": "Photo",
@@ -54,6 +105,9 @@
   "details": "Details",
   "numberOfGuests": "Number of guests",
   "periodTime": "Period time",
+  "dayType": "Day Type",
+  "weekday": "Weekday",
+  "weekend": "Weekend",
   "morning": "Morning",
   "afternoon": "Afternoon",
   "evening": "All day",
@@ -87,5 +141,27 @@
   "close": "Close",
   "downloadPdf": "Download PDF",
   "quotationFilename": "quotation",
-  "pdfGenerationError": "Failed to generate PDF. Please try again."
+  "pdfGenerationError": "Failed to generate PDF. Please try again.",
+  "chooseServices": "Choose Services",
+  "selectBeverages": "Select Beverages",
+  "selectAdditionalServices": "Select Additional Services",
+  "selectCeremonyFoodBeverage": "Select ceremony services, food, beverages, and discount programs for your wedding",
+  "selectAlcoholicBeverages": "Select additional alcoholic beverages for your event",
+  "ceremonyServices": "Ceremony Services",
+  "foodBeverage": "Food & Beverage",
+  "alcoholicBeverages": "Alcoholic Beverages",
+  "marketingProgram": "Marketing Program",
+  "selectOnePerCategory": "* Select only one item per category",
+  "price": "Price",
+  "included": "Included",
+  "deselect": "Deselect",
+  "quantity": "Quantity",
+  "total": "Total",
+  "minimumGuests": "Min.",
+  "guests": "guests",
+  "priceExcludesVat": "* Price excludes VAT 7%",
+  "person": "person",
+  "people": "people",
+  "bottle": "bottle",
+  "tenPeople": "10 people"
 }

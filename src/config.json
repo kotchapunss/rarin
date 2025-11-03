@@ -492,7 +492,7 @@
                     "After 16:00 , Ballad Restaurant Clousure package applies"
                 ],
                 "equipmentServices": [],
-                "isPopular": true,
+                "isPopular": false,
                 "limits": [
                     "Please contact the restaurant directly LINE : @ballad.bkk"
                 ]
@@ -1306,62 +1306,6 @@
                     }
                 ]
             }
-        }
-    },
-    "translations": {
-        "th": {
-            "step1Title": "ยินดีต้อนรับสู่ รรินทร์ สเปซ ริมแม่น้ำของคุณ พร้อมต้อนรับทุกความทรงจำที่สวยงามของคุณ",
-            "step1Description": "เลือกประเภทงานของคุณ",
-            "step2Title": "เลือกงบประมาณของคุณ",
-            "step2Description": "ขั้นตอนที่ 1 : เลือกงบประมาณที่เหมาะสมกับงานของคุณ",
-            "step3Title": "เลือกแพ็กเกจของคุณ",
-            "step3Description": "ขั้นตอนที่ 2 : เลือกแพ็กเกจที่เหมาะสมกับงบประมาณของคุณ",
-            "step4Title": "กรอกรายละเอียดงาน",
-            "step4Description": "ขั้นตอนที่ 3 : กรอกรายละเอียดงาน",
-            "step5Title": "เลือกบริการเสริม",
-            "step5Description": "ขั้นตอนที่ 4 : เลือกบริการเสริม",
-            "numberOfGuests": "จำนวนแขก",
-            "periodTime": "ช่วงเวลา",
-            "specialRequests": "ความต้องการพิเศษ",
-            "placeholder": "เช่น ธีมสีน้ำตาลพาสเทล, เมนูเจ…",
-            "back": "ย้อนกลับ",
-            "next": "ถัดไป",
-            "reset": "รีเซ็ต",
-            "done": "เสร็จสิ้น",
-            "recommend": "แนะนำ",
-            "over": "เกิน",
-            "notOver": "ไม่เกิน",
-            "dayType": "ประเภทวัน",
-            "weekday": "วันธรรมดา",
-            "weekend": "วันหยุดสุดสัปดาห์",
-            "weekdayDiscount": "ส่วนลด ฿20,000 สำหรับวันธรรมดา"
-        },
-        "en": {
-            "step1Title": "Welcome to Rarin, your riverside celebrate space.",
-            "step1Description": "Choose your event type",
-            "step2Title": "Choose Your Budget",
-            "step2Description": "Step 1: Select a budget that fits your wedding",
-            "step3Title": "Choose Your Package",
-            "step3Description": "Step 2: Select a package that matches your budget",
-            "step4Title": "Event Details",
-            "step4Description": "Step 3: Enter event details",
-            "step5Title": "Additional Services",
-            "step5Description": "Step 4: Select additional services",
-            "numberOfGuests": "Number of guests",
-            "periodTime": "Period time",
-            "specialRequests": "Special requests",
-            "placeholder": "e.g., pastel brown theme, vegan menu section…",
-            "back": "Back",
-            "next": "Next",
-            "reset": "Reset",
-            "done": "Done",
-            "recommend": "Recommend",
-            "over": "Over",
-            "notOver": "Not over",
-            "dayType": "Day Type",
-            "weekday": "Weekday",
-            "weekend": "Weekend",
-            "weekdayDiscount": "฿20,000 discount for weekdays"
         }
     },
     "settings": {

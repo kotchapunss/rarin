@@ -3,22 +3,20 @@ import React from 'react'
 import { Check } from 'lucide-react'
 import { useStore } from '../store'
 import { useTranslations } from '../i18n'
-import { getTranslations } from '../data'
 
 export default function PackageCard({ item, isPopular = false }) {
   const { packageId, setPackage, type, language } = useStore()
   const t = useTranslations()
-  const configTranslations = getTranslations(language)
   const active = packageId === item.id
 
   // Get translated package info - use config data directly from item
   const packageInfo = {
-    name: item.name,
+    name: item.name?.[language] || item.name?.th || item.name || '',
     details: item.details,
     description: item.description?.[language] || item.description?.th || '',
-    area: item.area || 'Standard Area',
+    area: typeof item.area === 'object' ? (item.area?.[language] || item.area?.th || 'Standard Area') : (item.area || 'Standard Area'),
     timeSlots: item.timeSlots || '06:00 - 22:00',
-    features: item.features || item.details,
+    features: item.features || item.details || [],
     equipmentServices: item.equipmentServices || [],
     food: item.food || [],
     limits: item.limits || []
@@ -34,7 +32,7 @@ export default function PackageCard({ item, isPopular = false }) {
         {/* Popular Badge */}
         {isPopular && (
           <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-3 py-1 rounded-full font-medium">
-            {configTranslations.recommend || 'Recommend'}
+            {t.recommend || 'Recommend'}
           </div>
         )}
 
@@ -67,7 +65,7 @@ export default function PackageCard({ item, isPopular = false }) {
       {/* Recommend Badge */}
       {(isPopular || item.isPopular) && (
         <div className="absolute -top-3 left-6 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-          {configTranslations.recommend?.toUpperCase() || 'RECOMMEND'}
+          {t.recommend?.toUpperCase() || 'RECOMMEND'}
         </div>
       )}
 
@@ -96,29 +94,45 @@ export default function PackageCard({ item, isPopular = false }) {
       </div>
 
       {/* Features Section */}
-      <div className="mb-4">
-        <h4 className="font-semibold text-gray-800 mb-3">สิ่งที่ได้รับรวม</h4>
-        <ul className="space-y-1">
-          {packageInfo.features.map((feature, index) => (
-            <li key={index} className="flex items-start">
-              <span className="text-orange-400 mr-2">•</span>
-              <span className="text-sm text-gray-700">{feature}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {packageInfo.features && packageInfo.features.length > 0 && (
+        <div className="mb-4">
+          <h4 className="font-semibold text-gray-800 mb-3">สิ่งที่ได้รับรวม</h4>
+          <ul className="space-y-1">
+            {packageInfo.features.map((feature, index) => {
+              // Handle both string features and object features with language keys
+              const featureText = typeof feature === 'object' 
+                ? (feature[language] || feature.th || feature.en || '')
+                : feature;
+              
+              return (
+                <li key={index} className="flex items-start">
+                  <span className="text-orange-400 mr-2">•</span>
+                  <span className="text-sm text-gray-700">{featureText}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
 
       {/* Equipment Services Section */}
       {packageInfo.equipmentServices.length > 0 && (
         <div className="mb-4">
           <h4 className="font-semibold text-gray-800 mb-3">รายการตกแต่ง</h4>
           <ul className="space-y-1">
-            {packageInfo.equipmentServices.map((service, index) => (
-              <li key={index} className="flex items-start">
-                <span className="text-orange-400 mr-2">•</span>
-                <span className="text-sm text-gray-700">{service}</span>
-              </li>
-            ))}
+            {packageInfo.equipmentServices.map((service, index) => {
+              // Handle both string services and object services with language keys
+              const serviceText = typeof service === 'object' 
+                ? (service[language] || service.th || service.en || '')
+                : service;
+              
+              return (
+                <li key={index} className="flex items-start">
+                  <span className="text-orange-400 mr-2">•</span>
+                  <span className="text-sm text-gray-700">{serviceText}</span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
@@ -128,12 +142,19 @@ export default function PackageCard({ item, isPopular = false }) {
         <div className="mb-4">
           <h4 className="font-semibold text-gray-800 mb-3">อาหาร</h4>
           <ul className="space-y-1">
-            {packageInfo.food.map((service, index) => (
-              <li key={index} className="flex items-start">
-                <span className="text-orange-400 mr-2">•</span>
-                <span className="text-sm text-gray-700">{service}</span>
-              </li>
-            ))}
+            {packageInfo.food.map((foodItem, index) => {
+              // Handle both string food items and object food items with language keys
+              const foodText = typeof foodItem === 'object' 
+                ? (foodItem[language] || foodItem.th || foodItem.en || '')
+                : foodItem;
+              
+              return (
+                <li key={index} className="flex items-start">
+                  <span className="text-orange-400 mr-2">•</span>
+                  <span className="text-sm text-gray-700">{foodText}</span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
@@ -143,12 +164,19 @@ export default function PackageCard({ item, isPopular = false }) {
         <div className="mb-4">
           <h4 className="font-semibold text-gray-800 mb-3">ข้อจำกัด ⚠️</h4>
           <ul className="space-y-1">
-            {packageInfo.limits.map((limit, index) => (
-              <li key={index} className="flex items-start">
-                <span className="text-orange-400 mr-2">•</span>
-                <span className="text-sm text-gray-700">{limit}</span>
-              </li>
-            ))}
+            {packageInfo.limits.map((limit, index) => {
+              // Handle both string limits and object limits with language keys
+              const limitText = typeof limit === 'object' 
+                ? (limit[language] || limit.th || limit.en || '')
+                : limit;
+              
+              return (
+                <li key={index} className="flex items-start">
+                  <span className="text-orange-400 mr-2">•</span>
+                  <span className="text-sm text-gray-700">{limitText}</span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

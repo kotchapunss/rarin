@@ -3,12 +3,12 @@ import React from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store'
-import { getTranslations } from '../data'
+import { useTranslations } from '../i18n'
 
 export default function StepNav() {
-  const { step, setStep, type, budget, packageId, people, language } = useStore()
+  const { step, setStep, type, budget, packageId, people, period, dayType, notes, language } = useStore()
   const navigate = useNavigate()
-  const configTranslations = getTranslations(language)
+  const t = useTranslations()
   
   // Check if we're in wedding flow (4 steps) or other flows (3 steps)
   const isWeddingFlow = type === 'wedding'
@@ -21,7 +21,7 @@ export default function StepNav() {
         case 0: return type !== null // Type must be selected
         case 1: return budget !== null // Budget must be selected
         case 2: return packageId !== null // Package must be selected
-        case 3: return people > 0 // Number of people must be set
+        case 3: return people > 0 && period !== null && period !== '' && dayType !== null && dayType !== '' // All mandatory details must be filled
         case 4: return true // Can always proceed from add-ons step
         default: return false
       }
@@ -29,7 +29,7 @@ export default function StepNav() {
       switch(step) {
         case 0: return type !== null // Type must be selected
         case 1: return packageId !== null // Package must be selected
-        case 2: return people > 0 // Number of people must be set
+        case 2: return people > 0 && period !== null && period !== '' && dayType !== null && dayType !== '' // All mandatory details must be filled
         case 3: return true // Can always proceed from add-ons step
         default: return false
       }
@@ -67,14 +67,18 @@ export default function StepNav() {
         className="btn btn-ghost" 
         disabled={step === 0}
       >
-        <ChevronLeft className="w-4 h-4 mr-1"/> {configTranslations.back || 'Back'}
+        <ChevronLeft className="w-4 h-4 mr-1"/> {t.back || 'Back'}
       </button>
       
       <div className="flex items-center gap-2">
         {stepIndicators.map((i) => (
           <div 
             key={i} 
-            className={"h-2 w-8 rounded-full " + (i <= step ? "bg-orange-500" : "bg-stone-300")} 
+            className={
+              "h-2 rounded-full transition-all " + 
+              "w-2 sm:w-8 " + 
+              (i <= step ? "bg-orange-500" : "bg-stone-300")
+            } 
           />
         ))}
       </div>
@@ -84,7 +88,7 @@ export default function StepNav() {
         className="btn btn-primary" 
         disabled={!canProceedToNext()}
       >
-        {isLastStep ? (configTranslations.done || 'Done') : (configTranslations.next || 'Next')} 
+        {isLastStep ? (t.done || 'Done') : (t.next || 'Next')} 
         <ChevronRight className="w-4 h-4 ml-1"/>
       </button>
     </div>

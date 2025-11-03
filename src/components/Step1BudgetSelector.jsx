@@ -21,10 +21,13 @@ export default function BudgetSelector() {
 
     return (
         <div className="space-y-6">
-            {/* Step Header */}
+            {/* Step Header - Wedding Budget Selector */}
             <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">{translations.step2Title}</h2>
-                <p className="text-gray-600">{translations.step2Description}</p>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">{translations.step1WeddingTitle}</h2>
+                <p className="text-gray-600">{translations.step1WeddingDescription}</p>
+                {translations.step1WeddingSubDescription && (
+                    <p className="text-sm text-gray-500 mt-2">{translations.step1WeddingSubDescription}</p>
+                )}
             </div>
 
             {/* Budget Options */}
@@ -36,30 +39,23 @@ export default function BudgetSelector() {
                         className={`
                             border-2 rounded-lg p-6 cursor-pointer transition-all duration-200
                             ${budget === budgetRange.id
-                                ? 'border-orange-500 shadow-md'
+                                ? 'border-orange-500 bg-orange-50 shadow-md'
                                 : 'border-gray-200 hover:border-orange-300 hover:shadow-sm'
                             }
                         `}
                     >
-                        <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                                    {budgetRange.name[language]}
-                                </h3>
-                                <div className="text-sm text-gray-600">
-                                    {budgetRange.description[language]}
-                                </div>
-                            </div>
-                            <div className={`
-                                w-6 h-6 rounded-full border-2 flex items-center justify-center
-                                ${budget === budgetRange.id
-                                    ? 'border-orange-500 bg-orange-500'
-                                    : 'border-gray-300'
+                        <div>
+                            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                                {typeof budgetRange.name === 'object' 
+                                    ? (budgetRange.name[language] || budgetRange.name.th || budgetRange.name.en || '')
+                                    : (budgetRange.name || '')
                                 }
-                            `}>
-                                {budget === budgetRange.id && (
-                                    <div className="w-2 h-2 bg-white rounded-full"></div>
-                                )}
+                            </h3>
+                            <div className="text-sm text-gray-600">
+                                {typeof budgetRange.description === 'object'
+                                    ? (budgetRange.description[language] || budgetRange.description.th || budgetRange.description.en || '')
+                                    : (budgetRange.description || '')
+                                }
                             </div>
                         </div>
                     </div>

@@ -2,10 +2,10 @@
 import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store'
-import { getPackages, getTranslations, getSettings, getBudget4TimeOptions, getAddonCategories } from '../data'
+import { getPackages, getSettings, getBudget4TimeOptions, getAddonCategories } from '../data'
 import { useTranslations } from '../i18n'
 
-function calcTotal(type, packageId, addons, people, dayType, period) {
+function calcTotal(type, packageId, addons, people, dayType, period, language = 'th') {
   const pkg = getPackages(type).find(p=>p.id===packageId)
   const settings = getSettings()
   const budget4TimeOptions = getBudget4TimeOptions()
@@ -21,7 +21,12 @@ function calcTotal(type, packageId, addons, people, dayType, period) {
     }
   }
   
-  const packageName = pkg ? pkg.name : ''
+  // Handle package name - it can be either a string or an object with language keys
+  const packageName = pkg ? (
+    typeof pkg.name === 'object' 
+      ? (pkg.name[language] || pkg.name.th || pkg.name.en || '') 
+      : (pkg.name || '')
+  ) : ''
   
   // Separate positive addons from negative (discounts)
   // Only consider numeric values (defensive) and sum positives / negatives separately
@@ -112,10 +117,11 @@ export default function Summary() {
   const state = useStore()
   const navigate = useNavigate()
   const t = useTranslations()
-  const configTranslations = getTranslations(state.language)
+  const [isExpanded, setIsExpanded] = React.useState(true)
+  
   const { packageName, base, addons, marketingDiscounts, extra, subtotalBeforeDiscounts, totalDiscounts, subtotal, vat, total, weekdayDiscount, weekdayDiscountLabel, isEligibleForDiscount, timeSurcharge, timeSurchargeLabel } = useMemo(
-    ()=>calcTotal(state.type, state.packageId, state.addons, state.people, state.dayType, state.period),
-    [state.type, state.packageId, state.addons, state.people, state.dayType, state.period]
+    ()=>calcTotal(state.type, state.packageId, state.addons, state.people, state.dayType, state.period, state.language),
+    [state.type, state.packageId, state.addons, state.people, state.dayType, state.period, state.language]
   )
 
   // Get selected addon details for display
@@ -163,8 +169,13 @@ export default function Summary() {
         if (['beer_singha', 'beer_asahi', 'wine_house'].includes(addonId) && value <= 0) return
 
         const service = customServices[addonId]
+        // Handle service name - it can be either a string or an object with language keys
+        const serviceName = typeof service.name === 'object' 
+          ? (service.name[state.language] || service.name.th || service.name.en || '')
+          : (service.name || '')
+        
         addonsList.push({
-          name: service.name[state.language] || service.name.th,
+          name: serviceName,
           value: value,
           isDiscount: value < 0
         })
@@ -191,7 +202,11 @@ export default function Summary() {
         const value = typeof storedValue === 'number' ? storedValue : Number(storedValue) || 0
         if (value === 0 || Number.isNaN(value)) return
         
-        const addonName = addon.name[state.language] || addon.name.th
+        // Handle addon name - it can be either a string or an object with language keys
+        const addonName = typeof addon.name === 'object' 
+          ? (addon.name[state.language] || addon.name.th || addon.name.en || '')
+          : (addon.name || '')
+        
         addonsList.push({
           name: addonName,
           value: value,
@@ -228,124 +243,161 @@ export default function Summary() {
     <div className="card p-4">
       <div className="flex items-center justify-between">
         <div className="font-semibold text-stone-800">{t.summary}</div>
-        <button 
-          onClick={handleReset}
-          className="text-sm text-stone-500 hover:text-stone-700 cursor-pointer p-1"
-          title={configTranslations.reset}
-        >
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="16" 
-            height="16" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="text-sm text-stone-500 hover:text-stone-700 cursor-pointer p-1"
+            title={isExpanded ? 'Hide details' : 'Show details'}
           >
-            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-            <path d="M21 3v5h-5"/>
-            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-            <path d="M3 21v-5h5"/>
-          </svg>
-        </button>
-      </div>
-      <div className="mt-3 space-y-2 text-sm">
-        {/* Base Package */}
-        <Row 
-          label={state.language === 'th' ? 'แพ็กเกจหลัก' : 'Base Package'} 
-          value={base}
-        />
-        <div className="text-xs text-stone-500 ml-4 -mt-1">
-          {packageName}
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+              className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <button 
+            onClick={handleReset}
+            className="text-sm text-stone-500 hover:text-stone-700 cursor-pointer p-1"
+            title={t.reset}
+          >
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+              <path d="M21 3v5h-5"/>
+              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+              <path d="M3 21v-5h5"/>
+            </svg>
+          </button>
         </div>
-        
-        {/* Add-ons Services */}
-        {selectedAddons.length > 0 && (
-          <>
-            <div className="font-medium text-stone-700 mt-4">
-              {state.language === 'th' ? 'บริการเสริม' : 'Add-on Services'}
-            </div>
-            {selectedAddons.filter(addon => !addon.isDiscount).map((addon, index) => (
-              <div key={index} className="flex justify-between text-xs ml-4">
-                <span className="text-stone-600">• {addon.name}</span>
-                <span className="text-stone-600">฿{addon.value.toLocaleString()}</span>
-              </div>
-            ))}
-          </>
-        )}
-        
-        {/* Time Surcharge */}
-        {timeSurcharge > 0 && (
-          <Row 
-            label={state.language === 'th' ? timeSurchargeLabel : (timeSurchargeLabel === 'ค่าบริการครึ่งวันบ่าย' ? 'Afternoon Surcharge' : 'Full Day Surcharge')} 
-            value={timeSurcharge} 
-          />
-        )}
-        
-        <hr className="border-stone-200"/>
-        
-        {/* Subtotal Before Discounts */}
-        <Row 
-          label={state.language === 'th' ? 'ยอดรวม (ก่อนส่วนลด)' : 'Subtotal (before discount)'} 
-          value={subtotalBeforeDiscounts}
-        />
-        
-        {/* Total Discounts */}
-        {totalDiscounts > 0 && (
-          <>
-            <div className="font-medium text-orange-600 mt-2">
-              {state.language === 'th' ? 'ส่วนลดทั้งหมด' : 'Total Discounts'}
-            </div>
-            
-            {/* Marketing Discounts */}
-            {selectedAddons.filter(addon => addon.isDiscount).map((addon, index) => (
-              <div key={index} className="flex justify-between text-xs ml-4 text-orange-600">
-                <span>• {addon.name}</span>
-                <span>-฿{Math.abs(addon.value).toLocaleString()}</span>
-              </div>
-            ))}
-            
-            {/* Weekday Discount */}
-            {weekdayDiscount > 0 && (
-              <div className="flex justify-between text-xs ml-4 text-orange-600">
-                <span>• {state.language === 'th' ? weekdayDiscountLabel : (weekdayDiscountLabel.includes('฿40,000') ? 'Weekday Discount (฿40,000)' : 'Weekday Discount (฿20,000)')}</span>
-                <span>-฿{weekdayDiscount.toLocaleString()}</span>
-              </div>
-            )}
-            
-            <Row 
-              label={state.language === 'th' ? 'รวมส่วนลด' : 'Total Discount'} 
-              value={-totalDiscounts} 
-              className="text-orange-600 font-medium"
-            />
-          </>
-        )}
-        
-        <hr className="border-stone-200"/>
-        
-        {/* Subtotal (Before VAT) */}
-        <Row 
-          label={state.language === 'th' ? 'ยอดรวม (ก่อน VAT)' : 'Subtotal (before VAT)'} 
-          value={subtotal}
-        />
-        
-        {/* VAT */}
-        <Row 
-          label={state.language === 'th' ? 'VAT (7%)' : 'VAT (7%)'} 
-          value={vat}
-        />
-        
-        <hr className="border-stone-200"/>
-        
-        {/* Total with VAT */}
-        <Row 
-          label={state.language === 'th' ? 'ยอดรวมทั้งสิ้น (รวม VAT)' : 'Total with VAT (7%)'} 
-          value={total} 
-          bold
-        />
       </div>
+      
+      {isExpanded && (
+        <div className="mt-3 space-y-2 text-sm">
+          {/* Base Package */}
+          <Row 
+            label={state.language === 'th' ? 'แพ็กเกจหลัก' : 'Base Package'} 
+            value={base}
+          />
+          <div className="text-xs text-stone-500 ml-4 -mt-1">
+            {packageName}
+          </div>
+          
+          {/* Add-ons Services */}
+          {selectedAddons.length > 0 && (
+            <>
+              <div className="font-medium text-stone-700 mt-4">
+                {state.language === 'th' ? 'บริการเสริม' : 'Add-on Services'}
+              </div>
+              {selectedAddons.filter(addon => !addon.isDiscount).map((addon, index) => (
+                <div key={index} className="flex justify-between text-xs ml-4">
+                  <span className="text-stone-600">• {addon.name}</span>
+                  <span className="text-stone-600">฿{addon.value.toLocaleString()}</span>
+                </div>
+              ))}
+            </>
+          )}
+          
+          {/* Time Surcharge */}
+          {timeSurcharge > 0 && (
+            <Row 
+              label={state.language === 'th' ? timeSurchargeLabel : (timeSurchargeLabel === 'ค่าบริการครึ่งวันบ่าย' ? 'Afternoon Surcharge' : 'Full Day Surcharge')} 
+              value={timeSurcharge} 
+            />
+          )}
+          
+          <hr className="border-stone-200"/>
+          
+          {/* Subtotal Before Discounts */}
+          <Row 
+            label={state.language === 'th' ? 'ยอดรวม (ก่อนส่วนลด)' : 'Subtotal (before discount)'} 
+            value={subtotalBeforeDiscounts}
+          />
+          
+          {/* Total Discounts */}
+          {totalDiscounts > 0 && (
+            <>
+              <div className="font-medium text-orange-600 mt-2">
+                {state.language === 'th' ? 'ส่วนลดทั้งหมด' : 'Total Discounts'}
+              </div>
+              
+              {/* Marketing Discounts */}
+              {selectedAddons.filter(addon => addon.isDiscount).map((addon, index) => (
+                <div key={index} className="flex justify-between text-xs ml-4 text-orange-600">
+                  <span>• {addon.name}</span>
+                  <span>-฿{Math.abs(addon.value).toLocaleString()}</span>
+                </div>
+              ))}
+              
+              {/* Weekday Discount */}
+              {weekdayDiscount > 0 && (
+                <div className="flex justify-between text-xs ml-4 text-orange-600">
+                  <span>• {state.language === 'th' ? weekdayDiscountLabel : (weekdayDiscountLabel.includes('฿40,000') ? 'Weekday Discount (฿40,000)' : 'Weekday Discount (฿20,000)')}</span>
+                  <span>-฿{weekdayDiscount.toLocaleString()}</span>
+                </div>
+              )}
+              
+              <Row 
+                label={state.language === 'th' ? 'รวมส่วนลด' : 'Total Discount'} 
+                value={-totalDiscounts} 
+                className="text-orange-600 font-medium"
+              />
+            </>
+          )}
+          
+          <hr className="border-stone-200"/>
+          
+          {/* Subtotal (Before VAT) */}
+          <Row 
+            label={state.language === 'th' ? 'ยอดรวม (ก่อน VAT)' : 'Subtotal (before VAT)'} 
+            value={subtotal}
+          />
+          
+          {/* VAT */}
+          <Row 
+            label={state.language === 'th' ? 'VAT (7%)' : 'VAT (7%)'} 
+            value={vat}
+          />
+          
+          <hr className="border-stone-200"/>
+          
+          {/* Total with VAT */}
+          <Row 
+            label={state.language === 'th' ? 'ยอดรวมทั้งสิ้น (รวม VAT)' : 'Total with VAT (7%)'} 
+            value={total} 
+            bold
+          />
+        </div>
+      )}
+      
+      {/* Always show total and book button */}
+      {!isExpanded && (
+        <div className="mt-3 py-2 border-t border-stone-200">
+          <Row 
+            label={state.language === 'th' ? 'ยอดรวมทั้งสิ้น (รวม VAT)' : 'Total with VAT (7%)'} 
+            value={total} 
+            bold
+          />
+        </div>
+      )}
+      
       <button 
         onClick={handleBookInquiry}
         className="btn btn-primary w-full mt-3"
