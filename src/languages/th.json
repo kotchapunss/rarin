@@ -633,7 +633,7 @@
         },
         "a11": {
           "name": "เบียร์สด",
-          "description": "LEO / CHANG / SIGHA"
+          "description": "LEO / CHANG / SIGHA ( นำเข้าแอลกอฮฮล์ไม่จำกัด เมื่อรับเบียร์สด 2 ถังขั้นต่ำ )"
         },
         "a12": {
           "name": "ไวน์",
@@ -746,7 +746,7 @@
   "thai": "ไทย",
   "english": "English",
   "estimationSummary": "สรุปการคำนวณ",
-  "estimationDescription": "สรุปราคาสำหรับการใช้งานเดีย",
+  "estimationDescription": "สรุปราคาสำหรับงานของคุณตามรายละเอียดที่ระบุด้านล่าง",
   "serviceSummary": "สรุปราคาการ",
   "packageType": "ค่าแพ็กเกจ",
   "beforeVat": "ราคาก่อน VAT",

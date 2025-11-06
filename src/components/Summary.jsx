@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store'
 import { getPackages, getSettings, getBudget4TimeOptions, getAddonCategories } from '../data'
-import { useTranslations } from '../i18n'
+import { useTranslations, getPackageCapacity, parseCapacityRange } from '../i18n'
 
 function calcTotal(type, packageId, addons, people, dayType, period, language = 'th') {
   const pkg = getPackages(type).find(p=>p.id===packageId)
@@ -40,8 +40,50 @@ function calcTotal(type, packageId, addons, people, dayType, period, language = 
   }, 0)
   const addonsSum = positiveAddons + marketingDiscounts
   
-  // simple headcount multiplier example (first 50 included)
-  const extra = Math.max(0, people - settings.baseGuestLimit) * settings.extraGuestPrice
+  // Calculate extra guest charges based on package capacity
+  let extra = 0
+  let extraGuestsCount = 0
+  let extraGuestUnitPrice = 0
+  let maxCapacity = 0
+  
+  if (pkg && people > 0) {
+    // Get package capacity
+    const capacityString = getPackageCapacity(type, packageId, language)
+    const capacityData = parseCapacityRange(capacityString)
+    maxCapacity = capacityData.max
+    
+    // Calculate extra guests if current guest count exceeds max capacity
+    if (people > maxCapacity) {
+      extraGuestsCount = people - maxCapacity
+      
+      // Find selected food addon to get price per person
+      const configAddons = getAddonCategories(type)
+      let foodAddonPrice = 0
+      
+      // Look through all addon categories to find selected food items
+      if (configAddons) {
+        Object.values(configAddons).forEach(category => {
+          if (category.items) {
+            category.items.forEach(item => {
+              // Check if this addon is selected and is a per_person food item
+              const addonValue = addons?.[item.id]
+              if (addonValue && addonValue > 0 && 
+                  (item.type === 'per_person' || item.type === 'auto')) {
+                // Use this food item's price as the extra guest price
+                if (item.price > foodAddonPrice) {
+                  foodAddonPrice = item.price
+                }
+              }
+            })
+          }
+        })
+      }
+      
+      // If no food addon selected, use default price from settings
+      extraGuestUnitPrice = foodAddonPrice > 0 ? foodAddonPrice : settings.extraGuestPrice
+      extra = extraGuestsCount * extraGuestUnitPrice
+    }
+  }
   
   // Check for budget4 specific time surcharges
   let timeSurcharge = 0
@@ -99,7 +141,10 @@ function calcTotal(type, packageId, addons, people, dayType, period, language = 
     base, 
     addons: positiveAddons, 
     marketingDiscounts: Math.abs(marketingDiscounts), 
-    extra, 
+    extra,
+    extraGuestsCount,
+    extraGuestUnitPrice,
+    maxCapacity,
     subtotalBeforeDiscounts,
     totalDiscounts,
     subtotal, 
@@ -119,7 +164,7 @@ export default function Summary() {
   const t = useTranslations()
   const [isExpanded, setIsExpanded] = React.useState(true)
   
-  const { packageName, base, addons, marketingDiscounts, extra, subtotalBeforeDiscounts, totalDiscounts, subtotal, vat, total, weekdayDiscount, weekdayDiscountLabel, isEligibleForDiscount, timeSurcharge, timeSurchargeLabel } = useMemo(
+  const { packageName, base, addons, marketingDiscounts, extra, extraGuestsCount, extraGuestUnitPrice, maxCapacity, subtotalBeforeDiscounts, totalDiscounts, subtotal, vat, total, weekdayDiscount, weekdayDiscountLabel, isEligibleForDiscount, timeSurcharge, timeSurchargeLabel } = useMemo(
     ()=>calcTotal(state.type, state.packageId, state.addons, state.people, state.dayType, state.period, state.language),
     [state.type, state.packageId, state.addons, state.people, state.dayType, state.period, state.language]
   )
@@ -212,9 +257,32 @@ export default function Summary() {
           addonName = addon.name || ''
         }
         
+        // Calculate quantity for display
+        let quantity = 1
+        let unitPrice = addon.price || 0
+        
+        if (addon.type === 'per_person' || addon.type === 'auto' || addon.type === 'grid') {
+          // People-based calculation
+          quantity = state.people || 1
+          // Check if it's a table-based addon (10 people per unit)
+          const unitText = typeof addon.unit === 'object' 
+            ? (addon.unit[state.language] || addon.unit.th || addon.unit.en || '')
+            : (addon.unit || '')
+          if (unitText === 'โต๊ะ' || unitText === 'table' || unitText === '10 ท่าน' || unitText === '10 people') {
+            quantity = Math.ceil((state.people || 1) / 10)
+          }
+        } else if (addon.type === 'input' || addon.type === 'per_bottle' || addon.type === 'per_package') {
+          // Quantity-based: calculate from stored value and unit price
+          if (unitPrice > 0) {
+            quantity = Math.max(1, Math.round(Math.abs(value) / unitPrice))
+          }
+        }
+        
         addonsList.push({
           name: addonName,
           value: value,
+          quantity: quantity,
+          unitPrice: unitPrice,
           isDiscount: value < 0
         })
       })
@@ -296,13 +364,27 @@ export default function Summary() {
       
       {isExpanded && (
         <div className="mt-3 space-y-2 text-sm">
-          {/* Base Package */}
+          {/* Base Package with Guest Info */}
           <Row 
             label={state.language === 'th' ? 'แพ็กเกจหลัก' : 'Base Package'} 
             value={base}
           />
-          <div className="text-xs text-stone-500 ml-4 -mt-1">
-            {packageName}
+          <div className="text-xs text-stone-500 ml-4 -mt-1 space-y-1">
+            <div>{packageName}</div>
+            {state.people > 0 && (
+              <>
+                <div>
+                  {state.language === 'th' ? 'จำนวนแขก: ' : 'Number of guests: '}
+                  <span className="font-medium text-stone-700">{state.people} {state.language === 'th' ? 'ท่าน' : 'people'}</span>
+                </div>
+                {maxCapacity > 0 && (
+                  <div>
+                    {state.language === 'th' ? 'รองรับสูงสุด: ' : 'Max capacity: '}
+                    <span className="font-medium text-stone-700">{maxCapacity} {state.language === 'th' ? 'ท่าน' : 'people'}</span>
+                  </div>
+                )}
+              </>
+            )}
           </div>
           
           {/* Add-ons Services */}
@@ -313,7 +395,10 @@ export default function Summary() {
               </div>
               {selectedAddons.filter(addon => !addon.isDiscount).map((addon, index) => (
                 <div key={index} className="flex justify-between text-xs ml-4">
-                  <span className="text-stone-600">• {addon.name}</span>
+                  <span className="text-stone-600">
+                    • {addon.name}
+                    {addon.quantity && addon.quantity > 1 && ` × ${addon.quantity}`}
+                  </span>
                   <span className="text-stone-600">฿{addon.value.toLocaleString()}</span>
                 </div>
               ))}

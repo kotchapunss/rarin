@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useStore } from '../store'
-import { useTranslations } from '../i18n'
+import { useTranslations, getPackageCapacity, parseCapacityRange } from '../i18n'
 import { getPackages, getAddons, getSettings, getBudget4TimeOptions, getAddonCategories } from '../data'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
@@ -120,8 +120,48 @@ export default function BookingConfirmation() {
 
     const addonsSum = positiveAddons + marketingDiscounts
 
-    // extra guest charges
-    const extraGuestsCost = Math.max(0, state.people - settings.baseGuestLimit) * settings.extraGuestPrice
+    // Calculate extra guest charges based on package capacity
+    let extraGuestsCost = 0
+    let extraGuestsCount = 0
+    let extraGuestUnitPrice = 0
+    
+    if (selectedPackage && state.people > 0) {
+      // Get package capacity
+      const capacityString = getPackageCapacity(state.type, state.packageId, language)
+      const { max: maxCapacity } = parseCapacityRange(capacityString)
+      
+      // Calculate extra guests if current guest count exceeds max capacity
+      if (state.people > maxCapacity) {
+        extraGuestsCount = state.people - maxCapacity
+        
+        // Find selected food addon to get price per person
+        const configAddons = getAddonCategories(state.type)
+        let foodAddonPrice = 0
+        
+        // Look through all addon categories to find selected food items
+        if (configAddons) {
+          Object.values(configAddons).forEach(category => {
+            if (category.items) {
+              category.items.forEach(item => {
+                // Check if this addon is selected and is a per_person food item
+                const addonValue = state.addons?.[item.id]
+                if (addonValue && addonValue > 0 && 
+                    (item.type === 'per_person' || item.type === 'auto')) {
+                  // Use this food item's price as the extra guest price
+                  if (item.price > foodAddonPrice) {
+                    foodAddonPrice = item.price
+                  }
+                }
+              })
+            }
+          })
+        }
+        
+        // If no food addon selected, use default price from settings
+        extraGuestUnitPrice = foodAddonPrice > 0 ? foodAddonPrice : settings.extraGuestPrice
+        extraGuestsCost = extraGuestsCount * extraGuestUnitPrice
+      }
+    }
 
     // Time surcharge logic
     let timeSurcharge = 0
@@ -169,6 +209,8 @@ export default function BookingConfirmation() {
       basePrice,
       addonsTotal: positiveAddons, // positive addon sum (for display if needed)
       extraGuestsCost,
+      extraGuestsCount,
+      extraGuestUnitPrice,
       subtotal,
       vat,
       total,
@@ -183,7 +225,7 @@ export default function BookingConfirmation() {
     }
   }
 
-  const { basePrice, addonsTotal, extraGuestsCost, subtotal, vat, total, weekdayDiscount, weekdayDiscountLabel, isEligibleForDiscount, selectedPackage, timeSurcharge, timeSurchargeLabel, marketingDiscounts, subtotalBeforeDiscounts } = calculateTotal()
+  const { basePrice, addonsTotal, extraGuestsCost, extraGuestsCount, extraGuestUnitPrice, subtotal, vat, total, weekdayDiscount, weekdayDiscountLabel, isEligibleForDiscount, selectedPackage, timeSurcharge, timeSurchargeLabel, marketingDiscounts, subtotalBeforeDiscounts } = calculateTotal()
 
   // Get package name in correct language
   const getPackageName = () => {
@@ -432,19 +474,23 @@ export default function BookingConfirmation() {
           ? (addon.unit[state.language] || addon.unit.th || addon.unit.en || '')
           : (addon.unit || '')
 
-        if (addon.type === 'auto') {
+        // Handle different addon types for quantity and price calculation
+        if (addon.type === 'auto' || addon.type === 'per_person') {
+          // Auto/per_person type: quantity based on people count
           quantity = state.people || 1
           totalPrice = quantity * unitPrice
           if (unitText === '10 ท่าน' || unitText === '10 people') {
             quantity = Math.ceil((state.people || 1) / 10)
             totalPrice = quantity * unitPrice
           }
-        } else if (addon.type === 'input') {
+        } else if (addon.type === 'input' || addon.type === 'per_bottle' || addon.type === 'per_package') {
+          // Input/per_bottle/per_package type: user-specified quantity
           if (unitPrice > 0) {
             quantity = Math.max(1, Math.round(Math.abs(value) / unitPrice))
             totalPrice = value // Keep the stored value as total price for input types
           }
         } else if (addon.type === 'checkbox' || addon.type === 'discount') {
+          // Checkbox/Discount type: fixed price/discount
           quantity = 1
           totalPrice = value // Keep the stored value (could be negative for discounts)
         }
@@ -602,19 +648,23 @@ export default function BookingConfirmation() {
           ? (addon.unit[state.language] || addon.unit.th || addon.unit.en || '')
           : (addon.unit || '')
 
-        if (addon.type === 'auto') {
+        // Handle different addon types for quantity and price calculation
+        if (addon.type === 'auto' || addon.type === 'per_person') {
+          // Auto/per_person type: quantity based on people count
           quantity = state.people || 1
           totalPrice = quantity * unitPrice
           if (unitText === '10 ท่าน' || unitText === '10 people') {
             quantity = Math.ceil((state.people || 1) / 10)
             totalPrice = quantity * unitPrice
           }
-        } else if (addon.type === 'input') {
+        } else if (addon.type === 'input' || addon.type === 'per_bottle' || addon.type === 'per_package') {
+          // Input/per_bottle/per_package type: user-specified quantity
           if (unitPrice > 0) {
             quantity = Math.max(1, Math.round(Math.abs(value) / unitPrice))
             totalPrice = value // Keep the stored value as total price for input types
           }
         } else if (addon.type === 'checkbox' || addon.type === 'discount') {
+          // Checkbox/Discount type: fixed price/discount
           quantity = 1
           totalPrice = value // Keep the stored value (could be negative for discounts)
         }
@@ -695,36 +745,45 @@ export default function BookingConfirmation() {
           ? (addon.unit[state.language] || addon.unit.th || addon.unit.en || '')
           : (addon.unit || '')
 
-        if (addon.type === 'auto' || addon.type === 'grid') {
+        // Handle different addon types for quantity and price calculation
+        if (addon.type === 'auto' || addon.type === 'grid' || addon.type === 'per_person') {
+          // Auto/grid/per_person type: quantity based on people count
           quantity = state.people || 1
           totalPrice = quantity * unitPrice
           if (unitText === 'โต๊ะ' || unitText === 'table' || unitText === '10 ท่าน' || unitText === '10 people') {
             quantity = Math.ceil((state.people || 1) / 10)
             totalPrice = quantity * unitPrice
           }
-        } else if (addon.type === 'input') {
+        } else if (addon.type === 'input' || addon.type === 'per_bottle' || addon.type === 'per_package') {
+          // Input/per_bottle/per_package type: user-specified quantity
           if (unitPrice > 0) {
             quantity = Math.max(1, Math.round(Math.abs(value) / unitPrice))
             totalPrice = value // Keep the stored value as total price for input types
           }
         } else if (addon.type === 'checkbox' || addon.type === 'discount') {
+          // Checkbox/Discount type: fixed price/discount
           quantity = 1
           totalPrice = value // Keep the stored value (could be negative for discounts)
         }
 
         // Get the addon name with proper language handling - always try to get a name
-        let addonName = ''
-        if (typeof addon.name === 'object' && addon.name) {
-          // Try current language first, then fallback to any available language
-          addonName = addon.name[state.language] || addon.name.th || addon.name.en || 
-                     Object.values(addon.name)[0] || ''
-        } else if (typeof addon.name === 'string') {
-          addonName = addon.name
+        // First try to get from translations (this is where event addon names are stored)
+        let addonName = t.addons?.[state.type]?.items?.[addonId]?.name || ''
+        
+        // If not in translations, try from addon object
+        if (!addonName) {
+          if (typeof addon.name === 'object' && addon.name) {
+            // Try current language first, then fallback to any available language
+            addonName = addon.name[state.language] || addon.name.th || addon.name.en || 
+                       Object.values(addon.name)[0] || ''
+          } else if (typeof addon.name === 'string') {
+            addonName = addon.name
+          }
         }
 
         // If still no name, use the addon ID as fallback
         if (!addonName) {
-          console.log('No addon name found for event/photo:', addonId, 'addon object:', addon, 'state.language:', state.language)
+          console.log('No addon name found for event/photo:', addonId, 'addon object:', addon, 'state.language:', state.language, 'translations:', t.addons?.[state.type]?.items?.[addonId])
           addonName = addonId
         }
 
@@ -878,9 +937,9 @@ export default function BookingConfirmation() {
                       {extraGuestsCost > 0 && (
                         <tr>
                           <td className="border border-gray-300 p-3 text-sm">{String(selectedAddons.length + (timeSurcharge > 0 ? 3 : 2)).padStart(3, '0')}</td>
-                          <td className="border border-gray-300 p-3 text-sm">แขกเพิ่มเติม ({state.people - 50} ท่าน)</td>
-                          <td className="border border-gray-300 p-3 text-center text-sm">{state.people - 50}</td>
-                          <td className="border border-gray-300 p-3 text-right text-sm">150</td>
+                          <td className="border border-gray-300 p-3 text-sm">แขกเพิ่มเติม ({extraGuestsCount} ท่าน)</td>
+                          <td className="border border-gray-300 p-3 text-center text-sm">{extraGuestsCount}</td>
+                          <td className="border border-gray-300 p-3 text-right text-sm">{extraGuestUnitPrice.toLocaleString()}</td>
                           <td className="border border-gray-300 p-3 text-right text-sm">{extraGuestsCost.toLocaleString()}</td>
                         </tr>
                       )}
@@ -1075,9 +1134,9 @@ export default function BookingConfirmation() {
                 {extraGuestsCost > 0 && (
                   <tr>
                     <td style={{ border: '1px solid #ccc', padding: '12px', fontSize: '12px' }}>{String(selectedAddons.length + (timeSurcharge > 0 ? 3 : 2)).padStart(3, '0')}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '12px', fontSize: '12px' }}>แขกเพิ่มเติม ({state.people - 50} ท่าน)</td>
-                    <td style={{ border: '1px solid #ccc', padding: '12px', textAlign: 'center', fontSize: '12px' }}>{state.people - 50}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '12px', textAlign: 'right', fontSize: '12px' }}>150</td>
+                    <td style={{ border: '1px solid #ccc', padding: '12px', fontSize: '12px' }}>แขกเพิ่มเติม ({extraGuestsCount} ท่าน)</td>
+                    <td style={{ border: '1px solid #ccc', padding: '12px', textAlign: 'center', fontSize: '12px' }}>{extraGuestsCount}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '12px', textAlign: 'right', fontSize: '12px' }}>{extraGuestUnitPrice.toLocaleString()}</td>
                     <td style={{ border: '1px solid #ccc', padding: '12px', textAlign: 'right', fontSize: '12px' }}>{extraGuestsCost.toLocaleString()}</td>
                   </tr>
                 )}
@@ -1187,10 +1246,32 @@ export default function BookingConfirmation() {
                 {t.serviceSummary || 'สรุปราคาการ'}
               </h3>
               <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="flex justify-between items-center mb-2">
-                  <span>{t.packageType || 'ค่าแพ็กเกจ'} ({getPackageName()})</span>
-                  <span className="font-semibold">฿{basePrice.toLocaleString()}</span>
+                {/* Package Details with Capacity */}
+                <div className="mb-3 pb-3 border-b border-gray-200">
+                  <div className="flex justify-between items-center mb-2">
+                    <span>{t.packageType || 'ค่าแพ็กเกจ'} ({getPackageName()})</span>
+                    <span className="font-semibold">฿{basePrice.toLocaleString()}</span>
+                  </div>
+                  {selectedPackage && (
+                    <div className="text-xs text-gray-500 space-y-1">
+                      <div>
+                        {language === 'th' ? 'จำนวนแขก: ' : 'Number of guests: '}
+                        <span className="font-medium text-gray-700">{state.people} {language === 'th' ? 'ท่าน' : 'people'}</span>
+                      </div>
+                      <div>
+                        {language === 'th' ? 'รองรับสูงสุด: ' : 'Max capacity: '}
+                        <span className="font-medium text-gray-700">
+                          {(() => {
+                            const capacityString = getPackageCapacity(state.type, state.packageId, language)
+                            const { max } = parseCapacityRange(capacityString)
+                            return `${max} ${language === 'th' ? 'ท่าน' : 'people'}`
+                          })()}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
+                
                 {positiveSelectedAddons.length > 0 && (
                   <div className="mt-3 border-t pt-3">
                     <div className="text-sm text-gray-600 mb-2">บริการเสริม:</div>
@@ -1240,7 +1321,7 @@ export default function BookingConfirmation() {
                 {extraGuestsCost > 0 && (
                   <div className="mt-3 border-t pt-3">
                     <div className="flex justify-between items-center text-sm">
-                      <span>แขกเพิ่มเติม ({state.people - 50} ท่าน)</span>
+                      <span>แขกเพิ่มเติม ({extraGuestsCount} ท่าน × ฿{extraGuestUnitPrice.toLocaleString()})</span>
                       <span>฿{extraGuestsCost.toLocaleString()}</span>
                     </div>
                   </div>
