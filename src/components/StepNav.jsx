@@ -11,10 +11,18 @@ export default function StepNav() {
   const navigate = useNavigate()
   const t = useTranslations()
   
-  // Check if we're in wedding flow (4 steps) or other flows (3 steps)
+  // Check if we're in wedding flow (4 steps) or other flows (3 steps for event, 2 steps for photo)
   const isWeddingFlow = type === 'wedding'
   const isBudget4Wedding = type === 'wedding' && budget === 'budget4'
-  const maxStep = isBudget4Wedding ? 4 : (isWeddingFlow ? 3 : 3)
+  const isEventType = type === 'event'
+  const isPhotoType = type === 'photo'
+  
+  // Determine max step based on type
+  // Wedding budget4: 0 -> 1 (budget) -> 2 (package) -> 3 (details) -> 4 (addons) = 5 steps
+  // Wedding other: 0 -> 1 (budget) -> 2 (package) -> 3 (details) = 4 steps
+  // Event: 0 -> 1 (package) -> 2 (details) -> 3 (addons) = 4 steps
+  // Photo: 0 -> 1 (package) -> 2 (details) = 3 steps
+  const maxStep = isBudget4Wedding ? 4 : (isWeddingFlow ? 3 : (isEventType ? 3 : 2))
   
   // Get the selected package to check if it has time slots
   const selectedPackage = getPackages(type).find(pkg => pkg.id === packageId)
@@ -59,7 +67,19 @@ export default function StepNav() {
         case 0: return type !== null // Type must be selected
         case 1: return packageId !== null // Package must be selected
         case 2: {
-          // People and day type are always required
+          // For photo type, people count is not required, only day type
+          if (type === 'photo') {
+            const basicRequirements = dayType !== null && dayType !== ''
+            
+            // Period is only required if package has time slots
+            if (packageHasTimeSlots()) {
+              return basicRequirements && period !== null && period !== ''
+            } else {
+              return basicRequirements
+            }
+          }
+          
+          // For event type, people and day type are required
           const basicRequirements = people > 0 && dayType !== null && dayType !== ''
           
           // Period is only required if package has time slots

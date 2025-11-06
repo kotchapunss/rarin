@@ -157,6 +157,11 @@ export default function DetailsInput() {
     } else if (type === 'wedding' && packageId && people === 0) {
       // For wedding, initialize to minimum guest count (50)
       setPeople(minGuests)
+    } else if (type === 'photo') {
+      // For photo type, reset people count to 0 since it's not needed
+      if (people !== 0) {
+        setPeople(0)
+      }
     }
   }, [packageId, type, minGuests, people, setPeople])
   
@@ -182,34 +187,36 @@ export default function DetailsInput() {
         )}
       </div>
 
-      {/* Guest Count Selector */}
-      <div>
-        <label className="block text-sm text-stone-600 mb-3">
-          {translations.numberOfGuests} ({minGuests} - {maxGuests}) 
-          <span className="text-red-500 ml-1">*</span>
-        </label>
-        <div className="mb-4">
-          <input 
-            type="number" 
-            value={people} 
-            min={minGuests}
-            max={maxGuests}
-            onChange={(e)=>setPeople(parseInt(e.target.value||'0',10))}
-            className={`w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2 text-lg transition-colors ${
-              isValidPeople 
-                ? 'border-stone-300 focus:ring-brand-400' 
-                : 'border-red-300 focus:ring-red-400 bg-red-50'
-            }`}
-          />
-          {!isValidPeople && (
-            <p className="text-red-500 text-sm mt-1">
-              {language === 'th' 
-                ? 'กรุณาระบุจำนวนแขก' 
-                : 'Please enter number of guests'}
-            </p>
-          )}
+      {/* Guest Count Selector - Only show for wedding and event types */}
+      {type !== 'photo' && (
+        <div>
+          <label className="block text-sm text-stone-600 mb-3">
+            {translations.numberOfGuests} ({minGuests} - {maxGuests}) 
+            <span className="text-red-500 ml-1">*</span>
+          </label>
+          <div className="mb-4">
+            <input 
+              type="number" 
+              value={people} 
+              min={minGuests}
+              max={maxGuests}
+              onChange={(e)=>setPeople(parseInt(e.target.value||'0',10))}
+              className={`w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2 text-lg transition-colors ${
+                isValidPeople 
+                  ? 'border-stone-300 focus:ring-brand-400' 
+                  : 'border-red-300 focus:ring-red-400 bg-red-50'
+              }`}
+            />
+            {!isValidPeople && (
+              <p className="text-red-500 text-sm mt-1">
+                {language === 'th' 
+                  ? 'กรุณาระบุจำนวนแขก' 
+                  : 'Please enter number of guests'}
+              </p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Time Period Selector - Only show if package has time slots */}
       {hasTimeSlots && (

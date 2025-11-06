@@ -41,9 +41,11 @@ export default function App() {
   const { step, type, budget } = useStore();
   const [showIntro, setShowIntro] = useState(true);
   
-  // For wedding type, use 4-step flow, for others use 3-step flow
+  // For wedding type, use 4-step flow (or 5 for budget4), for others use 3-step flow (event has addons, photo doesn't)
   const isWeddingFlow = type === 'wedding';
   const isBudget4Wedding = type === 'wedding' && budget === 'budget4';
+  const isEventType = type === 'event';
+  const isPhotoType = type === 'photo';
 
   const handleIntroComplete = () => {
     setShowIntro(false);
@@ -70,7 +72,7 @@ export default function App() {
               )}
               {step === 3 && (
                 <>
-                  {isWeddingFlow ? <DetailsInput /> : <AddonsSelect />}
+                  {isWeddingFlow ? <DetailsInput /> : (isEventType ? <AddonsSelect /> : null)}
                 </>
               )}
               {step === 4 && isBudget4Wedding && <AddonsSelect />}

@@ -237,7 +237,7 @@ export default function AddonsSelect() {
       return {
         services: {
           title: language === 'th' ? 'บริการ' : 'Services',
-          icon: '🎪',
+          icon: '💒',
           categories: ['ceremony']
         },
         catering: {
