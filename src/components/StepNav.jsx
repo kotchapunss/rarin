@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store'
 import { useTranslations } from '../i18n'
+import { getPackages, getBudget4TimeOptions } from '../data'
 
 export default function StepNav() {
   const { step, setStep, type, budget, packageId, people, period, dayType, notes, language } = useStore()
@@ -12,7 +13,25 @@ export default function StepNav() {
   
   // Check if we're in wedding flow (4 steps) or other flows (3 steps)
   const isWeddingFlow = type === 'wedding'
-  const maxStep = isWeddingFlow ? 4 : 3
+  const isBudget4Wedding = type === 'wedding' && budget === 'budget4'
+  const maxStep = isBudget4Wedding ? 4 : (isWeddingFlow ? 3 : 3)
+  
+  // Get the selected package to check if it has time slots
+  const selectedPackage = getPackages(type).find(pkg => pkg.id === packageId)
+  const isBudget4Package = selectedPackage?.budgetId === 'budget4'
+  
+  // Check if package has time slots
+  const packageHasTimeSlots = () => {
+    if (!selectedPackage) return false
+    
+    if (isBudget4Package) {
+      // Budget4 packages always have time slots (special options)
+      return true
+    }
+    
+    // Check if timeSlots field exists and is not empty
+    return selectedPackage.timeSlots && selectedPackage.timeSlots.trim() !== ''
+  }
   
   // Check if current step is complete and can proceed to next
   const canProceedToNext = () => {
@@ -21,15 +40,35 @@ export default function StepNav() {
         case 0: return type !== null // Type must be selected
         case 1: return budget !== null // Budget must be selected
         case 2: return packageId !== null // Package must be selected
-        case 3: return people > 0 && period !== null && period !== '' && dayType !== null && dayType !== '' // All mandatory details must be filled
-        case 4: return true // Can always proceed from add-ons step
+        case 3: {
+          // People and day type are always required
+          const basicRequirements = people > 0 && dayType !== null && dayType !== ''
+          
+          // Period is only required if package has time slots
+          if (packageHasTimeSlots()) {
+            return basicRequirements && period !== null && period !== ''
+          } else {
+            return basicRequirements
+          }
+        }
+        case 4: return true // Can always proceed from add-ons step (only for budget4)
         default: return false
       }
     } else {
       switch(step) {
         case 0: return type !== null // Type must be selected
         case 1: return packageId !== null // Package must be selected
-        case 2: return people > 0 && period !== null && period !== '' && dayType !== null && dayType !== '' // All mandatory details must be filled
+        case 2: {
+          // People and day type are always required
+          const basicRequirements = people > 0 && dayType !== null && dayType !== ''
+          
+          // Period is only required if package has time slots
+          if (packageHasTimeSlots()) {
+            return basicRequirements && period !== null && period !== ''
+          } else {
+            return basicRequirements
+          }
+        }
         case 3: return true // Can always proceed from add-ons step
         default: return false
       }

@@ -8,7 +8,7 @@ import { useTranslations } from '../i18n'
 export default function PackageSelect() {
   const { type, budget, language } = useStore()
   const translations = useTranslations()
-  const allPackages = getPackages(type)
+  const allPackages = getPackages(type, language)
   
   // Check if we're in wedding flow (5 steps) or other flow (4 steps)
   const isWeddingFlow = type === 'wedding'
@@ -45,9 +45,19 @@ export default function PackageSelect() {
           {getStepDescription()}
         </p>
         {getSubDescription() && (
-          <p className="text-sm text-gray-500 max-w-2xl mx-auto">
-            {getSubDescription()}
-          </p>
+          <div className="text-sm text-gray-500 max-w-2xl mx-auto">
+            {type === 'event' ? (
+              <div className="space-y-2">
+                {getSubDescription().split('\n').map((line, index) => (
+                  <p key={index} className={index === 1 ? 'text-orange-600 font-medium' : ''}>
+                    {line.trim()}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <p>{getSubDescription()}</p>
+            )}
+          </div>
         )}
       </div>
 

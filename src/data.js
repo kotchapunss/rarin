@@ -1,5 +1,13 @@
 
 import config from './config.json'
+import { 
+  getPackageName, 
+  getPackageDescription, 
+  getPackageArea,
+  getAddonName,
+  getAddonDescription,
+  getAddonUnit
+} from './i18n.js'
 
 // Export config for direct access when needed
 export { config }
@@ -8,44 +16,81 @@ export { config }
 export const PACKAGES = {}
 export const ADDONS = {}
 
-// Build PACKAGES from config
-Object.keys(config.packages).forEach(type => {
-  PACKAGES[type] = config.packages[type].map(pkg => ({
-    id: pkg.id,
-    name: pkg.name,
-    price: pkg.price,
-    details: pkg.features,
-    // Additional data for enhanced package cards
-    description: pkg.description,
-    area: pkg.area,
-    timeSlots: pkg.timeSlots,
-    features: pkg.features,
-    equipmentServices: pkg.equipmentServices,
-    isPopular: pkg.isPopular
-  }))
-})
-
-// Build ADDONS from config
-Object.keys(config.addons).forEach(type => {
-  ADDONS[type] = {}
-  Object.keys(config.addons[type]).forEach(category => {
-    ADDONS[type][category] = config.addons[type][category].items.map(addon => ({
-      id: addon.id,
-      name: addon.name.th, // Default to Thai
-      description: addon.description,
-      price: addon.price,
-      type: addon.type,
-      unit: addon.unit
+// Build PACKAGES from config with i18n support
+export function buildPackages(language = 'en') {
+  const packages = {}
+  
+  Object.keys(config.packages).forEach(type => {
+    packages[type] = config.packages[type].map(pkg => ({
+      id: pkg.id,
+      name: getPackageName(type, pkg.id, language) || pkg.id,
+      price: pkg.price,
+      details: pkg.features,
+      // Additional data for enhanced package cards
+      description: getPackageDescription(type, pkg.id, language) || '',
+      area: getPackageArea(type, pkg.id, language) || pkg.area || '',
+      timeSlots: pkg.timeSlots,
+      features: pkg.features,
+      equipmentServices: pkg.equipmentServices,
+      isPopular: pkg.isPopular,
+      weekdayDiscountEligible: pkg.weekdayDiscountEligible,
+      budgetId: pkg.budgetId,
+      limits: pkg.limits,
+      food: pkg.food,
+      minSpend: pkg.minSpend,
+      capacity: pkg.capacity,
+      duration: pkg.duration
     }))
   })
-})
-
-export function packageByType(type) {
-  return PACKAGES[type] || []
+  
+  return packages
 }
 
-export function addonsByType(type) {
-  return ADDONS[type] || {}
+// Build ADDONS from config with i18n support
+export function buildAddons(language = 'en') {
+  const addons = {}
+  
+  Object.keys(config.addons).forEach(type => {
+    addons[type] = {}
+    Object.keys(config.addons[type]).forEach(category => {
+      addons[type][category] = config.addons[type][category].items.map(addon => ({
+        id: addon.id,
+        name: getAddonName(type, addon.id, language) || addon.id,
+        description: getAddonDescription(type, addon.id, language) || addon.id,
+        price: addon.price,
+        type: addon.type,
+        unit: getAddonUnit(type, addon.id, language) || addon.unit || 'person',
+        minGuests: addon.minGuests
+      }))
+    })
+  })
+  
+  return addons
+}
+
+// Initialize with default language
+Object.assign(PACKAGES, buildPackages('en'))
+Object.assign(ADDONS, buildAddons('en'))
+
+// Update packages and addons when language changes
+export function updateLanguage(language) {
+  // Clear existing data
+  Object.keys(PACKAGES).forEach(key => delete PACKAGES[key])
+  Object.keys(ADDONS).forEach(key => delete ADDONS[key])
+  
+  // Rebuild with new language
+  Object.assign(PACKAGES, buildPackages(language))
+  Object.assign(ADDONS, buildAddons(language))
+}
+
+export function packageByType(type, language = 'en') {
+  const packages = buildPackages(language)
+  return packages[type] || []
+}
+
+export function addonsByType(type, language = 'en') {
+  const addons = buildAddons(language)
+  return addons[type] || {}
 }
 
 export function getBudgetRanges() {
@@ -69,7 +114,7 @@ export function getGuestRanges() {
   return config.guestRanges
 }
 
-export function getAddons(type) {
+export function getAddons(type, language = 'en') {
   // Flatten the addons structure to match original format
   const addons = {}
   const categoryData = config.addons[type] || {}
@@ -78,7 +123,9 @@ export function getAddons(type) {
     category.items.forEach(addon => {
       addons[addon.id] = {
         ...addon,
-        name: addon.name.th // Default to Thai for backward compatibility
+        name: getAddonName(type, addon.id, language) || addon.id,
+        description: getAddonDescription(type, addon.id, language) || addon.id,
+        unit: getAddonUnit(type, addon.id, language) || addon.unit || 'person'
       }
     })
   })
@@ -91,8 +138,9 @@ export function getAddonCategories(type) {
   return config.addons[type] || {}
 }
 
-export function getPackages(type) {
-  return config.packages[type] || []
+export function getPackages(type, language = 'en') {
+  const packages = buildPackages(language)
+  return packages[type] || []
 }
 
 export function getSettings() {

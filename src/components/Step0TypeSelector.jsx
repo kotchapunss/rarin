@@ -2,7 +2,7 @@
 import React from 'react'
 import { Heart, Calendar, Camera } from 'lucide-react'
 import { useStore } from '../store'
-import { useTranslations } from '../i18n'
+import { useTranslations, getEventTypeName, getEventTypeDescription } from '../i18n'
 import { getEventTypes } from '../data'
 
 export default function TypeSelector() {
@@ -20,8 +20,8 @@ export default function TypeSelector() {
     <div className="space-y-6">
       {/* Step 1 Header */}
       <div className="text-left">
-        <h2 className="text-xl font-bold text-gray-800 mb-2">{translations.step1Title}</h2>
-        <p className="text-gray-600">พร้อมต้อนรับทุกความทรงจำที่สวยงามของคุณ</p>
+        <h2 className="text-xl font-bold text-gray-800 mb-2"   style={{ fontFamily: "'Momo Signature', 'Dancing Script', 'Brush Script MT', cursive" }}>{translations.step1Title}</h2>
+        <p className="text-gray-600" style={{ fontFamily: "'Noto Sans Thai', sans-serif" }}>พร้อมต้อนรับทุกความทรงจำที่สวยงามของคุณ</p>
       </div>
  <p className="text-gray-600">{translations.step1Description}</p>
       {/* Type Selection */}
@@ -41,16 +41,10 @@ export default function TypeSelector() {
                 <span className="p-3 rounded-xl bg-brand-100 text-brand-700"><Icon className="w-6 h-6"/></span>
                 <div>
                   <div className="font-semibold text-lg">
-                    {typeof eventType.name === 'object' 
-                      ? (eventType.name[language] || eventType.name.th || eventType.name.en || '')
-                      : (eventType.name || '')
-                    }
+                    {getEventTypeName(eventType.id, language)}
                   </div>
                   <div className="text-sm text-stone-500 mt-1">
-                    {typeof eventType.description === 'object'
-                      ? (eventType.description[language] || eventType.description.th || eventType.description.en || '')
-                      : (eventType.description || '')
-                    }
+                    {getEventTypeDescription(eventType.id, language)}
                   </div>
                 </div>
               </div>

@@ -10,6 +10,453 @@
   "recommend": "Recommend",
   "over": "Over",
   "notOver": "Not over",
+  "shooting": "shooting",
+  "teardown": "teardown",
+  "hours": "hours",
+  "eventTypes": {
+    "wedding": {
+      "name": "Wedding 💍",
+      "description": "Wedding"
+    },
+    "event": {
+      "name": "Event 🗓️", 
+      "description": "Event"
+    },
+    "photo": {
+      "name": "Shooting 🎥",
+      "description": "Photo/Video Shooting"
+    }
+  },
+  "budgetRanges": {
+    "budget1": {
+      "name": "Not over ฿150,000",
+      "description": "Budget for small wedding not over 50 guests"
+    },
+    "budget2": {
+      "name": "฿150,000 - ฿300,000", 
+      "description": "Budget for wedding 50 - 100 guests"
+    },
+    "budget3": {
+      "name": "฿300,000 - ฿400,000",
+      "description": "Budget for medium wedding 100 - 200 guests"
+    },
+    "budget4": {
+      "name": "Over ฿400,000",
+      "description": "Budget for wedding over 100 guests"
+    }
+  },
+  "timeOptions": {
+    "morning": {
+      "label": "Morning",
+      "time": "(6.00 - 13.30)"
+    },
+    "afternoon": {
+      "label": "Afternoon", 
+      "time": "(16.00 - 22.00)"
+    },
+    "evening": {
+      "label": "All day",
+      "time": "(6.00 - 22.00)"
+    }
+  },
+  "budget4TimeOptions": {
+    "morning": {
+      "label": "Morning",
+      "time": "(06:00 - 14:00)"
+    },
+    "evening": {
+      "label": "Evening",
+      "time": "(18:00 - 22:00)"
+    },
+    "afternoon": {
+      "label": "Afternoon",
+      "time": "(13:00 - 22:00)"
+    },
+    "full_day": {
+      "label": "Full Day", 
+      "time": "(06:00 - 22:00)"
+    }
+  },
+  "packagesData": {
+    "wedding": {
+      "w1": {
+        "name": "Minimoon Light Package",
+        "description": "For small wedding not over 50 guests",
+        "area": "Moonlight Room"
+      },
+      "w2": {
+        "name": "Cozy Morning Package (Indoor)",
+        "description": "For 50-100 guests ( Restricted Area Usage )",
+        "area": "Moonlight Room / Ballad"
+      },
+      "w3": {
+        "name": "Sunset Garden Package (Outdoor)",
+        "description": "For 50-100 guests ( Restricted Area Usage )",
+        "area": "Moonlight Room / Riverside Garden"
+      },
+      "w4": {
+        "name": "Ballad Riverside Package (Indoor)",
+        "description": "For 50-100 guests ( Restricted Area Usage )", 
+        "area": "Moonlight Room / Ballad"
+      },
+      "w5": {
+        "name": "Rarin Inclusive Package",
+        "description": "For 100-200 guests (All Area with restricted time usage and decoration)",
+        "area": "All Area (Rarin Venue)"
+      },
+      "w6": {
+        "name": "Rarin Basic (Decor A)",
+        "description": "Venue package + small decoration (standard style)",
+        "area": "All Area"
+      },
+      "w7": {
+        "name": "Rarin Celebration (Decor B)",
+        "description": "Venue package + medium decoration (customizable style)",
+        "area": "All Area"
+      },
+      "w8": {
+        "name": "Rarin Your Style (Decor C)",
+        "description": "Venue package + full decoration (fully customizable style)",
+        "area": "All Area"
+      },
+      "w9": {
+        "name": "Rarin Premium (Decor D)",
+        "description": "Premium venue package + luxury decoration (premium customizable style)",
+        "area": "All Area"
+      }
+    },
+    "event": {
+      "e1": {
+        "name": "SMALL",
+        "description": "Minimum Spending ฿30,000",
+        "area": "Moonlight Room",
+        "capacity": "20-60 guests"
+      },
+      "e2": {
+        "name": "MEDIUM",
+        "description": "Minimum Spending ฿80,000",
+        "area": "Ballad Riverside Restaurant",
+        "capacity": "51-100 guests"
+      },
+      "e3": {
+        "name": "LARGE",
+        "description": "Minimum Spending ฿120,000",
+        "area": "Rarin Hall",
+        "capacity": "100-200 guests"
+      },
+      "e4": {
+        "name": "RARIN VENUE (Except Ballad)",
+        "description": "Minimum Rental ฿200,000 (Mon-Fri) / ฿250,000 (Sat-Sun)",
+        "area": "Rarin Venue (Except Ballad)",
+        "capacity": "200-400 guests"
+      }
+    },
+    "photo": {
+      "p1": {
+        "name": "Personal Shooting (1 hour)",
+        "description": "For Pre-wedding & Family Photos",
+        "area": "Rarin Venue",
+        "shootingHours": 1,
+        "teardownHours": 0
+      },
+      "p2": {
+        "name": "Personal Shooting (10 hours)",
+        "description": "For Pre-wedding & Family Photos",
+        "area": "Rarin Venue",
+        "shootingHours": 10,
+        "teardownHours": 0
+      },
+      "p3": {
+        "name": "Commercial Shooting (9 hours)",
+        "description": "For TV, Film, Fashion, and Commercial Photography",
+        "area": "Rarin Venue",
+        "shootingHours": 6,
+        "teardownHours": 3
+      },
+      "p4": {
+        "name": "Commercial Shooting (15 hours)",
+        "description": "For TV, Film, Fashion, and Commercial Photography",
+        "area": "Rarin Venue",
+        "shootingHours": 12,
+        "teardownHours": 3
+      }
+    }
+  },
+  "packagesDetails": {
+    "wedding": {
+      "w1": {
+        "features": [
+          "Ring exchange ceremony + 1 ceremony option - Tea ceremony / Water blessing / Western style",
+          "Dressing room for bride and groom",
+          "Food budget for 50 guests"
+        ],
+        "equipmentServices": [
+          "Sound system and 2 wireless microphones",
+          "Wedding lighting system for after party until midnight",
+          "50 gold Chiavari chairs for guests",
+          "5 round tables for guests with white tablecloths",
+          "Food table and cake stand",
+          "20 floral centerpieces for dining tables"
+        ],
+        "food": [
+          "Food budget for 50 guests",
+          "Additional guests at ฿950/person (can upgrade food type)"
+        ]
+      },
+      "w2": {
+        "features": [
+          "Ring exchange ceremony + 1 ceremony option - Tea ceremony / Water blessing / Western style",
+          "Dressing room for bride and groom"
+        ],
+        "equipmentServices": [
+          "Sound system and 2 wireless microphones",
+          "Wedding lighting system for after party until midnight",
+          "100 gold Chiavari chairs for guests",
+          "10 round tables for guests with white tablecloths",
+          "Food table and cake stand",
+          "20 floral centerpieces for dining tables"
+        ],
+        "food": [
+          "Food budget for 50 guests",
+          "Additional guests at ฿950/person (can upgrade food type)"
+        ],
+        "limits": [
+          "Moonlight / Ballad area only",
+          "Limited decoration - Centerpiece and other decorations",
+          "Evening weekday events available every month",
+          "Weekday events available every month"
+        ]
+      },
+      "w3": {
+        "features": [
+          "Ring exchange ceremony + 1 ceremony option - Tea ceremony / Water blessing / Western style",
+          "Dressing room for bride and groom"
+        ],
+        "equipmentServices": [
+          "Sound system and 2 wireless microphones",
+          "Wedding lighting system for after party until midnight",
+          "100 gold Chiavari chairs for guests",
+          "10 round tables for guests with white tablecloths",
+          "Food table and cake stand",
+          "20 floral centerpieces for dining tables"
+        ],
+        "food": [
+          "Food budget for 50 guests",
+          "Additional guests at ฿950/person (can upgrade food type)"
+        ],
+        "limits": [
+          "Moonlight / Riverside Garden area only",
+          "Limited decoration - Centerpiece and other decorations",
+          "Evening weekday events available every month",
+          "Weekday events available every month"
+        ]
+      },
+      "w4": {
+        "features": [
+          "Ring exchange ceremony + 1 ceremony option - Tea ceremony / Water blessing / Western style"
+        ],
+        "equipmentServices": [
+          "Sound system and 2 wireless microphones",
+          "Wedding lighting system for after party until midnight",
+          "100 gold Chiavari chairs for guests",
+          "10 round tables for guests with white tablecloths",
+          "Food table and cake stand",
+          "20 floral centerpieces for dining tables"
+        ],
+        "food": [
+          "Food budget for 50 guests",
+          "Additional guests at ฿950/person (can upgrade food type)"
+        ],
+        "limits": [
+          "Moonlight / Ballad area only",
+          "Limited decoration - Centerpiece and other decorations",
+          "No dressing room for bride and groom"
+        ]
+      },
+      "w5": {
+        "features": [
+          "Ring exchange ceremony + 1 ceremony option - Tea ceremony / Water blessing / Western style",
+          "Dressing room for bride and groom"
+        ],
+        "equipmentServices": [
+          "Sound system and 2 wireless microphones",
+          "Wedding lighting system for after party until midnight",
+          "200 gold Chiavari chairs for guests",
+          "20 round tables for guests with white tablecloths",
+          "Food table and cake stand",
+          "Welcome sign for bride and groom",
+          "20 floral centerpieces for dining tables"
+        ],
+        "food": [
+          "Food budget for 100 guests",
+          "Additional guests at ฿950/person (can upgrade food type)"
+        ],
+        "limits": [
+          "Weddings available from April to October only"
+        ]
+      },
+      "w6": {
+        "features": [
+          "Use all RARIN areas (All Area)",
+          "Ring exchange ceremony + 1 ceremony option - Tea ceremony / Water blessing / Western style",
+          "Dressing room for bride and groom",
+          "Parking for 200 cars with golf cart shuttle"
+        ],
+        "equipmentServices": [
+          "Sound system and 2 wireless microphones",
+          "Wedding lighting system for after party until midnight",
+          "Gold Chiavari chairs and round tables with white tablecloths",
+          "Food table and cake stand",
+          "Welcome sign for bride and groom"
+        ]
+      },
+      "w7": {
+        "features": [
+          "Use all RARIN areas (All Area)",
+          "Ring exchange ceremony + 1 ceremony option - Tea ceremony / Water blessing / Western style",
+          "Dressing room for bride and groom",
+          "Parking for 200 cars with golf cart shuttle"
+        ],
+        "equipmentServices": [
+          "Sound system and 2 wireless microphones",
+          "Wedding lighting system for after party until midnight",
+          "Gold Chiavari chairs and round tables with white tablecloths",
+          "Food table and cake stand",
+          "Welcome sign for bride and groom",
+          "Ceremony floral arch",
+          "Floral pathway",
+          "Welcome arch",
+          "20 floral cones"
+        ]
+      },
+      "w8": {
+        "features": [
+          "Use all RARIN areas (All Area)",
+          "Ring exchange ceremony + 1 ceremony option - Tea ceremony / Water blessing / Western style",
+          "Dressing room for bride and groom",
+          "Parking for 200 cars with golf cart shuttle"
+        ],
+        "equipmentServices": [
+          "Sound system and 2 wireless microphones",
+          "Wedding lighting system for after party until midnight",
+          "Gold Chiavari chairs and round tables with white tablecloths",
+          "Food table and cake stand",
+          "Welcome sign for bride and groom",
+          "Full decoration according to customer's concept within budget",
+          "Ceremony arch / Backdrop / Photo backdrop"
+        ]
+      },
+      "w9": {
+        "features": [
+          "Use all RARIN areas (All Area)",
+          "Ring exchange ceremony + 1 ceremony option - Tea ceremony / Water blessing / Western style",
+          "Dressing room for bride and groom",
+          "Parking for 200 cars with golf cart shuttle"
+        ],
+        "equipmentServices": [
+          "Sound system and 2 wireless microphones",
+          "Wedding lighting system for after party until midnight",
+          "Gold Chiavari chairs and round tables with white tablecloths",
+          "Food table and cake stand",
+          "Welcome sign for bride and groom",
+          "Premium luxury decoration according to customer's concept",
+          "Special ceremony arch / Backdrop / Photo backdrop"
+        ]
+      }
+    },
+    "event": {
+      "e1": {
+        "features": [
+          "Moonlight Room area"
+        ],
+        "equipmentServices": [],
+        "limits": []
+      },
+      "e2": {
+        "features": [
+          "Ballad Riverside Restaurant area",
+          "During 06:00 - 14:00, Minimum spend ฿80,000",
+          "After 16:00, Ballad Restaurant Closure package applies"
+        ],
+        "equipmentServices": [],
+        "limits": [
+          "Please contact the restaurant directly LINE: @ballad.bkk"
+        ]
+      },
+      "e3": {
+        "features": [
+          "Entire Rarin Hall area"
+        ],
+        "equipmentServices": [],
+        "limits": [
+          "Minimum Spending ฿100,000 on Mon-Fri",
+          "Minimum Spending ฿120,000 on Sat-Sun"
+        ]
+      },
+      "e4": {
+        "features": [
+          "Entire Rarin Venue (Except Ballad Riverside Restaurant)"
+        ],
+        "equipmentServices": [],
+        "limits": [
+          "Minimum Spending ฿200,000 on Mon-Fri",
+          "Minimum Spending ฿250,000 on Sat-Sun"
+        ]
+      }
+    },
+    "photo": {
+      "p1": {
+        "features": [
+          "40 chairs",
+          "10 square tables",
+          "2 dressing rooms (Riverside Suite / Lounge)",
+          "Pantry room",
+          "Parking for 100 cars",
+          "Power Plug 32A (3 phase)",
+          "Power Plug 50A (3 phase)"
+        ],
+        "equipmentServices": []
+      },
+      "p2": {
+        "features": [
+          "40 chairs",
+          "10 square tables",
+          "2 dressing rooms (Riverside Suite / Lounge)",
+          "Pantry room",
+          "Parking for 100 cars",
+          "Power Plug 32A (3 phase)",
+          "Power Plug 50A (3 phase)"
+        ],
+        "equipmentServices": []
+      },
+      "p3": {
+        "features": [
+          "6 hours shooting + 3 hours teardown",
+          "40 chairs",
+          "10 square tables",
+          "2 dressing rooms (Riverside Suite / Lounge)",
+          "Pantry room",
+          "Parking for 100 cars",
+          "Power Plug 32A (3 phase)",
+          "Power Plug 50A (3 phase)"
+        ],
+        "equipmentServices": []
+      },
+      "p4": {
+        "features": [
+          "12 hours shooting + 3 hours teardown",
+          "40 chairs",
+          "10 square tables",
+          "2 dressing rooms (Riverside Suite / Lounge)",
+          "Pantry room",
+          "Parking for 100 cars",
+          "Power Plug 32A (3 phase)",
+          "Power Plug 50A (3 phase)"
+        ],
+        "equipmentServices": []
+      }
+    }
+  },
   "step1Title": "Welcome to Rarin, your riverside celebration space",
   "step1Description": "Choose your event type",
   "step1WeddingTitle": "Select Wedding Budget",
@@ -27,7 +474,7 @@
   },
   "step2SubDescription": {
     "wedding": "Including decoration, ceremony services, and venue with weekday discounts available",
-    "event": "Perfect for seminars, parties, celebrations, and corporate events",
+    "event": "No venue rental fee when food & beverage minimum is met. \nEvent duration is 6 hours, with 3 hours for setup and 1 hour for teardown, totaling 10 hours.",
     "photo": "Can set up before 00:00 on the previous day if the venue is available (check availability again). No additional charges for decoration or lighting setup."
   },
   "step3Title": {
@@ -61,9 +508,9 @@
     "photo": "Please specify crew size, time period, day type, and any special requirements"
   },
   "step4Title": "Step 4",
-  "step4Description": "Select additional services",
+  "step4Description": "Select services",
   "step5WeddingTitle": "Step 5",
-  "step5WeddingDescription": "Select additional services",
+  "step5WeddingDescription": "Select your wedding services",
   "wedding": "Wedding",
   "event": "Event",
   "photo": "Photo",
@@ -86,18 +533,190 @@
     }
   },
   "addons": {
-    "wedding": {
-      "a1": "Extra flower arch",
-      "a2": "Live acoustic duo",
-      "a3": "Candy bar"
-    },
     "event": {
-      "a4": "LED screen (3m)",
-      "a5": "Live photographer"
+      "categories": {
+        "buffet": "Thai Buffet / International Buffet",
+        "food_sets": "Food Sets / Set Meals",
+        "course_menu": "Course Menu / Individual Serve",
+        "coffee_break": "Coffee Break / Afternoon Tea",
+        "cocktail": "Cocktail & Food Stall",
+        "liquor": "LIQUOR"
+      },
+      "items": {
+        "a1": {
+          "name": "Saver Thai Buffet",
+          "description": "5 items (4 main dishes, 1 dessert, rice, 2 beverages)"
+        },
+        "a2": {
+          "name": "Basic Thai Buffet",
+          "description": "8 items (6 main dishes, 2 desserts, rice, 2 beverages)"
+        },
+        "a3": {
+          "name": "Deluxe Thai Buffet",
+          "description": "10 items (7 main dishes, 2 desserts, 3 beverages)"
+        },
+        "a4": {
+          "name": "Deluxe International Buffet",
+          "description": "9 items (7 main dishes, 2 desserts, 3 beverages)"
+        },
+        "a5": {
+          "name": "Stylish International Buffet",
+          "description": "9 items (8 main dishes, 1 dessert, 2 beverages) seated 10 per table"
+        },
+        "fs1": {
+          "name": "Basic Chinese Set",
+          "description": "8 items (7 dishes, 1 dessert, 2 beverages) seated 10 per table"
+        },
+        "fs2": {
+          "name": "Classic Chinese Set",
+          "description": "9 items (8 dishes, 1 dessert, 2 beverages) seated 10 per table"
+        },
+        "fs3": {
+          "name": "Deluxe Chinese Set",
+          "description": "9 items (8 dishes, 1 dessert, 2 beverages) seated 10 per table"
+        },
+        "cm1": {
+          "name": "5-Course Menu Western / Thai",
+          "description": "Western / Thai - Appetizer / Soup / Main Dish / Dessert"
+        },
+        "cm2": {
+          "name": "5-Course Menu Western / Thai",
+          "description": "Western / Thai - Appetizer / Soup / Main Dish / Dessert"
+        },
+        "cm3": {
+          "name": "5-Course Menu Western / Thai",
+          "description": "Western / Thai - Appetizer / Soup / Main Dish / Dessert"
+        },
+        "cm4": {
+          "name": "5-Course Menu Western / Thai",
+          "description": "Western / Thai - Appetizer / Soup / Main Dish / Dessert"
+        },
+        "cm5": {
+          "name": "Premium 5-Course Menu Western / Thai",
+          "description": "Western / Thai - Appetizer / Soup / Main Dish / Dessert"
+        },
+        "cm6": {
+          "name": "Premium 5-Course Menu Western / Thai",
+          "description": "Western / Thai - Appetizer / Soup / Main Dish / Dessert"
+        },
+        "cb1": {
+          "name": "Classic 2 pastries",
+          "description": "2 pastries, tea, coffee, herbal drinks"
+        },
+        "cb2": {
+          "name": "Classic 4 pastries",
+          "description": "4 pastries, tea, coffee, herbal drinks"
+        },
+        "cb3": {
+          "name": "Mini Brunch",
+          "description": "4 canapes, soft drink buffet"
+        },
+        "cb4": {
+          "name": "Premium Afternoon Tea",
+          "description": "6 items, fruit tea, mocktails"
+        },
+        "a6": {
+          "name": "Basic Cocktail",
+          "description": "7 canapes and soft drink buffet"
+        },
+        "a7": {
+          "name": "Delight Cocktail",
+          "description": "10 canapes and soft drink buffet"
+        },
+        "a8": {
+          "name": "Stylish Heavy Cocktail",
+          "description": "14 items (8 canapes, 2 desserts, 4 food stalls, 4 beverages) with Napkin/Showplate"
+        },
+        "a9": {
+          "name": "Stylish Heavy Cocktail",
+          "description": "14 items (8 canapes, 2 desserts, 4 food stalls, 4 beverages) with Napkin/Showplate"
+        },
+
+        "a11": {
+          "name": "DRAUGHT BEER PACKAGE",
+          "description": "LEO / CHANG / SIGHA"
+        },
+        "a12": {
+          "name": "WINE",
+          "description": "Wine 750 ml 12 bottles per set"
+        },
+        "a13": {
+          "name": "WHISKEY",
+          "description": "REGENCY 350 ml 12 bottles per set"
+        },
+        "a14": {
+          "name": "Import Alcohol 24 bottles",
+          "description": "24 bottles per set"
+        }
+      },
+      "units": {
+        "a1": "person",
+        "a2": "person",
+        "a3": "guests",
+        "a4": "person",
+        "a5": "person",
+        "fs1": "person",
+        "fs2": "person",
+        "fs3": "person",
+        "cm1": "person",
+        "cm2": "person",
+        "cm3": "person",
+        "cm4": "person",
+        "cm5": "person",
+        "cm6": "person",
+        "cb1": "person",
+        "cb2": "person",
+        "cb3": "person",
+        "cb4": "person",
+        "a6": "person",
+        "a7": "person",
+        "a8": "person",
+        "a9": "person",
+        "a11": "bucket",
+        "a12": "set",
+        "a13": "set",
+        "a14": "set"
+      }
+    },
+    "wedding": {
+      "categories": {
+        "ceremony": "Ceremony Services",
+        "breaks": "BREAKS",
+        "food": "LUNCH / DINNER",
+        "liquor": "LIQUOR",
+        "marketing": "Marketing Discount"
+      },
+      "items": {
+        "a1": {
+          "name": "Extra flower arch",
+          "description": "Additional flower arch for wedding ceremony"
+        },
+        "a2": {
+          "name": "Live acoustic duo",
+          "description": "Live acoustic music performance for wedding"
+        },
+        "a3": {
+          "name": "Candy bar",
+          "description": "Candy and dessert bar"
+        }
+      }
     },
     "photo": {
-      "a6": "Makeup artist",
-      "a7": "Extra hour"
+      "categories": {
+        "breaks": "BREAKS",
+        "food": "FOOD",
+        "liquor": "BEVERAGES"
+      },
+      "items": {
+        "a6": {
+          "name": "Makeup artist",
+          "description": "Professional makeup and hair styling service"
+        },
+        "a7": {
+          "name": "Extra hour",
+          "description": "Additional shooting time of 1 hour"
+        }
+      }
     }
   },
   "select": "Select",
@@ -163,5 +782,141 @@
   "person": "person",
   "people": "people",
   "bottle": "bottle",
-  "tenPeople": "10 people"
+  "tenPeople": "10 people",
+  "budget4Wedding": {
+    "categories": {
+      "ceremony": "Ceremony Services",
+      "food": "Food & Beverage",
+      "liquor": "Alcoholic Beverages",
+      "marketing": "Marketing Discount"
+    },
+    "items": {
+      "water_blessing": {
+        "name": "Water Blessing Ceremony",
+        "shortName": "WATER BLESSING",
+        "description": "Traditional Thai water blessing ceremony",
+        "details": [
+          "Ring exchange ceremony setup",
+          "Buddha Altar Set for blessings",
+          "Blessing Ceremony Set with holy powder",
+          "Twin blessing cords for ceremony",
+          "Bride & Groom Floral Garlands (1 Pair)",
+          "80 Chairs for guests",
+          "Ceremonial ring tray",
+          "Holy water and ceremonial vessels",
+          "Flower petals and rose decorations",
+          "Thai fabric for guest seating area"
+        ]
+      },
+      "monk_blessing": {
+        "name": "Monk Blessing Ceremony",
+        "shortName": "MONK BLESSING",
+        "description": "Buddhist monk blessing ceremony",
+        "details": [
+          "Buddha Altar Set for ceremonial offering",
+          "Monk Ceremony Stage & Equipment setup",
+          "Monk seating mats and cushions",
+          "Traditional offering sets for monks",
+          "Holy water bowl and sacred thread",
+          "Invitation of 9 Monks with coordination",
+          "Round-trip transportation service for monks",
+          "Monk meal and refreshments",
+          "Candles and flowers for worship",
+          "Thai fabric for Dharma listening area"
+        ]
+      },
+      "tea_ceremony": {
+        "name": "Tea Ceremony",
+        "shortName": "CHINESE TEA",
+        "description": "Traditional Chinese tea ceremony",
+        "details": [
+          "Ring exchange ceremony setup",
+          "Chinese tea service for 50 guests",
+          "Premium ceremony tea services",
+          "Elegant sofa set for couple",
+          "50 chairs for guest seating",
+          "Traditional Chinese tea sets",
+          "Tea accompaniments and sweets",
+          "Ceremonial tea preparation",
+          "Tea ceremony coordination",
+          "Photography for key moments"
+        ]
+      },
+      "vow_ceremony": {
+        "name": "Vow Ceremony",
+        "shortName": "VOW",
+        "description": "Wedding vow and ring exchange ceremony",
+        "details": [
+          "Elegant ceremony stage setup",
+          "Multiple petal stations for decoration",
+          "80 chairs arranged for optimal viewing",
+          "Ceremonial ring tray with decoration",
+          "Microphone and sound system",
+          "Floral arrangements and decorations",
+          "Aisle runner and petals",
+          "Ceremony coordination",
+          "Photography for vow exchange",
+          "Background music arrangement"
+        ]
+      },
+      "classic_thai_buffet": {
+        "name": "Classic Thai Buffet",
+        "description": "10 items (7 dishes, 2 desserts, rice and 3 beverages)",
+        "unit": "person"
+      },
+      "deluxe_international_buffet": {
+        "name": "Deluxe International Buffet",
+        "description": "9 items (7 dishes, 2 desserts, 3 beverages)",
+        "unit": "person"
+      },
+      "delight_cocktail": {
+        "name": "Delight Cocktail",
+        "description": "10 items (10 canapes and 3 beverages) with 3-hour free drinks",
+        "unit": "person"
+      },
+      "stylish_heavy_cocktail": {
+        "name": "Stylish Heavy Cocktail",
+        "description": "14 items (8 canapes, 2 desserts, 4 heavy snacks, 4 beverages)",
+        "unit": "person"
+      },
+      "classic_chinese_table": {
+        "name": "Classic Chinese Table",
+        "description": "9 items (8 dishes, 1 dessert, 2 beverages) per table of 10 people",
+        "unit": "10 people"
+      },
+      "deluxe_chinese_table": {
+        "name": "Deluxe Chinese Table",
+        "description": "9 items (8 dishes, 1 dessert, 2 beverages) per table of 10 people",
+        "unit": "10 people"
+      },
+      "stylish_international_buffet": {
+        "name": "Stylish International Buffet",
+        "description": "9 items (8 dishes, 1 dessert, 2 beverages) per table of 10 people",
+        "unit": "person"
+      },
+      "western_thai_course_menu": {
+        "name": "5 Western / Thai Course Menu",
+        "description": "5 courses (Appetizer / Salad / Soup / Main Course / Dessert)",
+        "unit": "person"
+      },
+      "beer_singha": {
+        "name": "Singha / Leo / Change / Asahi",
+        "description": "Beer bucket 30 liters, serves 60 glasses",
+        "unit": "bucket"
+      },
+      "wine_house": {
+        "name": "House Wine",
+        "description": "Red/White wine 12 bottles 750ml each",
+        "unit": "12 bottle"
+      },
+      "collab_program": {
+        "name": "Couple Collab Program",
+        "description": "Get ฿20,000 discount for providing photos for marketing / joint review with RARIN / online platform reviews"
+      },
+      "social_media_collab": {
+        "name": "Co-Marketing",
+        "description": "Provide photos for marketing / Google Maps reviews"
+      }
+    }
+  }
 }

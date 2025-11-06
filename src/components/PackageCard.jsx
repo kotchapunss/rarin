@@ -2,24 +2,51 @@
 import React from 'react'
 import { Check } from 'lucide-react'
 import { useStore } from '../store'
-import { useTranslations } from '../i18n'
+import { 
+  useTranslations, 
+  getPackageName, 
+  getPackageDescription, 
+  getPackageArea,
+  getPackageCapacity,
+  getPackageFeatures,
+  getPackageEquipmentServices,
+  getPackageFood,
+  getPackageLimits,
+  getPackageShootingHours,
+  getPackageTeardownHours
+} from '../i18n'
 
 export default function PackageCard({ item, isPopular = false }) {
   const { packageId, setPackage, type, language } = useStore()
   const t = useTranslations()
   const active = packageId === item.id
 
-  // Get translated package info - use config data directly from item
+  // Get translated package info using i18n helpers
   const packageInfo = {
-    name: item.name?.[language] || item.name?.th || item.name || '',
-    details: item.details,
-    description: item.description?.[language] || item.description?.th || '',
-    area: typeof item.area === 'object' ? (item.area?.[language] || item.area?.th || 'Standard Area') : (item.area || 'Standard Area'),
+    name: getPackageName(type, item.id, language) || item.name || '',
+    description: getPackageDescription(type, item.id, language) || '',
+    area: getPackageArea(type, item.id, language) || item.area || 'Standard Area',
+    capacity: getPackageCapacity(type, item.id, language) || '',
     timeSlots: item.timeSlots || '06:00 - 22:00',
-    features: item.features || item.details || [],
-    equipmentServices: item.equipmentServices || [],
-    food: item.food || [],
-    limits: item.limits || []
+    features: getPackageFeatures(type, item.id, language),
+    equipmentServices: getPackageEquipmentServices(type, item.id, language),
+    food: getPackageFood(type, item.id, language),
+    limits: getPackageLimits(type, item.id, language),
+    shootingHours: getPackageShootingHours(type, item.id, language) || item.shootingHours,
+    teardownHours: getPackageTeardownHours(type, item.id, language) || item.teardownHours
+  }
+
+  // Build duration display for photo packages
+  const getDurationDisplay = () => {
+    if (type !== 'photo') return null
+    
+    const shooting = packageInfo.shootingHours || 0
+    const teardown = packageInfo.teardownHours || 0
+    
+    if (teardown > 0) {
+      return `${shooting} ${t.hours} ${t.shooting} + ${teardown} ${t.hours} ${t.teardown}`
+    }
+    return `${shooting} ${language === 'th' ? 'ชม.' : 'hrs'}`
   }
 
   // If not active, show collapsed version
@@ -41,9 +68,29 @@ export default function PackageCard({ item, isPopular = false }) {
           <div>
             <h3 className="text-xl font-bold text-gray-800 mb-2">{packageInfo.name}</h3>
             <div className="flex items-center gap-4 text-sm text-gray-600">
-              <span>฿{item.price.toLocaleString()}</span>
-              <span>•</span>
-              <span>{packageInfo.area}</span>
+              {type === 'event' ? (
+                <>
+                  <span>{language === 'th' ? 'ขั้นต่ำ' : 'Min'} ฿{item.minSpend?.toLocaleString() || '0'}</span>
+                  {packageInfo.capacity && (
+                    <>
+                      <span>•</span>
+                      <span>{packageInfo.capacity}</span>
+                    </>
+                  )}
+                </>
+              ) : type === 'photo' ? (
+                <>
+                  <span>฿{item.price?.toLocaleString() || '0'}</span>
+                  <span>•</span>
+                  <span>{getDurationDisplay()}</span>
+                </>
+              ) : (
+                <>
+                  <span>฿{item.price?.toLocaleString() || '0'}</span>
+                  <span>•</span>
+                  <span>{packageInfo.area}</span>
+                </>
+              )}
             </div>
           </div>
           <div className="text-gray-400">
@@ -77,19 +124,59 @@ export default function PackageCard({ item, isPopular = false }) {
         )}
         
         {/* Price, Area, Time */}
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          <div>
-            <div className="text-sm text-gray-500">ราคา</div>
-            <div className="font-semibold">฿{item.price.toLocaleString()}</div>
-          </div>
-          <div>
-            <div className="text-sm text-gray-500">พื้นที่</div>
-            <div className="font-semibold">{packageInfo.area}</div>
-          </div>
-          <div>
-            <div className="text-sm text-gray-500">รอบเวลา</div>
-            <div className="font-semibold text-sm">{packageInfo.timeSlots}</div>
-          </div>
+        <div className={`grid gap-4 mb-4 ${
+          type === 'event' ? 'grid-cols-3' : 
+          type === 'photo' ? 'grid-cols-3' :
+          (item.timeSlots && item.timeSlots.trim() !== '' ? 'grid-cols-3' : 'grid-cols-2')
+        }`}>
+          {type === 'event' ? (
+            <>
+              <div>
+                <div className="text-sm text-gray-500">{language === 'th' ? 'ขั้นต่ำ' : 'Minimum'}</div>
+                <div className="font-semibold">฿{item.minSpend?.toLocaleString() || '0'}</div>
+              </div>
+              <div>
+                <div className="text-sm text-gray-500">{language === 'th' ? 'จำนวนคน' : 'Capacity'}</div>
+                <div className="font-semibold">{packageInfo.capacity || '-'}</div>
+              </div>
+              <div>
+                <div className="text-sm text-gray-500">{language === 'th' ? 'พื้นที่' : 'Area'}</div>
+                <div className="font-semibold">{packageInfo.area}</div>
+              </div>
+            </>
+          ) : type === 'photo' ? (
+            <>
+              <div>
+                <div className="text-sm text-gray-500">{language === 'th' ? 'ราคา' : 'Price'}</div>
+                <div className="font-semibold">฿{item.price?.toLocaleString() || '0'}</div>
+              </div>
+              <div>
+                <div className="text-sm text-gray-500">{language === 'th' ? 'ระยะเวลา' : 'Duration'}</div>
+                <div className="font-semibold text-sm">{getDurationDisplay()}</div>
+              </div>
+              <div>
+                <div className="text-sm text-gray-500">{language === 'th' ? 'พื้นที่' : 'Area'}</div>
+                <div className="font-semibold">{packageInfo.area}</div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <div className="text-sm text-gray-500">{language === 'th' ? 'ราคา' : 'Price'}</div>
+                <div className="font-semibold">฿{item.price?.toLocaleString() || '0'}</div>
+              </div>
+              <div>
+                <div className="text-sm text-gray-500">{language === 'th' ? 'พื้นที่' : 'Area'}</div>
+                <div className="font-semibold">{packageInfo.area}</div>
+              </div>
+              {item.timeSlots && item.timeSlots.trim() !== '' && (
+                <div>
+                  <div className="text-sm text-gray-500">{language === 'th' ? 'รอบเวลา' : 'Time Slots'}</div>
+                  <div className="font-semibold text-sm">{packageInfo.timeSlots}</div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
 
@@ -98,19 +185,12 @@ export default function PackageCard({ item, isPopular = false }) {
         <div className="mb-4">
           <h4 className="font-semibold text-gray-800 mb-3">สิ่งที่ได้รับรวม</h4>
           <ul className="space-y-1">
-            {packageInfo.features.map((feature, index) => {
-              // Handle both string features and object features with language keys
-              const featureText = typeof feature === 'object' 
-                ? (feature[language] || feature.th || feature.en || '')
-                : feature;
-              
-              return (
-                <li key={index} className="flex items-start">
-                  <span className="text-orange-400 mr-2">•</span>
-                  <span className="text-sm text-gray-700">{featureText}</span>
-                </li>
-              );
-            })}
+            {packageInfo.features.map((feature, index) => (
+              <li key={index} className="flex items-start">
+                <span className="text-orange-400 mr-2">•</span>
+                <span className="text-sm text-gray-700">{feature}</span>
+              </li>
+            ))}
           </ul>
         </div>
       )}
@@ -120,19 +200,12 @@ export default function PackageCard({ item, isPopular = false }) {
         <div className="mb-4">
           <h4 className="font-semibold text-gray-800 mb-3">รายการตกแต่ง</h4>
           <ul className="space-y-1">
-            {packageInfo.equipmentServices.map((service, index) => {
-              // Handle both string services and object services with language keys
-              const serviceText = typeof service === 'object' 
-                ? (service[language] || service.th || service.en || '')
-                : service;
-              
-              return (
-                <li key={index} className="flex items-start">
-                  <span className="text-orange-400 mr-2">•</span>
-                  <span className="text-sm text-gray-700">{serviceText}</span>
-                </li>
-              );
-            })}
+            {packageInfo.equipmentServices.map((service, index) => (
+              <li key={index} className="flex items-start">
+                <span className="text-orange-400 mr-2">•</span>
+                <span className="text-sm text-gray-700">{service}</span>
+              </li>
+            ))}
           </ul>
         </div>
       )}
@@ -142,19 +215,12 @@ export default function PackageCard({ item, isPopular = false }) {
         <div className="mb-4">
           <h4 className="font-semibold text-gray-800 mb-3">อาหาร</h4>
           <ul className="space-y-1">
-            {packageInfo.food.map((foodItem, index) => {
-              // Handle both string food items and object food items with language keys
-              const foodText = typeof foodItem === 'object' 
-                ? (foodItem[language] || foodItem.th || foodItem.en || '')
-                : foodItem;
-              
-              return (
-                <li key={index} className="flex items-start">
-                  <span className="text-orange-400 mr-2">•</span>
-                  <span className="text-sm text-gray-700">{foodText}</span>
-                </li>
-              );
-            })}
+            {packageInfo.food.map((foodItem, index) => (
+              <li key={index} className="flex items-start">
+                <span className="text-orange-400 mr-2">•</span>
+                <span className="text-sm text-gray-700">{foodItem}</span>
+              </li>
+            ))}
           </ul>
         </div>
       )}
@@ -164,19 +230,12 @@ export default function PackageCard({ item, isPopular = false }) {
         <div className="mb-4">
           <h4 className="font-semibold text-gray-800 mb-3">ข้อจำกัด ⚠️</h4>
           <ul className="space-y-1">
-            {packageInfo.limits.map((limit, index) => {
-              // Handle both string limits and object limits with language keys
-              const limitText = typeof limit === 'object' 
-                ? (limit[language] || limit.th || limit.en || '')
-                : limit;
-              
-              return (
-                <li key={index} className="flex items-start">
-                  <span className="text-orange-400 mr-2">•</span>
-                  <span className="text-sm text-gray-700">{limitText}</span>
-                </li>
-              );
-            })}
+            {packageInfo.limits.map((limit, index) => (
+              <li key={index} className="flex items-start">
+                <span className="text-orange-400 mr-2">•</span>
+                <span className="text-sm text-gray-700">{limit}</span>
+              </li>
+            ))}
           </ul>
         </div>
       )}

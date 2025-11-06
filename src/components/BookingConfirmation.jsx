@@ -198,8 +198,303 @@ export default function BookingConfirmation() {
   const getSelectedAddons = () => {
     const selectedAddons = []
 
-    if (state.type === 'wedding') {
-      // For wedding type, use the same hardcoded services as Summary
+    console.log('Current state:', {
+      type: state.type,
+      budget: state.budget,
+      addons: state.addons,
+      language: state.language
+    })
+
+    if (state.type === 'wedding' && state.budget === 'budget4') {
+      // For Budget4 wedding type, use the same custom services structure as Step4AddonsSelect
+      const customServices = {
+        ceremony: {
+          title: { th: "งานพิธี", en: "Ceremony Services" },
+          items: [
+            {
+              id: "water_blessing",
+              name: { th: "พิธีรดน้ำสังข์", en: "Water Blessing Ceremony" },
+              price: 35000,
+              type: "checkbox"
+            },
+            {
+              id: "monk_blessing",
+              name: { th: "พิธีสงฆ์", en: "Monk Blessing Ceremony" },
+              price: 35000,
+              type: "checkbox"
+            },
+            {
+              id: "tea_ceremony",
+              name: { th: "พิธียกน้ำชา", en: "Tea Ceremony" },
+              price: 35000,
+              type: "checkbox"
+            },
+            {
+              id: "vow_ceremony",
+              name: { th: "พิธีสาบาน", en: "Vow Ceremony" },
+              price: 35000,
+              type: "checkbox"
+            }
+          ]
+        },
+        food: {
+          title: { th: "อาหารและเครื่องดื่ม", en: "Food & Beverage" },
+          items: [
+            {
+              id: "classic_thai_buffet",
+              name: { th: "Classic Thai Buffet", en: "Classic Thai Buffet" },
+              price: 950,
+              type: "auto",
+              unit: { th: "ท่าน", en: "person" }
+            },
+            {
+              id: "deluxe_international_buffet",
+              name: { th: "Deluxe International Buffet", en: "Deluxe International Buffet" },
+              price: 1290,
+              type: "auto",
+              unit: { th: "ท่าน", en: "person" }
+            },
+            {
+              id: "delight_cocktail",
+              name: { th: "Delight Cocktail", en: "Delight Cocktail" },
+              price: 950,
+              type: "auto",
+              unit: { th: "ท่าน", en: "person" }
+            },
+            {
+              id: "stylish_heavy_cocktail",
+              name: { th: "Stylish Heavy Cocktail", en: "Stylish Heavy Cocktail" },
+              price: 1590,
+              type: "auto",
+              unit: { th: "ท่าน", en: "person" }
+            },
+            {
+              id: "classic_chinese_table",
+              name: { th: "Classic Chinese Table", en: "Classic Chinese Table" },
+              price: 9900,
+              type: "auto",
+              unit: { th: "10 ท่าน", en: "10 people" }
+            },
+            {
+              id: "deluxe_chinese_table",
+              name: { th: "Deluxe Chinese Table", en: "Deluxe Chinese Table" },
+              price: 13900,
+              type: "auto",
+              unit: { th: "10 ท่าน", en: "10 people" }
+            },
+            {
+              id: "stylish_international_buffet",
+              name: { th: "Stylish International Buffet", en: "Stylish International Buffet" },
+              price: 1590,
+              type: "auto",
+              unit: { th: "ท่าน", en: "person" }
+            },
+            {
+              id: "western_thai_course_menu",
+              name: { th: "5 Western / Thai Course Menu", en: "5 Western / Thai Course Menu" },
+              price: 1800,
+              type: "auto",
+              unit: { th: "ท่าน", en: "person" }
+            }
+          ]
+        },
+        liquor: {
+          title: { th: "เครื่องดื่มแอลกอฮอล์", en: "Alcoholic Beverages" },
+          items: [
+            {
+              id: "beer_singha",
+              name: { th: "เบียร์สิงห์ / ลีโอ / ช้าง / อาซาฮี", en: "Singha / Leo / Change / Asahi" },
+              price: 13990,
+              type: "input",
+              unit: { th: "ถัง", en: "bucket" }
+            },
+            {
+              id: "wine_house",
+              name: { th: "House Wine", en: "House Wine" },
+              price: 9900,
+              type: "input",
+              unit: { th: "12 ขวด", en: "12 bottle" }
+            }
+          ]
+        },
+        marketing: {
+          title: { th: "โปรแกรมส่วนลด", en: "Marketing Discount" },
+          items: [
+            {
+              id: "collab_program",
+              name: { th: "โปรแกรม Couple Collab", en: "Couple Collab Program" },
+              discount: 20000,
+              type: "discount"
+            },
+            {
+              id: "social_media_collab",
+              name: { th: "ร่วมโปรโมททางการตลาดกับลลิล", en: "Co-Marketing" },
+              discount: 10000,
+              type: "discount"
+            }
+          ]
+        }
+      }
+
+      // Flatten all addon items from all categories
+      const allCustomAddons = {}
+      Object.values(customServices).forEach(category => {
+        if (category.items) {
+          category.items.forEach(item => {
+            allCustomAddons[item.id] = item
+          })
+        }
+      })
+
+      Object.entries(state.addons || {}).forEach(([addonId, storedValue]) => {
+        const addon = allCustomAddons[addonId]
+        if (!addon) {
+          console.log('Addon not found in Budget4 custom services:', addonId)
+          // Try to get from config addons as fallback
+          const configAddons = getAddonCategories(state.type)
+          const allConfigAddons = {}
+          Object.values(configAddons || {}).forEach(category => {
+            if (category.items) {
+              category.items.forEach(item => {
+                allConfigAddons[item.id] = item
+              })
+            }
+          })
+          
+          const configAddon = allConfigAddons[addonId]
+          if (configAddon) {
+            console.log('Found in config addons:', configAddon)
+            // Process config addon with same logic as below
+            const value = typeof storedValue === 'number' ? storedValue : Number(storedValue) || 0
+            if (value === 0 || Number.isNaN(value)) return
+
+            let quantity = 1
+            let unitPrice = configAddon.price || Math.abs(configAddon.discount || 0)
+            let totalPrice = value
+
+            const unitText = typeof configAddon.unit === 'object' 
+              ? (configAddon.unit[state.language] || configAddon.unit.th || configAddon.unit.en || '')
+              : (configAddon.unit || '')
+
+            if (configAddon.type === 'auto' || configAddon.type === 'grid') {
+              quantity = state.people || 1
+              totalPrice = quantity * unitPrice
+              if (unitText === 'โต๊ะ' || unitText === 'table' || unitText === '10 ท่าน' || unitText === '10 people') {
+                quantity = Math.ceil((state.people || 1) / 10)
+                totalPrice = quantity * unitPrice
+              }
+            } else if (configAddon.type === 'input') {
+              if (unitPrice > 0) {
+                quantity = Math.max(1, Math.round(Math.abs(value) / unitPrice))
+                totalPrice = value
+              }
+            } else if (configAddon.type === 'checkbox' || configAddon.type === 'discount') {
+              quantity = 1
+              totalPrice = value
+            }
+
+            let addonName = ''
+            if (typeof configAddon.name === 'object' && configAddon.name) {
+              addonName = configAddon.name[state.language] || configAddon.name.th || configAddon.name.en || 
+                         Object.values(configAddon.name)[0] || ''
+            } else if (typeof configAddon.name === 'string') {
+              addonName = configAddon.name
+            }
+
+            if (!addonName) {
+              addonName = addonId // Use ID as fallback
+            }
+
+            selectedAddons.push({
+              id: addonId,
+              name: addonName,
+              type: configAddon.type,
+              unit: unitText,
+              quantity: quantity,
+              unitPrice: unitPrice,
+              totalPrice: totalPrice
+            })
+          } else {
+            console.log('Addon not found in any category:', addonId)
+          }
+          return
+        }
+
+        const value = typeof storedValue === 'number' ? storedValue : Number(storedValue) || 0
+        if (value === 0 || Number.isNaN(value)) return
+
+        let quantity = 1
+        let unitPrice = addon.price || Math.abs(addon.discount || 0)
+        let totalPrice = value
+
+        // Extract unit text from object if needed
+        const unitText = typeof addon.unit === 'object' 
+          ? (addon.unit[state.language] || addon.unit.th || addon.unit.en || '')
+          : (addon.unit || '')
+
+        if (addon.type === 'auto') {
+          quantity = state.people || 1
+          totalPrice = quantity * unitPrice
+          if (unitText === '10 ท่าน' || unitText === '10 people') {
+            quantity = Math.ceil((state.people || 1) / 10)
+            totalPrice = quantity * unitPrice
+          }
+        } else if (addon.type === 'input') {
+          if (unitPrice > 0) {
+            quantity = Math.max(1, Math.round(Math.abs(value) / unitPrice))
+            totalPrice = value // Keep the stored value as total price for input types
+          }
+        } else if (addon.type === 'checkbox' || addon.type === 'discount') {
+          quantity = 1
+          totalPrice = value // Keep the stored value (could be negative for discounts)
+        }
+
+        // Get the addon name with proper language handling - always try to get a name
+        let addonName = ''
+        if (typeof addon.name === 'object' && addon.name) {
+          // Try current language first, then fallback to any available language
+          addonName = addon.name[state.language] || addon.name.th || addon.name.en || 
+                     Object.values(addon.name)[0] || ''
+        } else if (typeof addon.name === 'string') {
+          addonName = addon.name
+        }
+
+        // If still no name, use fallback names
+        if (!addonName) {
+          console.log('No addon name found for:', addonId, 'addon object:', addon, 'state.language:', state.language)
+          const fallbackNames = {
+            water_blessing: 'พิธีรดน้ำสังข์',
+            monk_blessing: 'พิธีสงฆ์', 
+            tea_ceremony: 'พิธียกน้ำชา',
+            vow_ceremony: 'พิธีสาบาน',
+            classic_thai_buffet: 'Classic Thai Buffet',
+            deluxe_international_buffet: 'Deluxe International Buffet',
+            delight_cocktail: 'Delight Cocktail',
+            stylish_heavy_cocktail: 'Stylish Heavy Cocktail',
+            classic_chinese_table: 'Classic Chinese Table',
+            deluxe_chinese_table: 'Deluxe Chinese Table',
+            stylish_international_buffet: 'Stylish International Buffet',
+            western_thai_course_menu: '5 Western / Thai Course Menu',
+            beer_singha: 'เบียร์สิงห์ / ลีโอ / ช้าง / อาซาฮี',
+            wine_house: 'House Wine',
+            collab_program: 'โปรแกรม Couple Collab',
+            social_media_collab: 'ร่วมโปรโมททางการตลาดกับลลิล'
+          }
+          addonName = fallbackNames[addonId] || addonId
+        }
+
+        selectedAddons.push({
+          id: addonId,
+          name: addonName,
+          type: addon.type,
+          unit: unitText,
+          quantity: quantity,
+          unitPrice: unitPrice,
+          totalPrice: totalPrice
+        })
+      })
+    } else if (state.type === 'wedding') {
+      // For regular wedding type, use basic hardcoded services
       const customServices = {
         engagement_ceremony: { name: { th: "พิธีหมั้น", en: "Engagement Ceremony" }, price: 15000, type: "checkbox" },
         tea_ceremony: { name: { th: "พิธียกน้ำชา", en: "Tea Ceremony" }, price: 35000, type: "checkbox" },
@@ -223,7 +518,77 @@ export default function BookingConfirmation() {
 
       Object.entries(state.addons || {}).forEach(([addonId, storedValue]) => {
         const addon = customServices[addonId]
-        if (!addon) return
+        if (!addon) {
+          console.log('Addon not found in regular wedding services:', addonId)
+          // Try to get from config addons as fallback
+          const configAddons = getAddonCategories(state.type)
+          const allConfigAddons = {}
+          Object.values(configAddons || {}).forEach(category => {
+            if (category.items) {
+              category.items.forEach(item => {
+                allConfigAddons[item.id] = item
+              })
+            }
+          })
+          
+          const configAddon = allConfigAddons[addonId]
+          if (configAddon) {
+            console.log('Found in config addons for regular wedding:', configAddon)
+            // Process config addon
+            const value = typeof storedValue === 'number' ? storedValue : Number(storedValue) || 0
+            if (value === 0 || Number.isNaN(value)) return
+
+            let quantity = 1
+            let unitPrice = configAddon.price || Math.abs(configAddon.discount || 0)
+            let totalPrice = value
+
+            const unitText = typeof configAddon.unit === 'object' 
+              ? (configAddon.unit[state.language] || configAddon.unit.th || configAddon.unit.en || '')
+              : (configAddon.unit || '')
+
+            if (configAddon.type === 'auto' || configAddon.type === 'grid') {
+              quantity = state.people || 1
+              totalPrice = quantity * unitPrice
+              if (unitText === 'โト๊ะ' || unitText === 'table' || unitText === '10 ท่าน' || unitText === '10 people') {
+                quantity = Math.ceil((state.people || 1) / 10)
+                totalPrice = quantity * unitPrice
+              }
+            } else if (configAddon.type === 'input') {
+              if (unitPrice > 0) {
+                quantity = Math.max(1, Math.round(Math.abs(value) / unitPrice))
+                totalPrice = value
+              }
+            } else if (configAddon.type === 'checkbox' || configAddon.type === 'discount') {
+              quantity = 1
+              totalPrice = value
+            }
+
+            let addonName = ''
+            if (typeof configAddon.name === 'object' && configAddon.name) {
+              addonName = configAddon.name[state.language] || configAddon.name.th || configAddon.name.en || 
+                         Object.values(configAddon.name)[0] || ''
+            } else if (typeof configAddon.name === 'string') {
+              addonName = configAddon.name
+            }
+
+            if (!addonName) {
+              addonName = addonId // Use ID as fallback
+            }
+
+            selectedAddons.push({
+              id: addonId,
+              name: addonName,
+              type: configAddon.type,
+              unit: unitText,
+              quantity: quantity,
+              unitPrice: unitPrice,
+              totalPrice: totalPrice
+            })
+          } else {
+            console.log('Addon not found in any category for regular wedding:', addonId)
+          }
+          return
+        }
 
         const value = typeof storedValue === 'number' ? storedValue : Number(storedValue) || 0
         if (value === 0 || Number.isNaN(value)) return
@@ -239,20 +604,60 @@ export default function BookingConfirmation() {
 
         if (addon.type === 'auto') {
           quantity = state.people || 1
+          totalPrice = quantity * unitPrice
           if (unitText === '10 ท่าน' || unitText === '10 people') {
             quantity = Math.ceil((state.people || 1) / 10)
+            totalPrice = quantity * unitPrice
           }
         } else if (addon.type === 'input') {
           if (unitPrice > 0) {
             quantity = Math.max(1, Math.round(Math.abs(value) / unitPrice))
+            totalPrice = value // Keep the stored value as total price for input types
           }
+        } else if (addon.type === 'checkbox' || addon.type === 'discount') {
+          quantity = 1
+          totalPrice = value // Keep the stored value (could be negative for discounts)
+        }
+
+        // Get the addon name with proper language handling - always try to get a name
+        let addonName = ''
+        if (typeof addon.name === 'object' && addon.name) {
+          // Try current language first, then fallback to any available language
+          addonName = addon.name[state.language] || addon.name.th || addon.name.en || 
+                     Object.values(addon.name)[0] || ''
+        } else if (typeof addon.name === 'string') {
+          addonName = addon.name
+        }
+
+        // If still no name, use fallback names
+        if (!addonName) {
+          console.log('No addon name found for regular wedding:', addonId, 'addon object:', addon, 'state.language:', state.language)
+          const fallbackNames = {
+            engagement_ceremony: 'พิธีหมั้น',
+            tea_ceremony: 'พิธียกน้ำชา',
+            water_blessing: 'พิธีรดน้ำสังข์',
+            monk_blessing: 'พิธีสงฆ์',
+            vow_ceremony: 'พิธีสาบาน',
+            classic_thai_buffet: 'Classic Thai Buffet',
+            deluxe_international_buffet: 'Deluxe International Buffet',
+            delight_cocktail: 'Delight Cocktail',
+            stylish_heavy_cocktail: 'Stylish Heavy Cocktail',
+            classic_chinese_table: 'Classic Chinese Table',
+            deluxe_chinese_table: 'Deluxe Chinese Table',
+            stylish_international_buffet: 'Stylish International Buffet',
+            western_thai_course_menu: '5 Western / Thai Course Menu',
+            beer_singha: 'เบียร์สิงห์',
+            beer_asahi: 'เบียร์อาซาฮี',
+            wine_house: 'ไวน์ House Wine',
+            collab_program: 'โปรแกรม Couple Collab',
+            social_media_collab: 'ร่วมโปรโมททางการตลาดกับลลิล'
+          }
+          addonName = fallbackNames[addonId] || addonId
         }
 
         selectedAddons.push({
           id: addonId,
-          name: typeof addon.name === 'object' 
-            ? (addon.name[state.language] || addon.name.th || addon.name.en || '')
-            : (addon.name || ''),
+          name: addonName,
           type: addon.type,
           unit: unitText,
           quantity: quantity,
@@ -290,22 +695,42 @@ export default function BookingConfirmation() {
           ? (addon.unit[state.language] || addon.unit.th || addon.unit.en || '')
           : (addon.unit || '')
 
-        if (addon.type === 'grid') {
+        if (addon.type === 'auto' || addon.type === 'grid') {
           quantity = state.people || 1
-          if (unitText === 'โต๊ะ' || unitText === 'table') {
+          totalPrice = quantity * unitPrice
+          if (unitText === 'โต๊ะ' || unitText === 'table' || unitText === '10 ท่าน' || unitText === '10 people') {
             quantity = Math.ceil((state.people || 1) / 10)
+            totalPrice = quantity * unitPrice
           }
         } else if (addon.type === 'input') {
           if (unitPrice > 0) {
             quantity = Math.max(1, Math.round(Math.abs(value) / unitPrice))
+            totalPrice = value // Keep the stored value as total price for input types
           }
+        } else if (addon.type === 'checkbox' || addon.type === 'discount') {
+          quantity = 1
+          totalPrice = value // Keep the stored value (could be negative for discounts)
+        }
+
+        // Get the addon name with proper language handling - always try to get a name
+        let addonName = ''
+        if (typeof addon.name === 'object' && addon.name) {
+          // Try current language first, then fallback to any available language
+          addonName = addon.name[state.language] || addon.name.th || addon.name.en || 
+                     Object.values(addon.name)[0] || ''
+        } else if (typeof addon.name === 'string') {
+          addonName = addon.name
+        }
+
+        // If still no name, use the addon ID as fallback
+        if (!addonName) {
+          console.log('No addon name found for event/photo:', addonId, 'addon object:', addon, 'state.language:', state.language)
+          addonName = addonId
         }
 
         selectedAddons.push({
           id: addonId,
-          name: typeof addon.name === 'object' 
-            ? (addon.name[state.language] || addon.name.th || addon.name.en || '')
-            : (addon.name || ''),
+          name: addonName,
           type: addon.type,
           unit: unitText,
           quantity: quantity,
@@ -846,7 +1271,7 @@ export default function BookingConfirmation() {
             {/* Bottom Action Buttons */}
             <div className="grid grid-cols-3 gap-3">
               <button 
-                onClick={() => navigate('/')}
+                onClick={() => navigate(-1)}
                 className="bg-gray-400 text-white py-3 px-4 rounded-xl font-medium hover:bg-gray-500 transition-colors"
               >
                 {t.backToEdit || 'กลับไปแก้ไข'}

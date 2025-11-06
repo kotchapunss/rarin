@@ -181,7 +181,7 @@ export default function Summary() {
         })
       })
     } else {
-      // For event and photo types, get addons from config
+      // For event and photo types, get addons from config and translations
       const configAddons = getAddonCategories(state.type)
       
       // Flatten all addon items from all categories
@@ -202,10 +202,15 @@ export default function Summary() {
         const value = typeof storedValue === 'number' ? storedValue : Number(storedValue) || 0
         if (value === 0 || Number.isNaN(value)) return
         
-        // Handle addon name - it can be either a string or an object with language keys
-        const addonName = typeof addon.name === 'object' 
-          ? (addon.name[state.language] || addon.name.th || addon.name.en || '')
-          : (addon.name || '')
+        // Get addon name from translations first, fallback to config
+        let addonName = ''
+        if (t.addons?.[state.type]?.items?.[addonId]?.name) {
+          addonName = t.addons[state.type].items[addonId].name
+        } else if (typeof addon.name === 'object') {
+          addonName = addon.name[state.language] || addon.name.th || addon.name.en || ''
+        } else {
+          addonName = addon.name || ''
+        }
         
         addonsList.push({
           name: addonName,

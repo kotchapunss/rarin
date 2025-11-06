@@ -1,6 +1,6 @@
 import React from 'react';
 import { useStore } from '../store';
-import { useTranslations } from '../i18n';
+import { useTranslations, getBudgetRangeName, getBudgetRangeDescription } from '../i18n';
 import { getBudgetRanges } from '../data';
 
 export default function BudgetSelector() {
@@ -8,6 +8,12 @@ export default function BudgetSelector() {
     const budgetRanges = getBudgetRanges();
     const translations = useTranslations();
 
+    // Debug logging
+    console.log('Debug BudgetSelector:');
+    console.log('- Current language:', language);
+    console.log('- Budget ranges from config:', budgetRanges);
+    console.log('- Translations budgetRanges:', translations.budgetRanges);
+    
     const handleBudgetSelect = (budgetId) => {
         setBudget(budgetId);
     };
@@ -46,16 +52,10 @@ export default function BudgetSelector() {
                     >
                         <div>
                             <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                                {typeof budgetRange.name === 'object' 
-                                    ? (budgetRange.name[language] || budgetRange.name.th || budgetRange.name.en || '')
-                                    : (budgetRange.name || '')
-                                }
+                                {getBudgetRangeName(budgetRange.id, language)}
                             </h3>
                             <div className="text-sm text-gray-600">
-                                {typeof budgetRange.description === 'object'
-                                    ? (budgetRange.description[language] || budgetRange.description.th || budgetRange.description.en || '')
-                                    : (budgetRange.description || '')
-                                }
+                                {getBudgetRangeDescription(budgetRange.id, language)}
                             </div>
                         </div>
                     </div>

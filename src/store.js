@@ -1,5 +1,6 @@
 
 import { create } from 'zustand'
+import { updateLanguage } from './data'
 
 export const useStore = create((set) => ({
   step: 0,
@@ -37,7 +38,11 @@ export const useStore = create((set) => ({
     return { addons: next }
   }),
   setNotes: (v) => set({ notes: v }),
-  setLanguage: (lang) => set({ language: lang }),
+  setLanguage: (lang) => set((state) => {
+    // Update data language when store language changes
+    updateLanguage(lang);
+    return { language: lang };
+  }),
   reset: () => set({
     step: 0,
     type: 'wedding',

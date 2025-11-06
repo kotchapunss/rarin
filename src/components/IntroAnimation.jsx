@@ -88,6 +88,9 @@ export default function IntroAnimation({ onComplete }) {
           } ${
             fadeOut ? 'opacity-0' : ''
           }`}
+          style={{
+              fontFamily: "'Momo Signature', 'Dancing Script', 'Brush Script MT', cursive",
+            }}
         >
           Where Memories Begin
         </p>

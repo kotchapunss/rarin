@@ -38,11 +38,12 @@ function Header() {
 }
 
 export default function App() {
-  const { step, type } = useStore();
+  const { step, type, budget } = useStore();
   const [showIntro, setShowIntro] = useState(true);
   
   // For wedding type, use 4-step flow, for others use 3-step flow
   const isWeddingFlow = type === 'wedding';
+  const isBudget4Wedding = type === 'wedding' && budget === 'budget4';
 
   const handleIntroComplete = () => {
     setShowIntro(false);
@@ -72,7 +73,7 @@ export default function App() {
                   {isWeddingFlow ? <DetailsInput /> : <AddonsSelect />}
                 </>
               )}
-              {step === 4 && isWeddingFlow && <AddonsSelect />}
+              {step === 4 && isBudget4Wedding && <AddonsSelect />}
             </div>
             
             {/* Navigation moved to bottom for all steps */}
