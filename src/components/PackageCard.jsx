@@ -53,12 +53,12 @@ export default function PackageCard({ item, isPopular = false }) {
   if (!active) {
     return (
       <div 
-        className="relative bg-white rounded-2xl p-6 cursor-pointer transition-all duration-300 border-2 border-gray-200 hover:border-gray-300 hover:shadow-md"
+        className="relative bg-white rounded-2xl p-6 cursor-pointer transition-all duration-300 border-2 border-gray-200 hover:border-[#d4b5a0] hover:shadow-md"
         onClick={() => setPackage(item.id)}
       >
         {/* Popular Badge */}
         {isPopular && (
-          <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-3 py-1 rounded-full font-medium">
+          <div className="absolute -top-2 -right-2 bg-[#B8846B] text-white text-xs px-3 py-1 rounded-full font-medium">
             {t.recommend || 'Recommend'}
           </div>
         )}
@@ -106,12 +106,12 @@ export default function PackageCard({ item, isPopular = false }) {
   // Active/expanded version
   return (
     <div 
-      className="relative bg-white rounded-2xl p-6 cursor-pointer transition-all duration-300 border-2 border-orange-400 shadow-lg"
+      className="relative bg-white rounded-2xl p-6 cursor-pointer transition-all duration-300 border-2 border-[#c19a7e] shadow-lg"
       onClick={() => setPackage(item.id)}
     >
       {/* Recommend Badge */}
       {(isPopular || item.isPopular) && (
-        <div className="absolute -top-3 left-6 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+        <div className="absolute -top-3 left-6 bg-[#B8846B] text-white px-3 py-1 rounded-full text-sm font-semibold">
           {t.recommend?.toUpperCase() || 'RECOMMEND'}
         </div>
       )}
@@ -187,7 +187,7 @@ export default function PackageCard({ item, isPopular = false }) {
           <ul className="space-y-1">
             {packageInfo.features.map((feature, index) => (
               <li key={index} className="flex items-start">
-                <span className="text-orange-400 mr-2">•</span>
+                <span className="text-[#c19a7e] mr-2">•</span>
                 <span className="text-sm text-gray-700">{feature}</span>
               </li>
             ))}
@@ -202,7 +202,7 @@ export default function PackageCard({ item, isPopular = false }) {
           <ul className="space-y-1">
             {packageInfo.equipmentServices.map((service, index) => (
               <li key={index} className="flex items-start">
-                <span className="text-orange-400 mr-2">•</span>
+                <span className="text-[#c19a7e] mr-2">•</span>
                 <span className="text-sm text-gray-700">{service}</span>
               </li>
             ))}
@@ -217,7 +217,7 @@ export default function PackageCard({ item, isPopular = false }) {
           <ul className="space-y-1">
             {packageInfo.food.map((foodItem, index) => (
               <li key={index} className="flex items-start">
-                <span className="text-orange-400 mr-2">•</span>
+                <span className="text-[#c19a7e] mr-2">•</span>
                 <span className="text-sm text-gray-700">{foodItem}</span>
               </li>
             ))}
@@ -232,7 +232,7 @@ export default function PackageCard({ item, isPopular = false }) {
           <ul className="space-y-1">
             {packageInfo.limits.map((limit, index) => (
               <li key={index} className="flex items-start">
-                <span className="text-orange-400 mr-2">•</span>
+                <span className="text-[#c19a7e] mr-2">•</span>
                 <span className="text-sm text-gray-700">{limit}</span>
               </li>
             ))}
@@ -242,7 +242,7 @@ export default function PackageCard({ item, isPopular = false }) {
 
       {/* Selection Indicator */}
       <div className="absolute top-4 right-4">
-        <div className="w-6 h-6 bg-orange-400 rounded-full flex items-center justify-center">
+        <div className="w-6 h-6 bg-[#c19a7e] rounded-full flex items-center justify-center">
           <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
           </svg>

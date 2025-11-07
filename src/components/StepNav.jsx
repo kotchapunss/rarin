@@ -136,7 +136,7 @@ export default function StepNav() {
             className={
               "h-2 rounded-full transition-all " + 
               "w-2 sm:w-8 " + 
-              (i <= step ? "bg-orange-500" : "bg-stone-300")
+              (i <= step ? "bg-[#B8846B]" : "bg-stone-300")
             } 
           />
         ))}

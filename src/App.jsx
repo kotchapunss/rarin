@@ -15,19 +15,14 @@ function Header() {
   const t = useTranslations();
   
   return (
-    <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-stone-200 w-full">
+    <header className="sticky top-0 z-10 bg-[#4e4e3d] backdrop-blur border-b border-stone-200 w-full">
       <div className="mx-auto max-w-6xl px-4 py-4 md:py-5 flex items-center justify-between w-full">
         <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
-          <div className="w-10 h-10 rounded-xl bg-orange-500 flex-shrink-0"></div>
-          <div 
-            className="font-semibold text-stone-800 text-2xl md:text-3xl truncate"
-            style={{ fontFamily: "'Momo Signature', 'Dancing Script', 'Brush Script MT', cursive" }}
-          >
-            Rarin Space
-          </div>
-          {/* <div className="text-xs px-2 py-1 rounded-lg bg-orange-100 text-orange-700 ml-2 flex-shrink-0">
-            Calculator
-          </div> */}
+          <img 
+            src="/logo-rarin.png" 
+            alt="Rarin Logo" 
+            className="h-10 md:h-12 w-auto object-contain flex-shrink-0"
+          />
         </div>
         <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
           <LanguageToggle />
@@ -52,10 +47,19 @@ export default function App() {
   };
   
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden relative">
+      {/* Background Image */}
+      <div className="fixed inset-0 z-0">
+        <img
+          src="/Self Estimation RARIN.png"
+          alt="Rarin Background"
+          className="w-full h-full object-cover opacity-30"
+        />
+      </div>
+      
       {showIntro && <IntroAnimation onComplete={handleIntroComplete} />}
       <Header />
-      <main className="mx-auto max-w-6xl px-4 py-6 grid md:grid-cols-[1fr_380px] gap-6 w-full md:h-auto">
+      <main className="relative z-10 mx-auto max-w-6xl px-4 py-6 grid md:grid-cols-[1fr_380px] gap-6 w-full md:h-auto">
         <div className="space-y-4 min-w-0">
           <div className="card p-4">
             <div>

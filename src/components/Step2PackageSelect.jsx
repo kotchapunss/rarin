@@ -49,7 +49,7 @@ export default function PackageSelect() {
             {type === 'event' ? (
               <div className="space-y-2">
                 {getSubDescription().split('\n').map((line, index) => (
-                  <p key={index} className={index === 1 ? 'text-orange-600 font-medium' : ''}>
+                  <p key={index} className={index === 1 ? 'text-[#B8846B] font-medium' : ''}>
                     {line.trim()}
                   </p>
                 ))}

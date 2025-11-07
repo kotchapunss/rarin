@@ -424,13 +424,13 @@ export default function Summary() {
           {/* Total Discounts */}
           {totalDiscounts > 0 && (
             <>
-              <div className="font-medium text-orange-600 mt-2">
+              <div className="font-medium text-[#B8846B] mt-2">
                 {state.language === 'th' ? 'ส่วนลดทั้งหมด' : 'Total Discounts'}
               </div>
               
               {/* Marketing Discounts */}
               {selectedAddons.filter(addon => addon.isDiscount).map((addon, index) => (
-                <div key={index} className="flex justify-between text-xs ml-4 text-orange-600">
+                <div key={index} className="flex justify-between text-xs ml-4 text-[#B8846B]">
                   <span>• {addon.name}</span>
                   <span>-฿{Math.abs(addon.value).toLocaleString()}</span>
                 </div>
@@ -438,7 +438,7 @@ export default function Summary() {
               
               {/* Weekday Discount */}
               {weekdayDiscount > 0 && (
-                <div className="flex justify-between text-xs ml-4 text-orange-600">
+                <div className="flex justify-between text-xs ml-4 text-[#B8846B]">
                   <span>• {state.language === 'th' ? weekdayDiscountLabel : (weekdayDiscountLabel.includes('฿40,000') ? 'Weekday Discount (฿40,000)' : 'Weekday Discount (฿20,000)')}</span>
                   <span>-฿{weekdayDiscount.toLocaleString()}</span>
                 </div>
@@ -447,7 +447,7 @@ export default function Summary() {
               <Row 
                 label={state.language === 'th' ? 'รวมส่วนลด' : 'Total Discount'} 
                 value={-totalDiscounts} 
-                className="text-orange-600 font-medium"
+                className="text-[#B8846B] font-medium"
               />
             </>
           )}

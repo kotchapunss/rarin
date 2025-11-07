@@ -11,7 +11,7 @@ export default function LanguageToggle() {
     <div className="relative">
       <button 
         onClick={() => setLanguage(language === 'en' ? 'th' : 'en')}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-stone-600 hover:bg-stone-100 transition"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-white hover:bg-white/10 transition"
         title={t.language}
       >
         <Globe className="w-4 h-4" />

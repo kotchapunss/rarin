@@ -36,9 +36,9 @@ export default function TypeSelector() {
                 setType(eventType.id)
                 setStep(step + 1)
               }}
-              className={"card p-6 text-left transition " + (active ? "ring-2 ring-brand-500" : "hover:shadow-md")}>
+              className={"card p-6 text-left transition " + (active ? "ring-2 ring-[#B8846B]" : "hover:shadow-md")}>
               <div className="flex items-center gap-4">
-                <span className="p-3 rounded-xl bg-brand-100 text-brand-700"><Icon className="w-6 h-6"/></span>
+                <span className="p-3 rounded-xl bg-[#f9f5f3] text-[#B8846B]"><Icon className="w-6 h-6"/></span>
                 <div>
                   <div className="font-semibold text-lg">
                     {getEventTypeName(eventType.id, language)}

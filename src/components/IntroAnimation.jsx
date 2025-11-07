@@ -33,7 +33,7 @@ export default function IntroAnimation({ onComplete }) {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-stone-100 via-orange-50 to-stone-100 transition-opacity duration-800 ${
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-stone-100 via-[#f9f5f3] to-stone-100 transition-opacity duration-800 ${
         fadeOut ? 'opacity-0' : 'opacity-100'
       }`}
     >
@@ -60,11 +60,11 @@ export default function IntroAnimation({ onComplete }) {
           }`}
         >
           <h1 
-            className="text-4xl md:text-9xl font text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-orange-500 to-orange-600 animate-text-shimmer"
+            className="text-4xl md:text-9xl font text-transparent bg-clip-text bg-gradient-to-r from-[#a0735a] via-[#B8846B] to-[#a0735a] animate-text-shimmer"
             style={{
               fontFamily: "'Momo Signature', 'Dancing Script', 'Brush Script MT', cursive",
               letterSpacing: '0.1em',
-              textShadow: '0 2px 10px rgba(234, 88, 12, 0.1)',
+              textShadow: '0 2px 10px rgba(184, 132, 107, 0.1)',
               backgroundSize: '200% auto',
             }}
           >
@@ -73,7 +73,7 @@ export default function IntroAnimation({ onComplete }) {
           
           {/* Underline animation */}
           <div 
-            className={`h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent mt-4 transition-all duration-1000 delay-300 ${
+            className={`h-1 bg-gradient-to-r from-transparent via-[#B8846B] to-transparent mt-4 transition-all duration-1000 delay-300 ${
               showText ? 'w-full opacity-100' : 'w-0 opacity-0'
             } ${
               fadeOut ? 'opacity-0' : ''
@@ -98,8 +98,8 @@ export default function IntroAnimation({ onComplete }) {
 
       {/* Decorative Elements */}
       <div className={`absolute inset-0 pointer-events-none transition-opacity duration-800 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-orange-300 rounded-full filter blur-3xl opacity-20 animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-orange-200 rounded-full filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-[#d4b5a0] rounded-full filter blur-3xl opacity-20 animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-[#e7d7cd] rounded-full filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }} />
       </div>
     </div>
   );

@@ -232,8 +232,8 @@ export default function DetailsInput() {
                 onClick={() => setPeriod(slot.value)}
                 className={`p-4 rounded-xl border text-center transition ${
                   period === slot.value 
-                    ? 'border-2 border-orange-600 bg-orange-50' 
-                    : 'bg-white border-stone-300 hover:border-orange-400 hover:bg-orange-50'
+                    ? 'border-2 border-[#B8846B] bg-[#f9f5f3]' 
+                    : 'bg-white border-stone-300 hover:border-[#c19a7e] hover:bg-[#f9f5f3]'
                 }`}
               >
                 <div className="font-medium">{slot.label}</div>
@@ -264,8 +264,8 @@ export default function DetailsInput() {
             onClick={() => setDayType('weekday')}
             className={`p-4 rounded-xl border text-center transition ${
               dayType === 'weekday' 
-                ? 'border-2  border-orange-600' 
-                : 'bg-white border-stone-300 hover:border-orange-400 hover:bg-orange-50'
+                ? 'border-2  border-[#B8846B]' 
+                : 'bg-white border-stone-300 hover:border-[#c19a7e] hover:bg-[#f9f5f3]'
             }`}
           >
             <div className="font-medium">{translations.weekday || (language === 'th' ? 'วันธรรมดา' : 'Weekday')}</div>
@@ -286,8 +286,8 @@ export default function DetailsInput() {
             onClick={() => setDayType('weekend')}
             className={`p-4 rounded-xl border text-center transition ${
               dayType === 'weekend' 
-                ? 'border-2 border-orange-600' 
-                : 'bg-white border-stone-300 hover:border-orange-400 hover:bg-orange-50'
+                ? 'border-2 border-[#B8846B]' 
+                : 'bg-white border-stone-300 hover:border-[#c19a7e] hover:bg-[#f9f5f3]'
             }`}
           >
             <div className="font-medium">{translations.weekend || (language === 'th' ? 'วันหยุด/สุดสัปดาห์' : 'Weekend')}</div>
@@ -315,7 +315,7 @@ export default function DetailsInput() {
           onChange={(e)=>setNotes(e.target.value)}
           rows={4}
           placeholder={translations.placeholder}
-          className="w-full rounded-xl border border-stone-300 px-4 py-3 focus:outline-none focus:border-2 focus:border-orange-600"
+          className="w-full rounded-xl border border-stone-300 px-4 py-3 focus:outline-none focus:border-2 focus:border-[#B8846B]"
         />
       </div>
     </div>

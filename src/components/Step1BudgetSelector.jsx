@@ -45,8 +45,8 @@ export default function BudgetSelector() {
                         className={`
                             border-2 rounded-lg p-6 cursor-pointer transition-all duration-200
                             ${budget === budgetRange.id
-                                ? 'border-orange-500 bg-orange-50 shadow-md'
-                                : 'border-gray-200 hover:border-orange-300 hover:shadow-sm'
+                                ? 'border-[#B8846B] bg-[#f9f5f3] shadow-md'
+                                : 'border-gray-200 hover:border-[#d4b5a0] hover:shadow-sm'
                             }
                         `}
                     >
