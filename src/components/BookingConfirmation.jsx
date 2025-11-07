@@ -1187,7 +1187,7 @@ export default function BookingConfirmation() {
               <div
                 style={{ fontSize: "12px", color: "#444", lineHeight: "1.6" }}
               >
-                <div>จำนวนแขก: {state.people} ท่าน</div>
+                {state.people > 0 && <div>จำนวนแขก: {state.people} ท่าน</div>}
                 <div>
                   ช่วงเวลา:{" "}
                   {state.period === "morning"
@@ -1368,9 +1368,10 @@ export default function BookingConfirmation() {
                         ฿{basePrice.toLocaleString()}
                       </span>
                     </div>
-                    {selectedPackage && (
+                    {selectedPackage && state.people > 0 && (
                       <div className="text-xs text-gray-500 space-y-1">
                         <div>
+                      
                           {language === "th"
                             ? "จำนวนแขก: "
                             : "Number of guests: "}

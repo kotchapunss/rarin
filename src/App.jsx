@@ -59,9 +59,9 @@ export default function App() {
       
       {showIntro && <IntroAnimation onComplete={handleIntroComplete} />}
       <Header />
-      <main className="relative z-10 mx-auto max-w-6xl px-4 py-6 grid md:grid-cols-[1fr_380px] gap-6 w-full md:h-auto">
+      <main className="relative z-10 mx-auto max-w-6xl px-4 py-6 grid md:grid-cols-[1fr_380px] gap-6 w-full">
         <div className="space-y-4 min-w-0">
-          <div className="card p-4">
+          <div className="card p-4 bg-white/95 backdrop-blur-sm">
             <div>
               {step === 0 && <TypeSelector />}
               {step === 1 && (
@@ -97,11 +97,13 @@ export default function App() {
         </div>
 
         <aside className="hidden md:block min-w-0 overflow-y-auto max-h-[calc(100vh-120px)] sticky top-[100px]">
-          <Summary />
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl">
+            <Summary />
+          </div>
         </aside>
       </main>
 
-      <div className="summary-sticky">
+      <div className="summary-sticky bg-white/95 backdrop-blur-sm">
         <div className="mx-auto max-w-6xl px-4 py-3 max-h-[50vh] overflow-y-auto w-full">
           <Summary />
         </div>

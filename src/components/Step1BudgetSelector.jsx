@@ -43,7 +43,7 @@ export default function BudgetSelector() {
                         key={budgetRange.id}
                         onClick={() => handleBudgetSelect(budgetRange.id)}
                         className={`
-                            border-2 rounded-lg p-6 cursor-pointer transition-all duration-200
+                            border-2 rounded-2xl p-6 cursor-pointer transition-all duration-200
                             ${budget === budgetRange.id
                                 ? 'border-[#B8846B] bg-[#f9f5f3] shadow-md'
                                 : 'border-gray-200 hover:border-[#d4b5a0] hover:shadow-sm'

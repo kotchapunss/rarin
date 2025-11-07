@@ -71,7 +71,7 @@ html {
 
 /* sticky summary visible on small screens */
 .summary-sticky {
-  @apply md:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur border-t border-stone-200;
+  @apply md:hidden fixed bottom-0 inset-x-0 border-t border-stone-200 z-20;
   max-width: 100vw;
 }
 
