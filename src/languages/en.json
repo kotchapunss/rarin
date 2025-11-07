@@ -82,47 +82,56 @@
       "w1": {
         "name": "Minimoon Light Package",
         "description": "For small wedding not over 50 guests",
-        "area": "Moonlight Room"
+        "area": "Moonlight Room",
+        "capacity": "Up to 50 guests"
       },
       "w2": {
         "name": "Cozy Morning Package (Indoor)",
         "description": "For 50-100 guests ( Restricted Area Usage )",
-        "area": "Moonlight Room / Ballad"
+        "area": "Moonlight Room / Ballad",
+        "capacity": "50-100 guests"
       },
       "w3": {
         "name": "Sunset Garden Package (Outdoor)",
         "description": "For 50-100 guests ( Restricted Area Usage )",
-        "area": "Moonlight Room / Riverside Garden"
+        "area": "Moonlight Room / Riverside Garden",
+        "capacity": "50-100 guests"
       },
       "w4": {
         "name": "Ballad Riverside Package (Indoor)",
         "description": "For 50-100 guests ( Restricted Area Usage )", 
-        "area": "Moonlight Room / Ballad"
+        "area": "Moonlight Room / Ballad",
+        "capacity": "50-100 guests"
       },
       "w5": {
         "name": "Rarin Inclusive Package",
         "description": "For 100-200 guests (All Area with restricted time usage and decoration)",
-        "area": "All Area (Rarin Venue)"
+        "area": "All Area (Rarin Venue)",
+        "capacity": "100-200 guests"
       },
       "w6": {
         "name": "Rarin Basic (Decor A)",
         "description": "Venue package + small decoration (standard style)",
-        "area": "All Area"
+        "area": "All Area",
+        "capacity": "100-400 guests"
       },
       "w7": {
         "name": "Rarin Celebration (Decor B)",
         "description": "Venue package + medium decoration (customizable style)",
-        "area": "All Area"
+        "area": "All Area",
+        "capacity": "100-400 guests"
       },
       "w8": {
         "name": "Rarin Your Style (Decor C)",
         "description": "Venue package + full decoration (fully customizable style)",
-        "area": "All Area"
+        "area": "All Area",
+        "capacity": "100-400 guests"
       },
       "w9": {
         "name": "Rarin Premium (Decor D)",
         "description": "Premium venue package + luxury decoration (premium customizable style)",
-        "area": "All Area"
+        "area": "All Area",
+        "capacity": "100-400 guests"
       }
     },
     "event": {
@@ -157,28 +166,32 @@
         "description": "For Pre-wedding & Family Photos",
         "area": "Rarin Venue",
         "shootingHours": 1,
-        "teardownHours": 0
+        "teardownHours": 0,
+        "capacity": "No limit"
       },
       "p2": {
         "name": "Personal Shooting (10 hours)",
         "description": "For Pre-wedding & Family Photos",
         "area": "Rarin Venue",
         "shootingHours": 10,
-        "teardownHours": 0
+        "teardownHours": 0,
+        "capacity": "No limit"
       },
       "p3": {
         "name": "Commercial Shooting (9 hours)",
         "description": "For TV, Film, Fashion, and Commercial Photography",
         "area": "Rarin Venue",
         "shootingHours": 6,
-        "teardownHours": 3
+        "teardownHours": 3,
+        "capacity": "No limit"
       },
       "p4": {
         "name": "Commercial Shooting (15 hours)",
         "description": "For TV, Film, Fashion, and Commercial Photography",
         "area": "Rarin Venue",
         "shootingHours": 12,
-        "teardownHours": 3
+        "teardownHours": 3,
+        "capacity": "No limit"
       }
     }
   },
@@ -485,12 +498,12 @@
   "step3Description": {
     "wedding": "Enter guest count and event timing information",
     "event": "Enter attendee count and event timing information",
-    "photo": "Enter crew size and shooting schedule information"
+    "photo": "Enter shooting schedule information"
   },
   "step3SubDescription": {
     "wedding": "Please specify guest count, time period, and day type for accurate pricing",
     "event": "Please specify attendee count, time period, and day type to calculate costs",
-    "photo": "Please specify crew size, time period, and day type for your booking"
+    "photo": "Please specify time period, and day type for your booking"
   },
   "step4WeddingTitle": {
     "wedding": "Wedding Event Details",
@@ -737,6 +750,9 @@
   "basePackage": "Base package",
   "addOns": "Add-ons",
   "extraGuests": "Extra guests",
+  "foodBudgetExceeded": "Guests exceed food budget",
+  "guestsOverLimit": "Over",
+  "extraGuestCost": "Extra guest cost",
   "subtotal": "Subtotal (before VAT)",
   "vat": "VAT (7%)",
   "totalWithVat": "Total (with VAT)",
@@ -761,6 +777,7 @@
   "downloadPdf": "Download PDF",
   "quotationFilename": "quotation",
   "pdfGenerationError": "Failed to generate PDF. Please try again.",
+  "capacity": "Capacity",
   "chooseServices": "Choose Services",
   "selectBeverages": "Select Beverages",
   "selectAdditionalServices": "Select Additional Services",

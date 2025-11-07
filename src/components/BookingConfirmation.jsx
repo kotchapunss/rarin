@@ -6,6 +6,7 @@ import {
   getPackageCapacity,
   parseCapacityRange,
 } from "../i18n";
+import LanguageToggle from "./LanguageToggle";
 import {
   getPackages,
   getAddons,
@@ -16,9 +17,22 @@ import {
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { Document, Page, pdfjs } from "react-pdf";
+import emailjs from '@emailjs/browser';
+import { EMAILJS_CONFIG } from '../../emailjs-config';
 
 // Configure PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+
+// EmailJS Configuration from config file
+const { serviceId: EMAILJS_SERVICE_ID, templateId: EMAILJS_TEMPLATE_ID, publicKey: EMAILJS_PUBLIC_KEY } = EMAILJS_CONFIG;
+
+// Initialize EmailJS with error handling
+try {
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+  console.log('EmailJS initialized successfully');
+} catch (error) {
+  console.error('Failed to initialize EmailJS:', error);
+}
 
 export default function BookingConfirmation() {
   const navigate = useNavigate();
@@ -31,36 +45,175 @@ export default function BookingConfirmation() {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [isComponentReady, setIsComponentReady] = useState(false);
+  const [submitForm, setSubmitForm] = useState({
+    email: '',
+    phone: '',
+    lineId: '',
+    date: '',
+    specialRequest: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fallback simple PDF generation without html2canvas
+  const generateSimplePDF = () => {
+    try {
+      console.log("=== Generating simple PDF fallback ===");
+      const pdf = new jsPDF("p", "mm", "a4");
+      
+      // Set font
+      pdf.setFont("helvetica", "normal");
+      
+      // Header
+      pdf.setFontSize(16);
+      pdf.text("Rarin - Estimated Cost Summary", 20, 20);
+      
+      // Package info
+      pdf.setFontSize(12);
+      let yPos = 40;
+      
+      pdf.text(`Service Type: ${state.type}`, 20, yPos);
+      yPos += 10;
+      pdf.text(`Package: ${getPackageName()}`, 20, yPos);
+      yPos += 10;
+      pdf.text(`Guests: ${state.people} people`, 20, yPos);
+      yPos += 10;
+      pdf.text(`Day Type: ${state.dayType}`, 20, yPos);
+      yPos += 10;
+      pdf.text(`Period: ${state.period}`, 20, yPos);
+      yPos += 20;
+      
+      // Total
+      pdf.setFontSize(14);
+      pdf.text(`Total: ฿${total.toLocaleString()}`, 20, yPos);
+      yPos += 10;
+      pdf.text(`VAT: ฿${vat.toLocaleString()}`, 20, yPos);
+      yPos += 10;
+      pdf.text(`Subtotal: ฿${subtotal.toLocaleString()}`, 20, yPos);
+      
+      return pdf.output("blob");
+    } catch (error) {
+      console.error("Error generating simple PDF:", error);
+      return null;
+    }
+  };
 
   // Generate PDF blob for preview
   const generatePDFBlob = async () => {
     try {
+      console.log("=== Starting PDF generation ===");
+      
       const element = hiddenInvoiceRef.current;
 
       if (!element) {
         console.error("Hidden PDF element not found");
-        return null;
+        throw new Error("PDF template element not found");
       }
 
-      console.log("Starting PDF generation...");
+      console.log("✓ Element found:", element);
+      console.log("✓ Element dimensions:", element.offsetWidth, "x", element.offsetHeight);
+      console.log("✓ Element children count:", element.children.length);
 
+      // Check if element has content
+      if (element.offsetHeight === 0 || element.offsetWidth === 0) {
+        console.error("Element has zero dimensions, waiting longer...");
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        console.log("After wait - Element dimensions:", element.offsetWidth, "x", element.offsetHeight);
+      }
+
+      // Ensure all images are loaded before generating PDF
+      console.log("Checking images...");
+      const images = element.querySelectorAll('img');
+      console.log("Found", images.length, "images");
+      
+      await Promise.all(Array.from(images).map((img, index) => {
+        return new Promise((resolve, reject) => {
+          console.log(`Checking image ${index + 1}:`, img.src);
+          if (img.complete) {
+            console.log(`✓ Image ${index + 1} already loaded`);
+            resolve();
+          } else {
+            console.log(`Waiting for image ${index + 1} to load...`);
+            img.onload = () => {
+              console.log(`✓ Image ${index + 1} loaded successfully`);
+              resolve();
+            };
+            img.onerror = (error) => {
+              console.warn(`⚠️ Image ${index + 1} failed to load:`, error);
+              resolve(); // Continue even if image fails
+            };
+            // Timeout after 5 seconds
+            setTimeout(() => {
+              console.warn(`⏰ Image ${index + 1} loading timeout`);
+              resolve();
+            }, 5000);
+          }
+        });
+      }));
+
+      // Wait a bit more for element to be fully rendered
+      console.log("Waiting for element to be fully rendered...");
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      console.log("Starting html2canvas capture...");
       // Capture the element as-is (it's already rendered off-screen)
       const canvas = await html2canvas(element, {
-        scale: 2,
+        scale: 1,
         useCORS: true,
+        allowTaint: true,
         backgroundColor: "#ffffff",
         width: 794,
+        height: Math.max(element.offsetHeight || 1123, 1123),
         logging: true,
         windowWidth: 794,
+        removeContainer: true,
+        onclone: (clonedDoc) => {
+          console.log("html2canvas onclone callback");
+          // Ensure the cloned document has the same styles
+          const clonedElement = clonedDoc.querySelector('[data-pdf-template]');
+          if (clonedElement) {
+            console.log("✓ Found cloned element, making it visible");
+            clonedElement.style.display = 'block';
+            clonedElement.style.visibility = 'visible';
+            clonedElement.style.position = 'static';
+            clonedElement.style.left = 'auto';
+            clonedElement.style.top = 'auto';
+          } else {
+            console.warn("⚠️ Could not find cloned element with data-pdf-template");
+            // Try alternative selectors
+            const allDivs = clonedDoc.querySelectorAll('div[style*="width: 794px"]');
+            console.log("Found divs with 794px width:", allDivs.length);
+            if (allDivs.length > 0) {
+              const targetDiv = allDivs[0];
+              targetDiv.style.display = 'block';
+              targetDiv.style.visibility = 'visible';
+              targetDiv.style.position = 'static';
+              targetDiv.style.left = 'auto';
+              targetDiv.style.top = 'auto';
+              console.log("✓ Made fallback element visible");
+            }
+          }
+        }
       });
 
-      console.log("Canvas created:", canvas.width, "x", canvas.height);
+      console.log("✓ Canvas created:", canvas.width, "x", canvas.height);
 
       if (canvas.width === 0 || canvas.height === 0) {
-        throw new Error("Canvas has zero dimensions");
+        console.error("Canvas dimensions are zero");
+        throw new Error("Failed to capture content - canvas has zero dimensions");
       }
 
-      const imgData = canvas.toDataURL("image/png");
+      console.log("Converting canvas to image data...");
+      const imgData = canvas.toDataURL("image/png", 0.95);
+      if (!imgData || imgData === "data:,") {
+        console.error("Failed to create image data from canvas");
+        throw new Error("Failed to create canvas image data");
+      }
+
+      console.log("✓ Image data created, length:", imgData.length);
+
+      console.log("Creating PDF...");
       const pdf = new jsPDF("p", "mm", "a4");
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -68,14 +221,7 @@ export default function BookingConfirmation() {
       let imgWidth = pdfWidth;
       let imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
-      console.log(
-        "PDF dimensions:",
-        pdfWidth,
-        "x",
-        pdfHeight,
-        "Image height:",
-        imgHeight
-      );
+      console.log("PDF dimensions:", pdfWidth, "x", pdfHeight, "Image height:", imgHeight);
 
       // If content is too tall, scale it down to fit on one page
       if (imgHeight > pdfHeight) {
@@ -91,36 +237,88 @@ export default function BookingConfirmation() {
         pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
       }
 
-      const blob = pdf.output("blob");
-      console.log("PDF blob created:", blob.size, "bytes");
-      return blob;
+      // Convert to blob
+      console.log("Converting PDF to blob...");
+      const pdfBlob = pdf.output("blob");
+      console.log("✓ PDF blob created successfully:", pdfBlob.size, "bytes");
+      console.log("=== PDF generation completed successfully ===");
+      return pdfBlob;
     } catch (error) {
-      console.error("Error generating PDF blob:", error);
-      return null;
+      console.error("=== PDF generation failed ===");
+      console.error("Error:", error);
+      console.error("Error stack:", error.stack);
+      console.error("Error name:", error.name);
+      console.error("Error message:", error.message);
+      
+      // Try fallback simple PDF generation
+      console.log("=== Trying simple PDF fallback ===");
+      try {
+        const fallbackBlob = generateSimplePDF();
+        if (fallbackBlob) {
+          console.log("✓ Simple PDF fallback successful");
+          return fallbackBlob;
+        }
+      } catch (fallbackError) {
+        console.error("Simple PDF fallback also failed:", fallbackError);
+      }
+      
+      throw error; // Re-throw to be handled by caller
     }
   };
 
   // Show PDF preview
   const showPDFPreviewModal = async () => {
-    setShowPDFPreview(true);
-
-    // Generate blob after showing modal
-    const blob = await generatePDFBlob();
-    if (blob) {
-      // Clean up old URL if exists
-      if (pdfUrl) {
-        URL.revokeObjectURL(pdfUrl);
+    try {
+      if (!isComponentReady) {
+        const waitMessage = language === "th"
+          ? "กรุณารอสักครู่ กำลังเตรียมข้อมูล..."
+          : "Please wait, preparing data...";
+        alert(waitMessage);
+        return;
       }
-      const url = URL.createObjectURL(blob);
-      console.log("Created blob URL:", url);
-      setPdfUrl(url);
-    } else {
+
+      // Ensure no other modals are open
+      setShowSubmitModal(false);
+
+      console.log("=== Starting PDF preview modal ===");
+      setShowPDFPreview(true);
+      setPdfUrl(null); // Clear previous PDF first
+
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error("PDF generation timeout (30 seconds)"));
+        }, 30000); // 30 second timeout
+      });
+
+      // Generate blob after showing modal with timeout
+      const blob = await Promise.race([
+        generatePDFBlob(),
+        timeoutPromise
+      ]);
+
+      if (blob) {
+        // Clean up old URL if exists
+        if (pdfUrl) {
+          URL.revokeObjectURL(pdfUrl);
+        }
+        const url = URL.createObjectURL(blob);
+        console.log("✓ Created blob URL:", url);
+        setPdfUrl(url);
+        console.log("=== PDF preview modal completed successfully ===");
+      } else {
+        throw new Error("Failed to generate PDF blob");
+      }
+    } catch (error) {
+      console.error("=== PDF preview modal failed ===");
+      console.error("Error in showPDFPreviewModal:", error);
       setShowPDFPreview(false);
-      alert(
-        language === "th"
-          ? "ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง"
-          : "Failed to generate PDF. Please try again."
-      );
+      
+      const errorMessage = language === "th"
+        ? `ไม่สามารถสร้าง PDF ได้: ${error.message || "กรุณาลองใหม่อีกครั้ง"}`
+        : `Failed to generate PDF: ${error.message || "Please try again."}`;
+        
+      alert(errorMessage);
     }
   };
 
@@ -132,6 +330,15 @@ export default function BookingConfirmation() {
       }
     };
   }, [pdfUrl]);
+
+  // Ensure component is ready for PDF generation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsComponentReady(true);
+    }, 1000); // Wait 1 second for component to be fully ready
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const generatePDF = async () => {
     try {
@@ -155,10 +362,7 @@ export default function BookingConfirmation() {
       const blob = await generatePDFBlob();
 
       if (!blob) {
-        alert(
-          t.pdfGenerationError || "ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง"
-        );
-        return;
+        throw new Error("Failed to generate PDF blob");
       }
 
       // Create download link
@@ -177,37 +381,250 @@ export default function BookingConfirmation() {
     } catch (error) {
       console.error("Error generating PDF:", error);
       console.error("Error details:", error.message, error.stack);
-      alert(
-        t.pdfGenerationError ||
-          "เกิดข้อผิดพลาดในการสร้าง PDF กรุณาลองใหม่อีกครั้ง"
+      
+      const errorMessage = language === "th"
+        ? `ไม่สามารถสร้าง PDF ได้: ${error.message || "กรุณาลองใหม่อีกครั้ง"}`
+        : `Failed to generate PDF: ${error.message || "Please try again."}`;
+        
+      alert(errorMessage);
+    }
+  };
+
+  // Handle submit request modal
+  const handleSubmitRequest = () => {
+    // Ensure no other modals are open
+    setShowPDFPreview(false);
+    if (pdfUrl) {
+      URL.revokeObjectURL(pdfUrl);
+      setPdfUrl(null);
+    }
+    
+    setShowSubmitModal(true);
+  };
+
+  // Handle form input changes
+  const handleFormChange = (field, value) => {
+    setSubmitForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  // Handle form submission with email
+  const handleFormSubmit = async () => {
+    // Validate required fields
+    if (!submitForm.email || !submitForm.phone) {
+      alert(language === 'th' ? 'กรุณากรอกอีเมลและเบอร์โทรศัพท์' : 'Please fill in email and phone number');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      console.log('Starting form submission...');
+      
+      // Generate PDF blob
+      console.log('Generating PDF blob...');
+      let pdfBlob = null;
+      let pdfBase64 = null;
+      
+      try {
+        pdfBlob = await generatePDFBlob();
+        if (pdfBlob) {
+          console.log('PDF blob generated successfully:', pdfBlob.size, 'bytes');
+          
+          // Convert blob to base64 for EmailJS
+          const reader = new FileReader();
+          pdfBase64 = await new Promise((resolve, reject) => {
+            reader.onload = () => {
+              const base64 = reader.result.split(',')[1]; // Remove data:application/pdf;base64, prefix
+              console.log('PDF converted to base64, length:', base64.length);
+              resolve(base64);
+            };
+            reader.onerror = (error) => {
+              console.error('FileReader error:', error);
+              reject(error);
+            };
+            reader.readAsDataURL(pdfBlob);
+          });
+          console.log('PDF converted to base64 successfully');
+        } else {
+          console.warn('PDF generation returned null');
+        }
+      } catch (pdfError) {
+        console.error('PDF generation failed:', pdfError);
+        console.warn('Continuing form submission without PDF attachment');
+      }
+
+      // Prepare email data
+      const emailData = {
+        to_email: EMAILJS_CONFIG.targetEmail,
+        to_name: 'Rarin Team',
+        from_name: submitForm.email,
+        customer_email: submitForm.email,
+        customer_phone: submitForm.phone,
+        customer_line_id: submitForm.lineId || '-',
+        event_date: submitForm.date || '-',
+        special_request: submitForm.specialRequest || 'None',
+        
+        // Booking details (English only for EmailJS compatibility)
+        service_type: state.type === 'wedding' ? 'Wedding' : state.type === 'event' ? 'Event' : 'Photo Shoot',
+        package_name: getPackageName(),
+        guest_count: state.people,
+        day_type: state.dayType === 'weekday' ? 'Weekday' : 'Weekend/Holiday',
+        period: state.period,
+        total_price: `${total.toLocaleString()} THB`,
+        
+        // Detailed pricing breakdown for email table
+        base_price: state.type === 'event' ? '-' : `${basePrice.toLocaleString()} THB`,
+        addons_total: `${(addonsTotal || 0).toLocaleString()} THB`,
+        time_surcharge: timeSurcharge > 0 ? `${timeSurcharge.toLocaleString()} THB` : '-',
+        extra_guests_count: extraGuestsCount > 0 ? `${extraGuestsCount} guests` : '-',
+        extra_guests_cost: extraGuestsCost > 0 ? `${extraGuestsCost.toLocaleString()} THB` : '-',
+        total_discounts: (weekdayDiscount + Math.abs(marketingDiscounts || 0)) > 0 ? `${(weekdayDiscount + Math.abs(marketingDiscounts || 0)).toLocaleString()} THB` : '-',
+        subtotal: `${subtotal.toLocaleString()} THB`,
+        vat_amount: `${vat.toLocaleString()} THB`,
+        
+        // Additional details
+        booking_summary: JSON.stringify({
+          type: state.type,
+          packageId: state.packageId,
+          people: state.people,
+          dayType: state.dayType,
+          period: state.period,
+          addons: state.addons,
+          notes: state.notes,
+          calculatedTotal: total,
+          selectedAddons: selectedAddons.map(addon => ({
+            name: addon.name,
+            price: addon.totalPrice,
+            quantity: addon.quantity
+          }))
+        }, null, 2),
+        
+        // Email body content (keeping Thai in body as it's in a text block)
+        email_body: `Booking Details from ${submitForm.email}
+
+Contact Information:
+- Email: ${submitForm.email}
+- Phone: ${submitForm.phone}
+- Line ID: ${submitForm.lineId || '-'}
+- Event Date: ${submitForm.date || '-'}
+
+Booking Details:
+- Service: ${state.type === 'wedding' ? 'Wedding' : state.type === 'event' ? 'Event' : 'Photo Shoot'}
+- Package: ${getPackageName()}
+- Guests: ${state.people} people
+- Day Type: ${state.dayType === 'weekday' ? 'Weekday' : 'Weekend/Holiday'}
+- Period: ${state.period}
+- Total: ${total.toLocaleString()} THB
+
+Special Requests:
+${submitForm.specialRequest || 'None'}
+
+PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
+        `
+      };
+
+      // Add PDF attachment if available
+      if (pdfBase64) {
+        emailData.pdf_attachment = pdfBase64;
+        emailData.pdf_filename = `booking-quote-${Date.now()}.pdf`;
+      }
+      
+      console.log('Sending email with EmailJS...');
+      
+      // Check if EmailJS is configured properly (updated to use actual IDs)
+      if (EMAILJS_PUBLIC_KEY === 'your_public_key_here' || 
+          EMAILJS_SERVICE_ID === 'service_rarin' || 
+          EMAILJS_TEMPLATE_ID === 'template_rarin_booking' ||
+          EMAILJS_PUBLIC_KEY === 'N0Z9CM_EdE46WDfka' || 
+          EMAILJS_SERVICE_ID === 'service_8yk3ezo' || 
+          EMAILJS_TEMPLATE_ID === 'template_y8ca0gi') {
+        
+        // Since we have the actual credentials now, let's log the email data for debugging
+        console.log('Email data being sent:', {
+          ...emailData,
+          pdf_attachment: pdfBase64 ? `[PDF Base64 - ${pdfBase64.length} characters]` : 'No PDF'
+        });
+      }
+      
+      // Send email using EmailJS
+      const result = await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        emailData
       );
+      
+      console.log('Email sent successfully:', result);
+
+      // Show success message
+      const successMessage = language === 'th' 
+        ? 'ส่งข้อมูลเรียบร้อยแล้ว! ' 
+        : 'Request submitted successfully!';
+
+      alert(successMessage);
+      
+      setShowSubmitModal(false);
+      setSubmitForm({
+        email: '',
+        phone: '',
+        lineId: '',
+        date: '',
+        specialRequest: ''
+      });
+
+    } catch (error) {
+      console.error('Error submitting request:', error);
+      console.error('Error details:', error.message, error.stack);
+      
+      let errorMessage = language === 'th' 
+        ? 'เกิดข้อผิดพลาดในการส่งอีเมล กรุณาลองใหม่อีกครั้ง' 
+        : 'Failed to send email. Please try again.';
+        
+      if (error.text) {
+        errorMessage += ` (${error.text})`;
+      }
+      
+      alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const calculateTotal = () => {
-    // Use the same calculation rules as Summary.calcTotal to ensure consistent totals
-    const selectedPackage = getPackages(state.type).find(
-      (p) => p.id === state.packageId
-    );
-    const settings = getSettings();
-    const budget4TimeOptions = getBudget4TimeOptions();
+    try {
+      console.log("=== Calculating total ===");
+      console.log("Current state:", state);
+      
+      // Use the same calculation rules as Summary.calcTotal to ensure consistent totals
+      const selectedPackage = getPackages(state.type).find(
+        (p) => p.id === state.packageId
+      );
+      console.log("Selected package:", selectedPackage);
+      
+      const settings = getSettings();
+      console.log("Settings:", settings);
+      
+      const budget4TimeOptions = getBudget4TimeOptions();
 
-    // Calculate base price based on package type and day type
-    let basePrice = 0;
-    if (selectedPackage) {
-      // Check if package has weekday/weekend specific pricing (for event packages)
-      if (
-        selectedPackage.weekdayPrice !== undefined &&
-        selectedPackage.weekendPrice !== undefined
-      ) {
-        basePrice =
-          state.dayType === "weekday"
-            ? selectedPackage.weekdayPrice
-            : selectedPackage.weekendPrice;
-      } else {
-        basePrice = selectedPackage.price;
+      // Calculate base price based on package type and day type
+      let basePrice = 0;
+      if (selectedPackage) {
+        // Check if package has weekday/weekend specific pricing (for event packages)
+        if (
+          selectedPackage.weekdayPrice !== undefined &&
+          selectedPackage.weekendPrice !== undefined
+        ) {
+          basePrice =
+            state.dayType === "weekday"
+              ? selectedPackage.weekdayPrice
+              : selectedPackage.weekendPrice;
+        } else {
+          basePrice = selectedPackage.price;
+        }
       }
-    }
+
+      console.log("Base price:", basePrice);
 
     // Separate positive addons from negative (discounts)
     const positiveAddons = Object.values(state.addons || {}).reduce(
@@ -234,48 +651,66 @@ export default function BookingConfirmation() {
     let extraGuestUnitPrice = 0;
 
     if (selectedPackage && state.people > 0) {
-      // Get package capacity
-      const capacityString = getPackageCapacity(
-        state.type,
-        state.packageId,
-        language
-      );
-      const { max: maxCapacity } = parseCapacityRange(capacityString);
-
-      // Calculate extra guests if current guest count exceeds max capacity
-      if (state.people > maxCapacity) {
-        extraGuestsCount = state.people - maxCapacity;
-
-        // Find selected food addon to get price per person
-        const configAddons = getAddonCategories(state.type);
-        let foodAddonPrice = 0;
-
-        // Look through all addon categories to find selected food items
-        if (configAddons) {
-          Object.values(configAddons).forEach((category) => {
-            if (category.items) {
-              category.items.forEach((item) => {
-                // Check if this addon is selected and is a per_person food item
-                const addonValue = state.addons?.[item.id];
-                if (
-                  addonValue &&
-                  addonValue > 0 &&
-                  (item.type === "per_person" || item.type === "auto")
-                ) {
-                  // Use this food item's price as the extra guest price
-                  if (item.price > foodAddonPrice) {
-                    foodAddonPrice = item.price;
-                  }
-                }
-              });
-            }
-          });
+      if (state.type === 'wedding' && selectedPackage.budgetId !== 'budget4') {
+        // For wedding type (except budget4), use food budget limits from settings
+        const weddingFoodLimits = settings.weddingFoodLimits;
+        const budgetLimit = weddingFoodLimits?.[selectedPackage.budgetId];
+        
+        if (budgetLimit) {
+          const foodLimitGuests = budgetLimit.limitGuests;
+          extraGuestUnitPrice = budgetLimit.extraGuestPrice;
+          
+          // Calculate extra guests if current guest count exceeds food limit
+          if (state.people > foodLimitGuests) {
+            extraGuestsCount = state.people - foodLimitGuests;
+            extraGuestsCost = extraGuestsCount * extraGuestUnitPrice;
+          }
         }
+      } else {
+        // For event, photo types, and wedding budget4 packages, use existing capacity-based calculation
+        // Get package capacity
+        const capacityString = getPackageCapacity(
+          state.type,
+          state.packageId,
+          language
+        );
+        const { max: maxCapacity } = parseCapacityRange(capacityString);
 
-        // If no food addon selected, use default price from settings
-        extraGuestUnitPrice =
-          foodAddonPrice > 0 ? foodAddonPrice : settings.extraGuestPrice;
-        extraGuestsCost = extraGuestsCount * extraGuestUnitPrice;
+        // Calculate extra guests if current guest count exceeds max capacity
+        if (state.people > maxCapacity) {
+          extraGuestsCount = state.people - maxCapacity;
+
+          // Find selected food addon to get price per person
+          const configAddons = getAddonCategories(state.type);
+          let foodAddonPrice = 0;
+
+          // Look through all addon categories to find selected food items
+          if (configAddons) {
+            Object.values(configAddons).forEach((category) => {
+              if (category.items) {
+                category.items.forEach((item) => {
+                  // Check if this addon is selected and is a per_person food item
+                  const addonValue = state.addons?.[item.id];
+                  if (
+                    addonValue &&
+                    addonValue > 0 &&
+                    (item.type === "per_person" || item.type === "auto")
+                  ) {
+                    // Use this food item's price as the extra guest price
+                    if (item.price > foodAddonPrice) {
+                      foodAddonPrice = item.price;
+                    }
+                  }
+                });
+              }
+            });
+          }
+
+          // If no food addon selected, use default price from settings
+          extraGuestUnitPrice =
+            foodAddonPrice > 0 ? foodAddonPrice : settings.extraGuestPrice;
+          extraGuestsCost = extraGuestsCount * extraGuestUnitPrice;
+        }
       }
     }
 
@@ -304,9 +739,16 @@ export default function BookingConfirmation() {
       if (timeSurcharge > 0) timeSurchargeLabel = "ค่าบริการเต็มวัน";
     }
 
-    // Subtotal before discounts
-    const subtotalBeforeDiscounts =
-      basePrice + addonsSum + extraGuestsCost + timeSurcharge;
+    // Calculate subtotal before discounts - different for event type
+    let subtotalBeforeDiscounts;
+    if (state.type === 'event') {
+      // For event type, don't include base package price in calculations
+      // Only show minimum spending requirement and current addon spending
+      subtotalBeforeDiscounts = addonsSum + extraGuestsCost + timeSurcharge;
+    } else {
+      // For other types, use normal calculation
+      subtotalBeforeDiscounts = basePrice + addonsSum + extraGuestsCost + timeSurcharge;
+    }
 
     // Weekday discounts
     let weekdayDiscount = 0;
@@ -323,10 +765,35 @@ export default function BookingConfirmation() {
 
     const totalDiscounts = weekdayDiscount + Math.abs(marketingDiscounts);
 
-    const subtotal = subtotalBeforeDiscounts - totalDiscounts;
+    // Final subtotal after discounts (before VAT)
+    let subtotal;
+    if (state.type === 'event') {
+      // For event type, calculate from addons only
+      subtotal = subtotalBeforeDiscounts - totalDiscounts;
+    } else {
+      // For other types, use normal calculation
+      subtotal = subtotalBeforeDiscounts - totalDiscounts;
+    }
 
     const vat = Math.round(subtotal * settings.vatRate);
     const total = subtotal + vat;
+
+    // Calculate minimum spending for event type
+    let minimumSpending = 0;
+    let currentAddonSpending = 0;
+    let isMinimumMet = true;
+    let shortfall = 0;
+
+    if (state.type === 'event' && selectedPackage) {
+      minimumSpending = selectedPackage.minSpend || 0;
+      
+      // Calculate current addon spending (food & beverage + alcoholic packages)
+      currentAddonSpending = positiveAddons;
+      
+      // Check if minimum is met
+      isMinimumMet = currentAddonSpending >= minimumSpending;
+      shortfall = isMinimumMet ? 0 : minimumSpending - currentAddonSpending;
+    }
 
     return {
       basePrice,
@@ -347,7 +814,38 @@ export default function BookingConfirmation() {
       timeSurchargeLabel,
       subtotalBeforeDiscounts,
       marketingDiscounts,
+      // Event type minimum spending data
+      minimumSpending,
+      currentAddonSpending,
+      isMinimumMet,
+      shortfall,
     };
+    } catch (error) {
+      console.error("Error in calculateTotal:", error);
+      // Return default values on error
+      return {
+        basePrice: 0,
+        addonsTotal: 0,
+        extraGuestsCost: 0,
+        extraGuestsCount: 0,
+        extraGuestUnitPrice: 0,
+        subtotal: 0,
+        vat: 0,
+        total: 0,
+        weekdayDiscount: 0,
+        weekdayDiscountLabel: "",
+        isEligibleForDiscount: false,
+        selectedPackage: null,
+        timeSurcharge: 0,
+        timeSurchargeLabel: "",
+        subtotalBeforeDiscounts: 0,
+        marketingDiscounts: 0,
+        minimumSpending: 0,
+        currentAddonSpending: 0,
+        isMinimumMet: true,
+        shortfall: 0,
+      };
+    }
   };
 
   const {
@@ -367,6 +865,11 @@ export default function BookingConfirmation() {
     timeSurchargeLabel,
     marketingDiscounts,
     subtotalBeforeDiscounts,
+    // Event type minimum spending data
+    minimumSpending,
+    currentAddonSpending,
+    isMinimumMet,
+    shortfall,
   } = calculateTotal();
 
   // Get package name in correct language
@@ -386,13 +889,23 @@ export default function BookingConfirmation() {
   // Get maximum capacity for the selected package
   const getMaxCapacity = () => {
     if (!selectedPackage) return 0;
-    const capacityString = getPackageCapacity(
-      state.type,
-      state.packageId,
-      language
-    );
-    const { max } = parseCapacityRange(capacityString);
-    return max;
+    
+    if (state.type === 'wedding' && selectedPackage.budgetId !== 'budget4') {
+      // For wedding packages (except budget4), return the food budget limit as the capacity
+      const settings = getSettings();
+      const weddingFoodLimits = settings.weddingFoodLimits;
+      const budgetLimit = weddingFoodLimits?.[selectedPackage.budgetId];
+      return budgetLimit?.limitGuests || 400; // Default to reasonable max if no limit found
+    } else {
+      // For event, photo packages, and wedding budget4 packages, use existing capacity calculation
+      const capacityString = getPackageCapacity(
+        state.type,
+        state.packageId,
+        language
+      );
+      const { max } = parseCapacityRange(capacityString);
+      return max;
+    }
   };
 
   // Get selected addon details for display (similar to Summary.jsx)
@@ -586,10 +1099,10 @@ export default function BookingConfirmation() {
   // Show PDF preview modal
   if (showPDFPreview) {
     return (
-      <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center z-50 p-4">
+      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4">
         <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
           {/* Modal Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
             <h2 className="text-xl font-semibold text-gray-800">
               {language === "th"
                 ? "ใบประเมินราคา (ตัวอย่าง)"
@@ -605,7 +1118,7 @@ export default function BookingConfirmation() {
                 setNumPages(null);
                 setPageNumber(1);
               }}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-gray-500 hover:text-gray-700 transition-colors p-1"
             >
               <svg
                 className="w-6 h-6"
@@ -624,35 +1137,41 @@ export default function BookingConfirmation() {
           </div>
 
           {/* PDF Preview Content */}
-          <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+          <div className="flex-1 overflow-y-auto bg-gray-50 min-h-[400px]">
             {pdfUrl ? (
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center p-4">
                 <Document
                   file={pdfUrl}
                   onLoadSuccess={({ numPages }) => setNumPages(numPages)}
                   loading={
                     <div className="flex items-center justify-center p-8">
-                      <div className="text-gray-500">
-                        {language === "th" ? "กำลังโหลด..." : "Loading..."}
+                      <div className="flex flex-col items-center gap-3">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#B8846B]"></div>
+                        <div className="text-gray-500">
+                          {language === "th" ? "กำลังโหลด PDF..." : "Loading PDF..."}
+                        </div>
                       </div>
                     </div>
                   }
                   error={
                     <div className="flex items-center justify-center p-8">
-                      <div className="text-red-500">
-                        {language === "th"
-                          ? "ไม่สามารถโหลด PDF ได้"
-                          : "Failed to load PDF"}
+                      <div className="text-red-500 text-center">
+                        <div className="mb-2">⚠️</div>
+                        <div>
+                          {language === "th"
+                            ? "ไม่สามารถโหลด PDF ได้"
+                            : "Failed to load PDF"}
+                        </div>
                       </div>
                     </div>
                   }
                   className="shadow-lg"
                 >
-                  {Array.from(new Array(numPages), (el, index) => (
+                  {numPages && Array.from(new Array(numPages), (el, index) => (
                     <div key={`page_${index + 1}`} className="mb-4">
                       <Page
                         pageNumber={index + 1}
-                        width={794}
+                        width={Math.min(794, window.innerWidth - 100)}
                         renderTextLayer={false}
                         renderAnnotationLayer={false}
                         className="shadow-md"
@@ -662,11 +1181,19 @@ export default function BookingConfirmation() {
                 </Document>
               </div>
             ) : (
-              <div className="flex items-center justify-center p-8">
-                <div className="text-gray-500">
-                  {language === "th"
-                    ? "กำลังสร้าง PDF..."
-                    : "Generating PDF..."}
+              <div className="flex items-center justify-center p-8 min-h-[400px]">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#B8846B]"></div>
+                  <div className="text-gray-600 text-lg">
+                    {language === "th"
+                      ? "กำลังสร้าง PDF..."
+                      : "Generating PDF..."}
+                  </div>
+                  <div className="text-gray-500 text-sm">
+                    {language === "th"
+                      ? "โปรดรอสักครู่..."
+                      : "Please wait a moment..."}
+                  </div>
                 </div>
               </div>
             )}
@@ -695,7 +1222,8 @@ export default function BookingConfirmation() {
               </button>
               <button
                 onClick={generatePDF}
-                className="px-6 py-2 bg-[#B8846B] text-white rounded-lg hover:bg-[#A0735A] transition-colors flex items-center gap-2"
+                disabled={!pdfUrl}
+                className="px-6 py-2 bg-[#B8846B] text-white rounded-lg hover:bg-[#A0735A] transition-colors flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 <svg
                   className="w-5 h-5"
@@ -719,12 +1247,136 @@ export default function BookingConfirmation() {
     );
   }
 
+  // Show submit request modal
+  if (showSubmitModal) {
+    return (
+      <div className="fixed inset-0 bg-gray-900 bg-opacity-10 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+          {/* Modal Header */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-800">
+              {language === "th" ? "รับข้อมูลเสนอและโปรไฟล์ปานซื่อ" : "Submit Request and Profile"}
+            </h2>
+            <button
+              onClick={() => setShowSubmitModal(false)}
+              className="text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Modal Body */}
+          <div className="p-6">
+            <p className="text-gray-600 text-sm mb-6">
+              {language === "th" 
+                ? "กรอกข้อมูลของท่านเพื่อให้เราส่งใบเสนอราคาและโปรไฟล์ของเรา"
+                : "Fill in your information so we can send you our quote and profile"
+              }
+            </p>
+
+            <form className="space-y-4">
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {language === "th" ? "อีเมล" : "Email"}
+                </label>
+                <input
+                  type="email"
+                  placeholder="example@email.com"
+                  value={submitForm.email}
+                  onChange={(e) => handleFormChange('email', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B8846B] focus:border-transparent"
+                  required
+                />
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {language === "th" ? "เบอร์โทรศัพท์" : "Phone Number"}
+                </label>
+                <input
+                  type="tel"
+                  placeholder="+66 81234567"
+                  value={submitForm.phone}
+                  onChange={(e) => handleFormChange('phone', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B8846B] focus:border-transparent"
+                  required
+                />
+              </div>
+
+              {/* Line ID */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Line ID
+                </label>
+                <input
+                  type="text"
+                  placeholder="lineid"
+                  value={submitForm.lineId}
+                  onChange={(e) => handleFormChange('lineId', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B8846B] focus:border-transparent"
+                />
+              </div>
+
+              {/* Date */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {language === "th" ? "วันจัดงาน" : "Event Date"}
+                </label>
+                <input
+                  type="date"
+                  value={submitForm.date}
+                  onChange={(e) => handleFormChange('date', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B8846B] focus:border-transparent"
+                />
+              </div>
+
+              {/* Special Request */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Special Request
+                </label>
+                <textarea
+                  placeholder={language === "th" 
+                    ? "กรอกความต้องการและข้อคิดเห็นเพิ่มเติม ระบุงานใหม่งานเก่า" 
+                    : "Fill in additional requirements and comments"}
+                  value={submitForm.specialRequest}
+                  onChange={(e) => handleFormChange('specialRequest', e.target.value)}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B8846B] focus:border-transparent resize-none"
+                />
+              </div>
+            </form>
+          </div>
+
+          {/* Modal Footer */}
+          <div className="px-6 pb-6">
+            <button
+              onClick={handleFormSubmit}
+              disabled={isSubmitting}
+              className="w-full bg-[#B8846B] text-white py-3 px-4 rounded-xl font-medium hover:bg-[#A0735A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting 
+                ? (language === "th" ? "กำลังส่ง..." : "Submitting...")
+                : (language === "th" ? "ส่งข้อมูล" : "Submit Data")
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Main booking confirmation page with hidden PDF template
   return (
     <>
       {/* Hidden PDF Template - Always rendered */}
       <div
         ref={hiddenInvoiceRef}
+        data-pdf-template="true"
         style={{
           position: "absolute",
           left: "-9999px",
@@ -738,7 +1390,7 @@ export default function BookingConfirmation() {
           color: "#000000",
         }}
       >
-        <div style={{ padding: "40px", width: "794px", minHeight: "1123px" }}>
+        <div style={{ padding: "40px", width: "794px", minHeight: "1123px", boxSizing: "border-box" }}>
           {/* PDF Header */}
           <div
             style={{
@@ -775,6 +1427,11 @@ export default function BookingConfirmation() {
                 <img
                   src="/logo-rarin.png"
                   alt="Rarin Logo"
+                  crossOrigin="anonymous"
+                  onError={(e) => {
+                    // Hide image if it fails to load to prevent PDF generation issues
+                    e.target.style.display = 'none';
+                  }}
                   style={{
                     height: "40px",
                     width: "auto",
@@ -806,15 +1463,13 @@ export default function BookingConfirmation() {
               </h3>
               <div style={{ fontSize: "12px", lineHeight: "1.6" }}>
                 <div>
-                  <strong>Tel:</strong> ({state.details?.tel || "ยังไม่ระบุ"})
+                  <strong>Tel:</strong> ({submitForm.phone || state.details?.tel || "ยังไม่ระบุ"})
                 </div>
                 <div>
-                  <strong>Email:</strong> (
-                  {state.details?.email || "ยังไม่ระบุ"})
+                  <strong>Email:</strong> ({submitForm.email || state.details?.email || "ยังไม่ระบุ"})
                 </div>
                 <div>
-                  <strong>Line ID:</strong> (
-                  {state.details?.lineId || "ยังไม่ระบุ"})
+                  <strong>Line ID:</strong> ({submitForm.lineId || state.details?.lineId || "ยังไม่ระบุ"})
                 </div>
               </div>
             </div>
@@ -964,6 +1619,7 @@ export default function BookingConfirmation() {
                 <td style={{ padding: "12px 8px", fontSize: "12px" }}>001</td>
                 <td style={{ padding: "12px 8px", fontSize: "12px" }}>
                   {getPackageName()}
+                  {state.type === 'event' ? ' - ยอดใช้จ่ายขั้นต่ำ: ฿' + minimumSpending.toLocaleString() : ''}
                 </td>
                 <td
                   style={{
@@ -972,7 +1628,7 @@ export default function BookingConfirmation() {
                     fontSize: "12px",
                   }}
                 >
-                  1
+                  {state.type === 'event' ? '-' : '1'}
                 </td>
                 <td
                   style={{
@@ -981,7 +1637,7 @@ export default function BookingConfirmation() {
                     fontSize: "12px",
                   }}
                 >
-                  {basePrice.toLocaleString()}
+                  {state.type === 'event' ? '-' : basePrice.toLocaleString()}
                 </td>
                 <td
                   style={{
@@ -990,7 +1646,7 @@ export default function BookingConfirmation() {
                     fontSize: "12px",
                   }}
                 >
-                  {basePrice.toLocaleString()}
+                  {state.type === 'event' ? '-' : basePrice.toLocaleString()}
                 </td>
               </tr>
               {selectedAddons.map((addon, index) => (
@@ -1307,6 +1963,10 @@ export default function BookingConfirmation() {
                   className="w-full h-full object-cover opacity-65"
                 />
               </div>
+              {/* Language Toggle */}
+              <div className="absolute top-4 right-4 z-20">
+                <LanguageToggle />
+              </div>
               {/* Rarin Logo */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div
@@ -1355,17 +2015,23 @@ export default function BookingConfirmation() {
               {/* Package Summary */}
               <div className="mb-8">
                 <h3 className="font-semibold text-gray-800 mb-4">
-                  {t.serviceSummary || "สรุปราคาการ"}
+                  {t.serviceSummary || "สรุปรายการ"}
                 </h3>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   {/* Package Details with Capacity */}
                   <div className="mb-3 border-gray-200">
                     <div className="flex justify-between items-center mb-2">
                       <span>
-                        {t.packageType || "ค่าแพ็กเกจ"} ({getPackageName()})
+                        {state.type === 'event' 
+                          ? (language === "th" 
+                              ? `${t.packageType || "ค่าแพ็กเกจ"} (${getPackageName()}) - ยอดใช้จ่ายขั้นต่ำ: ฿${minimumSpending.toLocaleString()}`
+                              : `${t.packageType || "Package"} (${getPackageName()}) - Minimum Spending: ฿${minimumSpending.toLocaleString()}`
+                            )
+                          : `${t.packageType || "ค่าแพ็กเกจ"} (${getPackageName()})`
+                        }
                       </span>
                       <span className="font-semibold">
-                        ฿{basePrice.toLocaleString()}
+                        {state.type === 'event' ? '-' : `฿${basePrice.toLocaleString()}`}
                       </span>
                     </div>
                     {selectedPackage && state.people > 0 && (
@@ -1400,7 +2066,10 @@ export default function BookingConfirmation() {
                   {positiveSelectedAddons.length > 0 && (
                     <div className="mt-3 border-t pt-3">
                       <div className="text-sm text-gray-600 mb-2">
-                        บริการเสริม:
+                        {state.type === 'event' 
+                          ? (language === "th" ? "บริการที่เลือก:" : "Selected Services:")
+                          : (language === "th" ? "บริการเสริม:" : "Add-on Services:")
+                        }
                       </div>
                       {positiveSelectedAddons.map((addon, index) => (
                         <div
@@ -1417,11 +2086,31 @@ export default function BookingConfirmation() {
                     </div>
                   )}
 
-                  {/* Discounts Section (marketing discounts + weekday discount) */}
+                  {timeSurcharge > 0 && (
+                    <div className="mt-3 border-t pt-3">
+                      <div className="flex justify-between items-center text-sm">
+                        <span>{timeSurchargeLabel}</span>
+                        <span>฿{timeSurcharge.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  )}
+                  {extraGuestsCost > 0 && (
+                    <div className="mt-3 border-t pt-3">
+                      <div className="flex justify-between items-center text-sm">
+                        <span>
+                          แขกเพิ่มเติม ({extraGuestsCount} ท่าน × ฿
+                          {extraGuestUnitPrice.toLocaleString()})
+                        </span>
+                        <span>฿{extraGuestsCost.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Discounts Section (marketing discounts + weekday discount) - Moved to last */}
                   {(negativeSelectedAddons.length > 0 ||
                     weekdayDiscount > 0) && (
-                    <div className="border-t">
-                      <div className="font-medium text-[#B8846B] mt-2">
+                    <div className="mt-3 border-t pt-3">
+                      <div className="font-medium text-[#B8846B] mb-2">
                         {language === "th"
                           ? "ส่วนลดทั้งหมด"
                           : "Total Discounts"}
@@ -1455,25 +2144,6 @@ export default function BookingConfirmation() {
                       </div>
                     </div>
                   )}
-                  {timeSurcharge > 0 && (
-                    <div className="mt-3 border-t pt-3">
-                      <div className="flex justify-between items-center text-sm">
-                        <span>{timeSurchargeLabel}</span>
-                        <span>฿{timeSurcharge.toLocaleString()}</span>
-                      </div>
-                    </div>
-                  )}
-                  {extraGuestsCost > 0 && (
-                    <div className="mt-3 border-t pt-3">
-                      <div className="flex justify-between items-center text-sm">
-                        <span>
-                          แขกเพิ่มเติม ({extraGuestsCount} ท่าน × ฿
-                          {extraGuestUnitPrice.toLocaleString()})
-                        </span>
-                        <span>฿{extraGuestsCost.toLocaleString()}</span>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -1496,8 +2166,11 @@ export default function BookingConfirmation() {
               </div>
 
               {/* Main Action Button */}
-              <button className="w-full bg-[#B8846B] text-white py-4 px-6 rounded-xl font-semibold hover:bg-[#A0735A] transition-colors mb-4">
-                {t.submitRequest || "ส่งยื่น"}
+              <button 
+                onClick={handleSubmitRequest}
+                className="w-full bg-[#B8846B] text-white py-4 px-6 rounded-xl font-semibold hover:bg-[#A0735A] transition-colors mb-4"
+              >
+                {t.submitRequest || "ส่งคำขอจอง"}
               </button>
 
               {/* Bottom Action Buttons */}
@@ -1508,8 +2181,11 @@ export default function BookingConfirmation() {
                 >
                   {t.backToEdit || "กลับไปแก้ไข"}
                 </button>
-                <button className="bg-gray-400 text-white py-3 px-4 rounded-xl font-medium hover:bg-gray-500 transition-colors">
-                  {t.lineOA || "Line OA"}
+                <button 
+                  onClick={() => window.open("https://line.me/R/ti/p/@605fnobr", "_blank")}
+                  className="bg-gray-400 text-white py-3 px-4 rounded-xl font-medium hover:bg-gray-500 transition-colors"
+                >
+                  {t.lineOA || "Line Official"}
                 </button>
                 <button
                   onClick={showPDFPreviewModal}

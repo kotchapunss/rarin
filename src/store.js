@@ -7,18 +7,19 @@ export const useStore = create((set) => ({
   type: 'wedding', // wedding | event | photo
   budget: null, // New budget selection
   packageId: null,
-  people: 50,
+  people: 0,
   period: 'morning', // morning | afternoon | evening
   dayType: 'weekend', // weekday | weekend
   addons: {},
   notes: '',
   language: 'en', // en | th
+  hasAttemptedBooking: false, // Track if user has attempted to proceed without meeting minimum spending
   prices: {
     base: 0,
     addons: 0
   },
   setStep: (n) => set({ step: Math.max(0, Math.min(4, n)) }), // Updated to 4 steps for wedding
-  setType: (t) => set({ type: t, budget: null, packageId: null }), // Reset budget and package when type changes
+  setType: (t) => set({ type: t, budget: null, packageId: null, addons: {} }), // Reset budget, package, and addons when type changes
   setBudget: (b) => set({ budget: b, packageId: null }), // New budget setter, reset package when budget changes
   setPackage: (id) => set({ packageId: id }),
   setPeople: (n) => set({ people: n }),
@@ -43,16 +44,18 @@ export const useStore = create((set) => ({
     updateLanguage(lang);
     return { language: lang };
   }),
+  setHasAttemptedBooking: (attempted) => set({ hasAttemptedBooking: attempted }),
   reset: () => set({
     step: 0,
     type: 'wedding',
     budget: null,
     packageId: null,
-    people: 50,
+    people: 0,
     period: 'morning',
     dayType: 'weekend',
     addons: {},
     notes: '',
+    hasAttemptedBooking: false,
     prices: {
       base: 0,
       addons: 0

@@ -82,47 +82,56 @@
       "w1": {
         "name": "แพ็คเกจมินิมูนไลท์",
         "description": "สำหรับงานแต่งขนาดเล็กแขกไม่เกิน 50 คน",
-        "area": "Moonlight Room"
+        "area": "Moonlight Room",
+        "capacity": "ไม่เกิน 50 คน"
       },
       "w2": {
         "name": "แพ็คเกจคอซี่มอร์นิ่ง (ในร่ม)",
         "description": "สำหรับแขก 50-100 คน (ใช้พื้นที่แบบจำกัด)",
-        "area": "Moonlight Room / Ballad"
+        "area": "Moonlight Room / Ballad",
+        "capacity": "50-100 คน"
       },
       "w3": {
         "name": "แพ็คเกจซันเซ็ทการ์เด้น (กลางแจ้ง)",
         "description": "สำหรับแขก 50-100 คน (ใช้พื้นที่แบบจำกัด)",
-        "area": "Moonlight Room / Riverside Garden"
+        "area": "Moonlight Room / Riverside Garden",
+        "capacity": "50-100 คน"
       },
       "w4": {
         "name": "แพ็คเกจบัลลาดริเวอร์ไซด์ (ในร่ม)",
         "description": "สำหรับแขก 50-100 คน (ใช้พื้นที่แบบจำกัด)",
-        "area": "Moonlight Room / Ballad"
+        "area": "Moonlight Room / Ballad",
+        "capacity": "50-100 คน"
       },
       "w5": {
         "name": "แพ็คเกจเรนนี่ อินคลูซีฟ",
         "description": "สำหรับแขก 100-200 คน (ใช้พื้นที่ทั้งหมดแบบจำกัดเวลาและการตกแต่ง)",
-        "area": "พื้นที่ทั้งหมด (Rarin Venue)"
+        "area": "พื้นที่ทั้งหมด (Rarin Venue)",
+        "capacity": "100-200 คน"
       },
       "w6": {
         "name": "Rarin Basic (Decor A)",
         "description": "แพ็คเกจสถานที่ + การตกแต่งเล็กๆ (สไตล์มาตรฐาน)",
-        "area": "พื้นที่ทั้งหมด"
+        "area": "พื้นที่ทั้งหมด",
+        "capacity": "100-400 คน"
       },
       "w7": {
         "name": "Rarin Celebration (Decor B)",
         "description": "แพ็คเกจสถานที่ + การตกแต่งระดับกลาง (สไตล์ปรับแต่งได้)",
-        "area": "พื้นที่ทั้งหมด"
+        "area": "พื้นที่ทั้งหมด",
+        "capacity": "100-400 คน"
       },
       "w8": {
         "name": "Rarin Your Style (Decor C)",
         "description": "แพ็คเกจสถานที่ + การตกแต่งเต็มรูปแบบ (ปรับแต่งได้ทั้งหมด)",
-        "area": "พื้นที่ทั้งหมด"
+        "area": "พื้นที่ทั้งหมด",
+        "capacity": "100-400 คน"
       },
       "w9": {
         "name": "Rarin Premium (Decor D)",
         "description": "แพ็คเกจสถานที่พรีเมียม + การตกแต่งหรูหรา (ปรับแต่งแบบพรีเมียม)",
-        "area": "พื้นที่ทั้งหมด"
+        "area": "พื้นที่ทั้งหมด",
+        "capacity": "100-400 คน"
       }
     },
     "event": {
@@ -157,28 +166,32 @@
         "description": "สำหรับ Pre-wedding & ภาพถ่ายครอบครัว",
         "area": "Rarin Venue",
         "shootingHours": 1,
-        "teardownHours": 0
+        "teardownHours": 0,
+        "capacity": "ไม่จำกัดคน"
       },
       "p2": {
         "name": "Personal Shooting (10 ชั่วโมง)",
         "description": "สำหรับ Pre-wedding & ภาพถ่ายครอบครัว",
         "area": "Rarin Venue",
         "shootingHours": 10,
-        "teardownHours": 0
+        "teardownHours": 0,
+        "capacity": "ไม่จำกัดคน"
       },
       "p3": {
         "name": "Commercial Shooting (9 ชั่วโมง)",
         "description": "สำหรับถ่ายภาพทีวี, ภาพยนต์, แฟชั่น และงานโฆษณา",
         "area": "Rarin Venue",
         "shootingHours": 6,
-        "teardownHours": 3
+        "teardownHours": 3,
+        "capacity": "ไม่จำกัดคน"
       },
       "p4": {
         "name": "Commercial Shooting (15 ชั่วโมง)",
         "description": "สำหรับถ่ายภาพทีวี, ภาพยนต์, แฟชั่น และงานโฆษณา",
         "area": "Rarin Venue",
         "shootingHours": 12,
-        "teardownHours": 3
+        "teardownHours": 3,
+        "capacity": "ไม่จำกัดคน"
       }
     }
   },
@@ -485,12 +498,12 @@
   "step3Description": {
     "wedding": "กรอกข้อมูลจำนวนแขกและช่วงเวลาจัดงาน",
     "event": "กรอกข้อมูลจำนวนผู้เข้าร่วมและช่วงเวลาจัดงาน",
-    "photo": "กรอกข้อมูลจำนวนคนในกองและช่วงเวลาถ่ายทำ"
+    "photo": "กรอกข้อมูลช่วงเวลาถ่ายทำ"
   },
   "step3SubDescription": {
     "wedding": "กรุณาระบุจำนวนแขก ช่วงเวลา และประเภทวัน เพื่อคำนวณราคาที่แม่นยำ",
     "event": "กรุณาระบุจำนวนผู้เข้าร่วม ช่วงเวลา และประเภทวัน เพื่อคำนวณค่าใช้จ่าย",
-    "photo": "กรุณาระบุจำนวนคนในกอง ช่วงเวลา และประเภทวัน สำหรับการจอง"
+    "photo": "กรุณาระบุช่วงเวลา / ประเภทวัน สำหรับการจอง"
   },
   "step4WeddingTitle": {
     "wedding": "รายละเอียดงานแต่งงาน",
@@ -736,6 +749,9 @@
   "basePackage": "แพ็กเกจพื้นฐาน",
   "addOns": "บริการเสริม",
   "extraGuests": "แขกเพิ่มเติม",
+  "foodBudgetExceeded": "แขกเกินงบอาหาร",
+  "guestsOverLimit": "จำนวนแขกเกิน",
+  "extraGuestCost": "ค่าแขกเพิ่มเติม",
   "subtotal": "ราคาก่อน VAT",
   "vat": "ราคารวม VAT (7%)",
   "totalWithVat": "ราคารวม VAT (7%)",
@@ -747,11 +763,11 @@
   "english": "English",
   "estimationSummary": "สรุปการคำนวณ",
   "estimationDescription": "สรุปราคาสำหรับงานของคุณตามรายละเอียดที่ระบุด้านล่าง",
-  "serviceSummary": "สรุปราคาการ",
+  "serviceSummary": "สรุปรายการ",
   "packageType": "ค่าแพ็กเกจ",
   "beforeVat": "ราคาก่อน VAT",
   "priceDisclaimer": "* ราคานี้เป็นการประเมินเบื้องต้นที่อาจมีการเปลี่ยนแปลง เมื่อดำเนินการตามระบบนี้จริงขึ้นอยู่",
-  "submitRequest": "ส่งยื่น",
+  "submitRequest": "ส่งคำขอจอง",
   "backToEdit": "กลับไปแก้ไข",
   "lineOA": "Line OA",
   "quotation": "ใบประเมินราคา",
@@ -760,6 +776,7 @@
   "downloadPdf": "ดาวน์โหลด PDF",
   "quotationFilename": "ใบประเมินราคา",
   "pdfGenerationError": "เกิดข้อผิดพลาดในการสร้าง PDF กรุณาลองใหม่อีกครั้ง",
+  "capacity": "รองรับ",
   "chooseServices": "เลือกบริการเสริม",
   "selectBeverages": "เลือกเครื่องดื่ม",
   "selectAdditionalServices": "เลือกบริการเสริม",

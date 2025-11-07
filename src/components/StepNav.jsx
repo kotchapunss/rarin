@@ -7,7 +7,7 @@ import { useTranslations } from '../i18n'
 import { getPackages, getBudget4TimeOptions } from '../data'
 
 export default function StepNav() {
-  const { step, setStep, type, budget, packageId, people, period, dayType, notes, language } = useStore()
+  const { step, setStep, type, budget, packageId, people, period, dayType, notes, language, addons, setHasAttemptedBooking } = useStore()
   const navigate = useNavigate()
   const t = useTranslations()
   
@@ -39,6 +39,21 @@ export default function StepNav() {
     
     // Check if timeSlots field exists and is not empty
     return selectedPackage.timeSlots && selectedPackage.timeSlots.trim() !== ''
+  }
+
+  // Check if minimum spending requirement is met for event type
+  const isMinimumSpendingMet = () => {
+    if (type !== 'event' || !selectedPackage) return true
+    
+    const minimumSpending = selectedPackage.minSpend || 0
+    
+    // Calculate current addon spending (positive addons only)
+    const currentAddonSpending = Object.values(addons).reduce((acc, v) => {
+      const n = typeof v === "number" ? v : Number(v) || 0
+      return acc + (n > 0 ? n : 0)
+    }, 0)
+    
+    return currentAddonSpending >= minimumSpending
   }
   
   // Check if current step is complete and can proceed to next
@@ -89,7 +104,11 @@ export default function StepNav() {
             return basicRequirements
           }
         }
-        case 3: return true // Can always proceed from add-ons step
+        case 3: {
+          // For event type, always allow clicking Done to show warning if needed
+          // For other types, can always proceed from add-ons step
+          return true
+        }
         default: return false
       }
     }
@@ -97,7 +116,14 @@ export default function StepNav() {
 
   const handleNextClick = () => {
     if (step === maxStep) {
-      // Last step - navigate to booking confirmation
+      // Last step - check for event type minimum spending before proceeding
+      if (type === 'event' && !isMinimumSpendingMet()) {
+        // For event type, if minimum spending not met, set the flag but don't navigate
+        setHasAttemptedBooking(true)
+        return
+      }
+      
+      // Navigate to booking confirmation
       const state = useStore.getState()
       localStorage.setItem('bookingData', JSON.stringify(state))
       

@@ -22,6 +22,47 @@ export default function DetailsInput() {
   // Check if we're in wedding flow to determine correct step titles
   const isWeddingFlow = type === 'wedding'
   
+  // Helper function to render food budget warning
+  const renderFoodBudgetWarning = () => {
+    if (type !== 'wedding' || !selectedPackage || selectedPackage.budgetId === 'budget4' || people <= 0) {
+      return null
+    }
+    
+    const weddingFoodLimits = settings.weddingFoodLimits
+    const budgetLimit = weddingFoodLimits?.[selectedPackage.budgetId]
+    const foodLimitGuests = budgetLimit?.limitGuests || maxGuests
+    const extraGuestPrice = budgetLimit?.extraGuestPrice || 950
+    
+    if (people <= foodLimitGuests) {
+      return null
+    }
+    
+    const extraGuests = people - foodLimitGuests
+    const extraCost = extraGuests * extraGuestPrice
+    
+    return (
+      <div className="text-amber-600 text-sm mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+        <div className="flex items-start gap-2">
+          <svg className="w-4 h-4 mt-0.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+          <div>
+            <p className="font-medium">
+              {language === 'th' 
+                ? `แขกเกินงบอาหาร: จำนวนแขกเกิน ${foodLimitGuests} ท่าน`
+                : `Guests exceed food budget for this package : Over ${foodLimitGuests} guests`}
+            </p>
+            <p className="text-xs mt-1">
+              {language === 'th' 
+                ? `ค่าแขกเพิ่มเติม ${extraGuests} ท่าน × ฿${extraGuestPrice.toLocaleString()} = ฿${extraCost.toLocaleString()}`
+                : `Extra ${extraGuests} guests × ฿${extraGuestPrice.toLocaleString()} = ฿${extraCost.toLocaleString()}`}
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  
   // Get event-type-specific content
   const getStepTitle = () => {
     const titleObj = isWeddingFlow ? translations.step4WeddingTitle : translations.step3Title
@@ -49,26 +90,43 @@ export default function DetailsInput() {
     packageCapacity = getPackageCapacity(type, packageId, language)
     capacityRange = parseCapacityRange(packageCapacity)
   } else if (type === 'wedding' && packageId) {
-    // For wedding type, get capacity from package description
-    const packageDescription = selectedPackage?.description || ''
-    // Extract capacity from description like "For 50-100 guests" or "For small wedding not over 50 guests"
-    const capacityMatch = packageDescription.match(/(\d+)-(\d+)\s*guests?/i)
-    if (capacityMatch) {
-      capacityRange = {
-        min: parseInt(capacityMatch[1], 10),
-        max: parseInt(capacityMatch[2], 10)
-      }
-    } else {
-      // Check for "not over X guests" pattern
-      const notOverMatch = packageDescription.match(/not over (\d+)\s*guests?/i)
-      if (notOverMatch) {
+    // For wedding type, use food budget limits from settings (except budget4)
+    if (selectedPackage?.budgetId !== 'budget4') {
+      const weddingFoodLimits = settings.weddingFoodLimits
+      const budgetLimit = weddingFoodLimits?.[selectedPackage?.budgetId]
+      
+      if (budgetLimit) {
+        // Use food budget limit as the max guests
         capacityRange = {
           min: settings.baseGuestLimit || 50,
-          max: parseInt(notOverMatch[1], 10)
+          max: budgetLimit.limitGuests
         }
       } else {
-        // Default for wedding
+        // Default for wedding without food budget limit
         capacityRange = { min: settings.baseGuestLimit || 50, max: 400 }
+      }
+    } else {
+      // For budget4 wedding packages, use package description or default to high capacity
+      const packageDescription = selectedPackage?.description || ''
+      // Extract capacity from description like "For 50-100 guests" or "For small wedding not over 50 guests"
+      const capacityMatch = packageDescription.match(/(\d+)-(\d+)\s*guests?/i)
+      if (capacityMatch) {
+        capacityRange = {
+          min: parseInt(capacityMatch[1], 10),
+          max: parseInt(capacityMatch[2], 10)
+        }
+      } else {
+        // Check for "not over X guests" pattern
+        const notOverMatch = packageDescription.match(/not over (\d+)\s*guests?/i)
+        if (notOverMatch) {
+          capacityRange = {
+            min: settings.baseGuestLimit || 50,
+            max: parseInt(notOverMatch[1], 10)
+          }
+        } else {
+          // Default for budget4 wedding (no food limit, high capacity)
+          capacityRange = { min: settings.baseGuestLimit || 50, max: 400 }
+        }
       }
     }
   }
@@ -131,7 +189,7 @@ export default function DetailsInput() {
   }
   
   // Validation states (after availableTimeSlots is defined)
-  const isValidPeople = people > 0
+  const isValidPeople = type === 'photo' ? true : people > 0
   const isValidPeriod = hasTimeSlots ? (period && period !== '' && availableTimeSlots.some(slot => slot.value === period)) : true
   const isValidDayType = dayType && dayType !== ''
   
@@ -191,7 +249,8 @@ export default function DetailsInput() {
       {type !== 'photo' && (
         <div>
           <label className="block text-sm text-stone-600 mb-3">
-            {translations.numberOfGuests} ({minGuests} - {maxGuests}) 
+            {translations.numberOfGuests} 
+            {/* ({minGuests} - {maxGuests})  */}
             <span className="text-red-500 ml-1">*</span>
           </label>
           <div className="mb-4">
@@ -201,11 +260,17 @@ export default function DetailsInput() {
               min={minGuests}
               max={maxGuests}
               onChange={(e)=>setPeople(parseInt(e.target.value||'0',10))}
+              placeholder={language === 'th' ? 'ระบุจำนวนแขก' : 'Enter number of guests'}
               className={`w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2 text-lg transition-colors ${
                 isValidPeople 
-                  ? 'border-stone-300 focus:ring-brand-400' 
+                  ? 'border-stone-300 focus:ring-[#B8846B]' 
                   : 'border-red-300 focus:ring-red-400 bg-red-50'
               }`}
+              style={{
+                MozAppearance: 'textfield',
+                WebkitAppearance: 'textfield'
+              }}
+              onWheel={(e) => e.target.blur()}
             />
             {!isValidPeople && (
               <p className="text-red-500 text-sm mt-1">
@@ -214,6 +279,8 @@ export default function DetailsInput() {
                   : 'Please enter number of guests'}
               </p>
             )}
+            {/* Warning for wedding packages when guests exceed food budget limit */}
+            {renderFoodBudgetWarning()}
           </div>
         </div>
       )}

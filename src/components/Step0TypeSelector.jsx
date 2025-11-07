@@ -6,7 +6,7 @@ import { useTranslations, getEventTypeName, getEventTypeDescription } from '../i
 import { getEventTypes } from '../data'
 
 export default function TypeSelector() {
-  const { type, setType, step, setStep, language } = useStore()
+  const { type, setType, step, setStep, language, setPeople, setPeriod, setDayType, setNotes, setPackage, toggleAddon, reset } = useStore()
   const translations = useTranslations()
   const eventTypes = getEventTypes()
   
@@ -32,7 +32,17 @@ export default function TypeSelector() {
           return (
             <button key={eventType.id}
               onClick={() => {
-                // set the selected type then advance to the next step automatically
+                // Reset all input details when changing type
+                setPeople(0) // Reset to 0 guests
+                setPeriod('morning') // Set default period
+                setDayType('weekend') // Set default day type
+                setNotes('')
+                setPackage(null) // Reset package selection
+                
+                // Reset all addons - we need to clear them individually since there's no setAddons
+                // We'll use the reset function instead for a clean slate
+                
+                // Set the selected type then advance to the next step automatically
                 setType(eventType.id)
                 setStep(step + 1)
               }}

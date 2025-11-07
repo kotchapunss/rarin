@@ -566,6 +566,20 @@
         "fullDaySurcharge": 40000,
         "eveningSurcharge": 50000,
         "budget4FullDaySurcharge": 60000,
-        "budget4WeekdayDiscount": 40000
+        "budget4WeekdayDiscount": 40000,
+        "weddingFoodLimits": {
+            "budget1": {
+                "limitGuests": 50,
+                "extraGuestPrice": 950
+            },
+            "budget2": {
+                "limitGuests": 50,
+                "extraGuestPrice": 950
+            },
+            "budget3": {
+                "limitGuests": 100,
+                "extraGuestPrice": 950
+            }
+        }
     }
 }
