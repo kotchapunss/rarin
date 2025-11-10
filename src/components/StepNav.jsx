@@ -147,13 +147,19 @@ export default function StepNav() {
   
   return (
     <div className="flex items-center justify-between">
-      <button 
-        onClick={() => setStep(step - 1)} 
-        className="btn btn-ghost" 
-        disabled={step === 0}
-      >
-        <ChevronLeft className="w-4 h-4 mr-1"/> {t.back || 'Back'}
-      </button>
+      {step > 0 ? (
+        <button 
+          onClick={() => setStep(step - 1)} 
+          className="btn btn-ghost"
+        >
+          <ChevronLeft className="w-4 h-4 mr-1"/> {t.back || 'Back'}
+        </button>
+      ) : (
+        // Invisible placeholder to maintain layout when back button is hidden
+        <div className="btn btn-ghost invisible">
+          <ChevronLeft className="w-4 h-4 mr-1"/> {t.back || 'Back'}
+        </div>
+      )}
       
       <div className="flex items-center gap-2">
         {stepIndicators.map((i) => (
