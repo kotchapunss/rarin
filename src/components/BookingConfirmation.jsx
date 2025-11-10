@@ -43,6 +43,7 @@ export default function BookingConfirmation() {
   const hiddenInvoiceRef = useRef();
   const [showPDFPreview, setShowPDFPreview] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfImageData, setPdfImageData] = useState(null);
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
@@ -99,170 +100,134 @@ export default function BookingConfirmation() {
     }
   };
 
-  // Generate PDF blob for preview
+  // Generate PDF blob for preview (exact A4 match at 2x scale -> 1588x2246 px)
   const generatePDFBlob = async () => {
     try {
-      console.log("=== Starting PDF generation ===");
-      
-      const element = hiddenInvoiceRef.current;
+      console.log("=== Starting PDF generation (A4 exact) ===");
 
-      if (!element) {
+      const source = hiddenInvoiceRef.current;
+      if (!source) {
         console.error("Hidden PDF element not found");
         throw new Error("PDF template element not found");
       }
 
-      console.log("✓ Element found:", element);
-      console.log("✓ Element dimensions:", element.offsetWidth, "x", element.offsetHeight);
-      console.log("✓ Element children count:", element.children.length);
+      // Fixed A4 size at 96 DPI in CSS pixels
+      const A4_WIDTH_PX = 794; // ~8.27in * 96dpi
+      const A4_HEIGHT_PX = 1123; // ~11.69in * 96dpi
+      const SCALE = 2; // produce 1588x2246 to match prior PDF
 
-      // Check if element has content
-      if (element.offsetHeight === 0 || element.offsetWidth === 0) {
-        console.error("Element has zero dimensions, waiting longer...");
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        console.log("After wait - Element dimensions:", element.offsetWidth, "x", element.offsetHeight);
+      // Clone the template so we can control layout/styling without touching UI
+      const clone = source.cloneNode(true);
+      // Ensure clone is visible and sized exactly to A4
+      clone.style.position = "fixed";
+      clone.style.left = "-10000px";
+      clone.style.top = "0";
+      clone.style.width = `${A4_WIDTH_PX}px`;
+      clone.style.minHeight = `${A4_HEIGHT_PX}px`;
+      clone.style.maxWidth = `${A4_WIDTH_PX}px`;
+      clone.style.opacity = "1";
+      clone.style.visibility = "visible";
+      clone.style.display = "block";
+      clone.style.transform = "none";
+      clone.style.background = "#ffffff";
+      clone.setAttribute("data-render-for", "pdf");
+
+      // Attempt to inline logo as base64 for guaranteed appearance
+      try {
+        const logoPath = "/RARIN-white-logo.png"; // public asset
+        const resp = await fetch(logoPath, { cache: "force-cache" });
+        if (resp.ok) {
+          const blobLogo = await resp.blob();
+          const logoDataUrl = await new Promise((resolve) => {
+            const fr = new FileReader();
+            fr.onload = () => resolve(fr.result);
+            fr.readAsDataURL(blobLogo);
+          });
+          const logoImg = clone.querySelector('img[alt="Rarin Logo"]');
+          if (logoImg) {
+            logoImg.src = logoDataUrl; // replace with inline base64
+            logoImg.removeAttribute('crossorigin');
+          }
+        } else {
+          console.warn("Logo fetch failed status", resp.status);
+        }
+      } catch (logoErr) {
+        console.warn("Logo inline failed", logoErr);
       }
 
-      // Ensure all images are loaded before generating PDF
-      console.log("Checking images...");
-      const images = element.querySelectorAll('img');
-      console.log("Found", images.length, "images");
-      
-      await Promise.all(Array.from(images).map((img, index) => {
-        return new Promise((resolve, reject) => {
-          console.log(`Checking image ${index + 1}:`, img.src);
-          if (img.complete) {
-            console.log(`✓ Image ${index + 1} already loaded`);
-            resolve();
-          } else {
-            console.log(`Waiting for image ${index + 1} to load...`);
-            img.onload = () => {
-              console.log(`✓ Image ${index + 1} loaded successfully`);
-              resolve();
-            };
-            img.onerror = (error) => {
-              console.warn(`⚠️ Image ${index + 1} failed to load:`, error);
-              resolve(); // Continue even if image fails
-            };
-            // Timeout after 5 seconds
-            setTimeout(() => {
-              console.warn(`⏰ Image ${index + 1} loading timeout`);
-              resolve();
-            }, 5000);
-          }
-        });
-      }));
+      // Append to DOM so styles (Tailwind, fonts) apply
+      document.body.appendChild(clone);
 
-      // Wait a bit more for element to be fully rendered
-      console.log("Waiting for element to be fully rendered...");
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Wait for images inside the clone
+      const images = clone.querySelectorAll("img");
+      await Promise.all(
+        Array.from(images).map((img) =>
+          new Promise((resolve) => {
+            if (img.complete) return resolve();
+            const done = () => resolve();
+            img.onload = done;
+            img.onerror = done;
+            setTimeout(done, 5000); // timeout safeguard
+          })
+        )
+      );
 
-      console.log("Starting html2canvas capture...");
-      // Capture the element as-is (it's already rendered off-screen)
-      const canvas = await html2canvas(element, {
-        scale: 1,
+      // Small settle wait to ensure final layout
+      await new Promise((r) => setTimeout(r, 150));
+
+      console.log("Capturing clone via html2canvas...", {
+        width: A4_WIDTH_PX,
+        height: A4_HEIGHT_PX,
+        scale: SCALE,
+      });
+
+      const canvas = await html2canvas(clone, {
+        scale: SCALE,
         useCORS: true,
         allowTaint: true,
         backgroundColor: "#ffffff",
-        width: 794,
-        height: Math.max(element.offsetHeight || 1123, 1123),
-        logging: true,
-        windowWidth: 794,
+        width: A4_WIDTH_PX,
+        height: A4_HEIGHT_PX,
+        windowWidth: A4_WIDTH_PX,
+        windowHeight: A4_HEIGHT_PX,
+        logging: false,
         removeContainer: true,
-        onclone: (clonedDoc) => {
-          console.log("html2canvas onclone callback");
-          // Ensure the cloned document has the same styles
-          const clonedElement = clonedDoc.querySelector('[data-pdf-template]');
-          if (clonedElement) {
-            console.log("✓ Found cloned element, making it visible");
-            clonedElement.style.display = 'block';
-            clonedElement.style.visibility = 'visible';
-            clonedElement.style.position = 'static';
-            clonedElement.style.left = 'auto';
-            clonedElement.style.top = 'auto';
-          } else {
-            console.warn("⚠️ Could not find cloned element with data-pdf-template");
-            // Try alternative selectors
-            const allDivs = clonedDoc.querySelectorAll('div[style*="width: 794px"]');
-            console.log("Found divs with 794px width:", allDivs.length);
-            if (allDivs.length > 0) {
-              const targetDiv = allDivs[0];
-              targetDiv.style.display = 'block';
-              targetDiv.style.visibility = 'visible';
-              targetDiv.style.position = 'static';
-              targetDiv.style.left = 'auto';
-              targetDiv.style.top = 'auto';
-              console.log("✓ Made fallback element visible");
-            }
-          }
-        }
       });
+
+      // Clean up the clone
+      document.body.removeChild(clone);
+
+      if (!canvas || canvas.width === 0 || canvas.height === 0) {
+        throw new Error("Failed to capture content - canvas is empty");
+      }
 
       console.log("✓ Canvas created:", canvas.width, "x", canvas.height);
 
-      if (canvas.width === 0 || canvas.height === 0) {
-        console.error("Canvas dimensions are zero");
-        throw new Error("Failed to capture content - canvas has zero dimensions");
-      }
-
-      console.log("Converting canvas to image data...");
-      const imgData = canvas.toDataURL("image/png", 0.95);
+      // To match the reference, embed full-bleed on a single A4 page
+      const imgData = canvas.toDataURL("image/png", 0.94);
       if (!imgData || imgData === "data:,") {
-        console.error("Failed to create image data from canvas");
         throw new Error("Failed to create canvas image data");
       }
 
-      console.log("✓ Image data created, length:", imgData.length);
+      // Save image for preview to guarantee parity with downloaded file
+      setPdfImageData(imgData);
 
-      console.log("Creating PDF...");
       const pdf = new jsPDF("p", "mm", "a4");
-
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      let imgWidth = pdfWidth;
-      let imgHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
 
-      console.log("PDF dimensions:", pdfWidth, "x", pdfHeight, "Image height:", imgHeight);
-
-      // If content is too tall, scale it down to fit on one page
-      if (imgHeight > pdfHeight) {
-        console.log("Content too tall, scaling to fit on one page");
-        const scale = pdfHeight / imgHeight;
-        imgHeight = pdfHeight;
-        imgWidth = imgWidth * scale;
-
-        // Center the image horizontally if scaled down
-        const xOffset = (pdfWidth - imgWidth) / 2;
-        pdf.addImage(imgData, "PNG", xOffset, 0, imgWidth, imgHeight);
-      } else {
-        pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-      }
-
-      // Convert to blob
-      console.log("Converting PDF to blob...");
-      const pdfBlob = pdf.output("blob");
-      console.log("✓ PDF blob created successfully:", pdfBlob.size, "bytes");
-      console.log("=== PDF generation completed successfully ===");
-      return pdfBlob;
+      const blob = pdf.output("blob");
+      console.log("✓ PDF blob created successfully:", blob.size, "bytes");
+      return blob;
     } catch (error) {
-      console.error("=== PDF generation failed ===");
-      console.error("Error:", error);
-      console.error("Error stack:", error.stack);
-      console.error("Error name:", error.name);
-      console.error("Error message:", error.message);
-      
+      console.error("=== PDF generation failed ===", error);
       // Try fallback simple PDF generation
-      console.log("=== Trying simple PDF fallback ===");
       try {
         const fallbackBlob = generateSimplePDF();
-        if (fallbackBlob) {
-          console.log("✓ Simple PDF fallback successful");
-          return fallbackBlob;
-        }
-      } catch (fallbackError) {
-        console.error("Simple PDF fallback also failed:", fallbackError);
-      }
-      
-      throw error; // Re-throw to be handled by caller
+        if (fallbackBlob) return fallbackBlob;
+      } catch (_) {}
+      throw error;
     }
   };
 
@@ -1136,63 +1101,39 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
             </button>
           </div>
 
-          {/* PDF Preview Content */}
+          {/* PDF Preview Content (image raster identical to PDF embed) */}
           <div className="flex-1 overflow-y-auto bg-gray-50 min-h-[400px]">
             {pdfUrl ? (
               <div className="flex flex-col items-center p-4">
-                <Document
-                  file={pdfUrl}
-                  onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-                  loading={
-                    <div className="flex items-center justify-center p-8">
-                      <div className="flex flex-col items-center gap-3">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#B8846B]"></div>
-                        <div className="text-gray-500">
-                          {language === "th" ? "กำลังโหลด PDF..." : "Loading PDF..."}
-                        </div>
+                {pdfImageData ? (
+                  <div className="bg-white shadow-md rounded-lg p-4 border border-gray-200">
+                    <img
+                      src={pdfImageData}
+                      alt="PDF preview"
+                      className="block w-[794px] h-auto"
+                      style={{ imageRendering: 'auto' }}
+                    />
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center p-8">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#B8846B]"></div>
+                      <div className="text-gray-500">
+                        {language === "th" ? "กำลังโหลดตัวอย่าง..." : "Loading preview..."}
                       </div>
                     </div>
-                  }
-                  error={
-                    <div className="flex items-center justify-center p-8">
-                      <div className="text-red-500 text-center">
-                        <div className="mb-2">⚠️</div>
-                        <div>
-                          {language === "th"
-                            ? "ไม่สามารถโหลด PDF ได้"
-                            : "Failed to load PDF"}
-                        </div>
-                      </div>
-                    </div>
-                  }
-                  className="shadow-lg"
-                >
-                  {numPages && Array.from(new Array(numPages), (el, index) => (
-                    <div key={`page_${index + 1}`} className="mb-4">
-                      <Page
-                        pageNumber={index + 1}
-                        width={Math.min(794, window.innerWidth - 100)}
-                        renderTextLayer={false}
-                        renderAnnotationLayer={false}
-                        className="shadow-md"
-                      />
-                    </div>
-                  ))}
-                </Document>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex items-center justify-center p-8 min-h-[400px]">
                 <div className="flex flex-col items-center gap-4">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#B8846B]"></div>
                   <div className="text-gray-600 text-lg">
-                    {language === "th"
-                      ? "กำลังสร้าง PDF..."
-                      : "Generating PDF..."}
+                    {language === "th" ? "กำลังสร้าง PDF..." : "Generating PDF..."}
                   </div>
                   <div className="text-gray-500 text-sm">
-                    {language === "th"
-                      ? "โปรดรอสักครู่..."
-                      : "Please wait a moment..."}
+                    {language === "th" ? "โปรดรอสักครู่..." : "Please wait a moment..."}
                   </div>
                 </div>
               </div>
@@ -1394,7 +1335,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
           {/* PDF Header */}
           <div
             style={{
-              backgroundColor: "#4e4e3d",
+              backgroundColor: "#B8846B",
               color: "white",
               padding: "20px",
               borderRadius: "8px 8px 0 0",
@@ -1405,16 +1346,15 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: "flex-start",
+                alignItems: "center",
               }}
             >
-              <div>
+              <div style={{marginTop: "-15px"}}>
                 <h2
                   style={{
                     fontSize: "18px",
                     fontWeight: "bold",
-                    marginBottom: "5px",
-                    margin: "0 0 5px 0",
+                    marginBottom: "5px"
                   }}
                 >
                   ใบประเมินราคาเบื้องต้น
@@ -1423,9 +1363,9 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                   Estimated Cost Summary
                 </p>
               </div>
-              <div style={{ textAlign: "right" }}>
+              <div>
                 <img
-                  src="/logo-rarin.png"
+                  src="/RARIN-white-logo.png"
                   alt="Rarin Logo"
                   crossOrigin="anonymous"
                   onError={(e) => {
@@ -1436,6 +1376,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                     height: "40px",
                     width: "auto",
                     objectFit: "contain",
+                    filter: "none",
                   }}
                 />
               </div>
