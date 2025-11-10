@@ -49,6 +49,20 @@ export default function PackageCard({ item, isPopular = false }) {
     return `${shooting} ${language === 'th' ? 'ชม.' : 'hrs'}`
   }
 
+  // Get package image for budget4 wedding packages
+  const getPackageImage = () => {
+    if (type !== 'wedding' && !(item.budgetId == 'budget4' || item.budgetId == 'budget3')) return null
+    
+    const imageMap = {
+      'w5': '/Inclusive-pack.jpeg',
+      'w6': '/basic-pack.jpeg',
+      'w7': '/celebrate-pack.jpeg',
+      'w8': '/yourstyle-pack.jpeg'
+    }
+    
+    return imageMap[item.id] || null
+  }
+
   // If not active, show collapsed version
   if (!active) {
     return (
@@ -180,6 +194,8 @@ export default function PackageCard({ item, isPopular = false }) {
         </div>
       </div>
 
+      
+
       {/* Features Section */}
       {packageInfo.features && packageInfo.features.length > 0 && (
         <div className="mb-4">
@@ -237,6 +253,18 @@ export default function PackageCard({ item, isPopular = false }) {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+
+      {/* Package Image for Budget4 Wedding Packages */}
+      {getPackageImage() && (
+        <div className="mb-4">
+          <img 
+            src={getPackageImage()} 
+            alt={packageInfo.name}
+            className="w-full object-cover rounded-m"
+          />
         </div>
       )}
 
