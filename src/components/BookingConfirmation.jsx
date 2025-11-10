@@ -1969,32 +1969,31 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
               </div>
               {/* Rarin Logo */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div
-                  className="text-[#B8846B] text-4xl font-bold"
-                  style={{ fontFamily: "cursive" }}
-                >
-                  Rarin
-                </div>
+                <img
+                  src="/logo-rarin-org.png"
+                  alt="Rarin Logo"
+                  className="h-16 object-contain"
+                />
               </div>
             </div>
 
             {/* Contact Info Strip */}
             <div className="border-b border-gray-200 p-4">
               <div className="grid grid-cols-4 gap-2 text-xs text-gray-600">
-                <div className="flex items-center justify-center">
-                  <span>📞 TEL 02-946-5625</span>
+                <div className="flex items-center justify-center text-center">
+                  <span>📞 <br />TEL<br />06-1946-1646</span>
                 </div>
-                <div className="flex items-center justify-center">
-                  <span>📧 hello@rarin.com</span>
+                <div className="flex items-center justify-center text-center">
+                  <span>📧 <br />Email<br />rarin.venue@gmail.com</span>
                 </div>
-                <div className="flex items-center justify-center">
-                  <span>💬 Line Official: @rarin</span>
+                <div className="flex items-center justify-center text-center">
+                  <span>💬<br /> Line Official<br />@rarinbkk</span>
                 </div>
                 <div className="flex items-center justify-center text-center">
                   <span>
-                    🕒 Office Time 10:00-19:00
+                    🕒<br />Office Time<br />10:00-19:00
                     <br />
-                    Monday - Sunday
+                    Everyday
                   </span>
                 </div>
               </div>

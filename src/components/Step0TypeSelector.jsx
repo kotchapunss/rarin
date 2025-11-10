@@ -20,7 +20,7 @@ export default function TypeSelector() {
     <div className="space-y-6">
       {/* Step 1 Header */}
       <div className="text-left">
-        <h2 className="text-xl font-bold text-gray-800 mb-2"   style={{ fontFamily: "'Momo Signature', 'Dancing Script', 'Brush Script MT', cursive" }}>{translations.step1Title}</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-2"   style={{ fontFamily: "'Bodoni Moda'" }}>{translations.step1Title}</h2>
         <p className="text-gray-600" style={{ fontFamily: "'Noto Sans Thai', sans-serif" }}>พร้อมต้อนรับทุกความทรงจำที่สวยงามของคุณ</p>
       </div>
  <p className="text-gray-600">{translations.step1Description}</p>

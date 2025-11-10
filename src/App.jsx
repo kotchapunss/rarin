@@ -15,11 +15,11 @@ function Header() {
   const t = useTranslations();
   
   return (
-    <header className="sticky top-0 z-10 bg-[#4e4e3d] backdrop-blur border-b border-stone-200 w-full">
+    <header className="sticky top-0 z-10 bg-[#8b634b] backdrop-blur border-b border-stone-200 w-full">
       <div className="mx-auto max-w-6xl px-4 py-4 md:py-5 flex items-center justify-between w-full">
         <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
           <img 
-            src="/logo-rarin.png" 
+            src="/RARIN-white-logo.png" 
             alt="Rarin Logo" 
             className="h-10 md:h-12 w-auto object-contain flex-shrink-0"
           />

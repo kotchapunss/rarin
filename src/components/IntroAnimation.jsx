@@ -50,31 +50,41 @@ export default function IntroAnimation({ onComplete }) {
         />
       </div>
 
-      {/* Animated Text */}
-      <div className="relative z-10">
+      {/* Animated Logo */}
+      <div className="relative z-10 flex flex-col items-center">
         <div
           className={`transition-all duration-1000 ${
-            showText ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            showText ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-90'
           } ${
-            fadeOut ? 'opacity-0 -translate-y-8 scale-95' : ''
+            fadeOut ? 'opacity-0 -translate-y-8 scale-110' : ''
           }`}
         >
-          <h1 
-            className="text-4xl md:text-9xl font text-transparent bg-clip-text bg-gradient-to-r from-[#a0735a] via-[#B8846B] to-[#a0735a] animate-text-shimmer"
-            style={{
-              fontFamily: "'Momo Signature', 'Dancing Script', 'Brush Script MT', cursive",
-              letterSpacing: '0.1em',
-              textShadow: '0 2px 10px rgba(184, 132, 107, 0.1)',
-              backgroundSize: '200% auto',
-            }}
-          >
-            Rarin
-          </h1>
+          {/* Logo with glow effect */}
+          <div className="relative">
+            {/* Glow effect behind logo */}
+            <div className="absolute inset-0 blur-2xl opacity-50 animate-pulse">
+              <img
+                src="/logo-rarin-org.png"
+                alt="Rarin Logo Glow"
+                className="w-96 h-96 md:w-96 md:h-96 object-contain"
+              />
+            </div>
+            
+            {/* Main logo */}
+            <img
+              src="/logo-rarin-org.png"
+              alt="Rarin Logo"
+              className="relative w-96 md:w-96  object-contain drop-shadow-2xl"
+              style={{
+                filter: 'drop-shadow(0 10px 30px rgba(184, 132, 107, 0.3))',
+              }}
+            />
+          </div>
           
           {/* Underline animation */}
           <div 
-            className={`h-1 bg-gradient-to-r from-transparent via-[#B8846B] to-transparent mt-4 transition-all duration-1000 delay-300 ${
-              showText ? 'w-full opacity-100' : 'w-0 opacity-0'
+            className={`h-1 bg-gradient-to-r from-transparent via-[#B8846B] to-transparent mt-2 transition-all duration-1000 delay-300 ${
+              showText ? 'w-96 opacity-100' : 'w-0 opacity-0'
             } ${
               fadeOut ? 'opacity-0' : ''
             }`}
@@ -82,8 +92,8 @@ export default function IntroAnimation({ onComplete }) {
         </div>
 
         {/* Subtitle */}
-        <p
-          className={`text-center mt-6 text-xl md:text-2xl text-stone-600 font-light tracking-wide transition-all duration-1000 delay-500 ${
+        {/* <p
+          className={`text-center mt-4 text-xl md:text-2xl text-stone-600 font-light tracking-wide transition-all duration-1000 delay-500 ${
             showText ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           } ${
             fadeOut ? 'opacity-0' : ''
@@ -93,7 +103,7 @@ export default function IntroAnimation({ onComplete }) {
             }}
         >
           Where Memories Begin
-        </p>
+        </p> */}
       </div>
 
       {/* Decorative Elements */}
