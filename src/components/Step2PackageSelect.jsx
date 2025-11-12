@@ -12,6 +12,7 @@ export default function PackageSelect() {
   
   // Check if we're in wedding flow (5 steps) or other flow (4 steps)
   const isWeddingFlow = type === 'wedding'
+  const isEventFlow = type === 'event'
   
   // Filter packages by selected budget
   const filteredPackages = budget 
@@ -20,17 +21,17 @@ export default function PackageSelect() {
   
   // Get event-type-specific content
   const getStepTitle = () => {
-    const titleObj = isWeddingFlow ? translations.step3Title : translations.step2Title
+    const titleObj = isWeddingFlow ? translations.step2Title.wedding : isEventFlow ? translations.step2Title.event : translations.step2Title.photo
     return typeof titleObj === 'object' ? (titleObj[type] || '') : titleObj
   }
 
   const getStepDescription = () => {
-    const descObj = isWeddingFlow ? translations.step3Description : translations.step2Description
+    const descObj = isWeddingFlow ? translations.step2Description.wedding : isEventFlow ? translations.step2Description.event : translations.step2Description.photo
     return typeof descObj === 'object' ? (descObj[type] || '') : descObj
   }
 
   const getSubDescription = () => {
-    const subDescObj = isWeddingFlow ? translations.step3SubDescription : translations.step2SubDescription
+    const subDescObj = isWeddingFlow ? translations.step2SubDescription.wedding : isEventFlow ? translations.step2SubDescription.event : translations.step2SubDescription.photo
     return typeof subDescObj === 'object' ? (subDescObj[type] || '') : ''
   }
 

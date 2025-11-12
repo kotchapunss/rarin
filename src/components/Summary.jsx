@@ -248,7 +248,12 @@ function calcTotal(
   let shortfall = 0;
 
   if (type === 'event' && pkg) {
-    minimumSpending = pkg.minSpend || 0;
+    // Use weekday/weekend specific pricing if available, otherwise fall back to minSpend
+    if (pkg.weekdayPrice !== undefined && pkg.weekendPrice !== undefined) {
+      minimumSpending = dayType === "weekday" ? pkg.weekdayPrice : pkg.weekendPrice;
+    } else {
+      minimumSpending = pkg.minSpend || 0;
+    }
     
     // Calculate current addon spending (food & beverage + alcoholic packages)
     currentAddonSpending = positiveAddons;
@@ -660,7 +665,7 @@ export default function Summary() {
                         {state.people} {state.language === "th" ? "ท่าน" : "people"}
                       </span>
                     </div>
-                    {state.people > maxCapacity && (
+                    {maxCapacity > 0 && state.people > maxCapacity && (
                       <div>
                         {state.language === "th" ? "รองรับสูงสุด: " : "Max capacity: "}
                         <span className="font-medium text-stone-700">
@@ -846,8 +851,8 @@ export default function Summary() {
                 <Row
                   label={
                     state.language === "th"
-                      ? "ยอดเลือกบริการปัจจุบัน (อาหาร & เครื่องดื่ม)"
-                      : "Current selection (Food & Beverage)"
+                      ? "ยอดเลือกบริการปัจจุบัน"
+                      : "Current selection spending"
                   }
                   value={currentAddonSpending}
                   className="text-red-700"

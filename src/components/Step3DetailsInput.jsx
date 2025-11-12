@@ -2,9 +2,9 @@
 import React, { useEffect } from 'react'
 import { useStore } from '../store'
 import { getTimeOptions, getBudget4TimeOptions, getPackages, getSettings } from '../data'
-import { 
-  useTranslations, 
-  getBudget4TimeOptionLabel, 
+import {
+  useTranslations,
+  getBudget4TimeOptionLabel,
   getBudget4TimeOptionTime,
   getTimeOptionLabel,
   getTimeOptionTime,
@@ -18,51 +18,61 @@ export default function DetailsInput() {
   const budget4TimeOptions = getBudget4TimeOptions()
   const translations = useTranslations()
   const settings = getSettings()
-  
+
   // Check if we're in wedding flow to determine correct step titles
   const isWeddingFlow = type === 'wedding'
-  
+
   // Helper function to render food budget warning
   const renderFoodBudgetWarning = () => {
     if (type !== 'wedding' || !selectedPackage || selectedPackage.budgetId === 'budget4' || people <= 0) {
       return null
     }
-    
+
     const weddingFoodLimits = settings.weddingFoodLimits
     const budgetLimit = weddingFoodLimits?.[selectedPackage.budgetId]
     const foodLimitGuests = budgetLimit?.limitGuests || maxGuests
     const extraGuestPrice = budgetLimit?.extraGuestPrice || 950
-    
+
     if (people <= foodLimitGuests) {
       return null
     }
-    
+
     const extraGuests = people - foodLimitGuests
     const extraCost = extraGuests * extraGuestPrice
-    
+
     return (
       <div className="text-amber-600 text-sm mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
         <div className="flex items-start gap-2">
-          <svg className="w-4 h-4 mt-0.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+
+          <svg
+            className="icon-info w-3 h-3 text-amber-600"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM9 9a1 1 0 112 0v4a1 1 0 11-2 0V9zm1-4a1.25 1.25 0 100 2.5A1.25 1.25 0 0010 5z"
+              clipRule="evenodd"
+            />
           </svg>
           <div>
-            <p className="font-medium">
-              {language === 'th' 
-                ? `แขกเกินงบอาหาร: จำนวนแขกเกิน ${foodLimitGuests} ท่าน`
-                : `Guests exceed food budget for this package : Over ${foodLimitGuests} guests`}
+            <p className="text-xs">
+              {language === 'th'
+                ? ` อาหารเบสิคไทยบุฟเฟ่ห์สำหรับแพ็คเกจนี้รองรับแขกจำนวน ${foodLimitGuests} ท่าน`
+                : ` Basic Thai buffet food for this package supports up to ${foodLimitGuests} guests`}
             </p>
             <p className="text-xs mt-1">
-              {language === 'th' 
-                ? `ค่าแขกเพิ่มเติม ${extraGuests} ท่าน × ฿${extraGuestPrice.toLocaleString()} = ฿${extraCost.toLocaleString()}`
-                : `Extra ${extraGuests} guests × ฿${extraGuestPrice.toLocaleString()} = ฿${extraCost.toLocaleString()}`}
+              {language === 'th'
+                ? `คำนวณแขกเพิ่มเติม ${extraGuests} ท่าน × ฿${extraGuestPrice.toLocaleString()} = ฿${extraCost.toLocaleString()}`
+                : `Calculate extra ${extraGuests} guests × ฿${extraGuestPrice.toLocaleString()} = ฿${extraCost.toLocaleString()}`}
             </p>
           </div>
         </div>
       </div>
     )
   }
-  
+
   // Get event-type-specific content
   const getStepTitle = () => {
     const titleObj = isWeddingFlow ? translations.step4WeddingTitle : translations.step3Title
@@ -76,15 +86,15 @@ export default function DetailsInput() {
 
   const stepTitle = getStepTitle()
   const stepDescription = getStepDescription()
-  
+
   // Get the selected package to access its time slots and discount eligibility
   const selectedPackage = getPackages(type).find(pkg => pkg.id === packageId)
   const isEligibleForDiscount = selectedPackage?.weekdayDiscountEligible === true
-  
+
   // Get capacity range for the selected package
   let packageCapacity = ''
   let capacityRange = { min: 50, max: 400 }
-  
+
   if (type === 'event' && packageId) {
     // For event type, get capacity from i18n
     packageCapacity = getPackageCapacity(type, packageId, language)
@@ -94,7 +104,7 @@ export default function DetailsInput() {
     if (selectedPackage?.budgetId !== 'budget4') {
       const weddingFoodLimits = settings.weddingFoodLimits
       const budgetLimit = weddingFoodLimits?.[selectedPackage?.budgetId]
-      
+
       if (budgetLimit) {
         // Use food budget limit as the max guests
         capacityRange = {
@@ -130,17 +140,17 @@ export default function DetailsInput() {
       }
     }
   }
-  
+
   const minGuests = capacityRange.min
   const maxGuests = capacityRange.max
-  
+
   // Check if the selected package is budget4
   const isBudget4Package = selectedPackage?.budgetId === 'budget4'
-  
+
   // Calculate weekday discount amount and label
   let weekdayDiscountAmount = 0
   let weekdayDiscountLabel = ''
-  
+
   if (isBudget4Package) {
     weekdayDiscountAmount = settings.budget4WeekdayDiscount
     weekdayDiscountLabel = `-฿${weekdayDiscountAmount.toLocaleString()}`
@@ -148,11 +158,11 @@ export default function DetailsInput() {
     weekdayDiscountAmount = settings.weekdayDiscount
     weekdayDiscountLabel = `-฿${weekdayDiscountAmount.toLocaleString()}`
   }
-  
+
   // Parse timeSlots from the selected package or use budget4 special options
   let availableTimeSlots
   let hasTimeSlots = true // Track if package has time slots
-  
+
   if (isBudget4Package) {
     // Use budget4 special time options with surcharges
     availableTimeSlots = budget4TimeOptions.map(option => {
@@ -187,12 +197,12 @@ export default function DetailsInput() {
       }
     })
   }
-  
+
   // Validation states (after availableTimeSlots is defined)
   const isValidPeople = type === 'photo' ? true : people > 0
   const isValidPeriod = hasTimeSlots ? (period && period !== '' && availableTimeSlots.some(slot => slot.value === period)) : true
   const isValidDayType = dayType && dayType !== ''
-  
+
   // Set default period if none is selected or if the current period is not available
   useEffect(() => {
     if (hasTimeSlots && availableTimeSlots.length > 0) {
@@ -207,7 +217,7 @@ export default function DetailsInput() {
       }
     }
   }, [packageId, hasTimeSlots, period, setPeriod]) // Remove availableTimeSlots from dependencies
-  
+
   // Set initial people count based on minimum capacity for event type
   useEffect(() => {
     if (type === 'event' && packageId && (people === 0 || people < minGuests)) {
@@ -222,7 +232,7 @@ export default function DetailsInput() {
       }
     }
   }, [packageId, type, minGuests, people, setPeople])
-  
+
   // Get sub-description based on event type
   const getSubDescription = () => {
     if (isWeddingFlow) {
@@ -249,23 +259,22 @@ export default function DetailsInput() {
       {type !== 'photo' && (
         <div>
           <label className="block text-sm text-stone-600 mb-3">
-            {translations.numberOfGuests} 
+            {translations.numberOfGuests}
             {/* ({minGuests} - {maxGuests})  */}
             <span className="text-red-500 ml-1">*</span>
           </label>
           <div className="mb-4">
-            <input 
-              type="number" 
-              value={people} 
+            <input
+              type="input"
+              value={people}
               min={minGuests}
               max={maxGuests}
-              onChange={(e)=>setPeople(parseInt(e.target.value||'0',10))}
+              onChange={(e) => setPeople(parseInt(e.target.value || '0', 10))}
               placeholder={language === 'th' ? 'ระบุจำนวนแขก' : 'Enter number of guests'}
-              className={`w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2 text-lg transition-colors ${
-                isValidPeople 
-                  ? 'border-stone-300 focus:ring-[#B8846B]' 
-                  : 'border-red-300 focus:ring-red-400 bg-red-50'
-              }`}
+              className={`w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2 text-lg transition-colors ${isValidPeople
+                ? 'border-stone-300 focus:ring-[#B8846B]'
+                : 'border-red-300 focus:ring-red-400 bg-red-50'
+                }`}
               style={{
                 MozAppearance: 'textfield',
                 WebkitAppearance: 'textfield'
@@ -274,8 +283,8 @@ export default function DetailsInput() {
             />
             {!isValidPeople && (
               <p className="text-red-500 text-sm mt-1">
-                {language === 'th' 
-                  ? 'กรุณาระบุจำนวนแขก' 
+                {language === 'th'
+                  ? 'กรุณาระบุจำนวนแขก'
                   : 'Please enter number of guests'}
               </p>
             )}
@@ -297,11 +306,10 @@ export default function DetailsInput() {
               <button
                 key={slot.value}
                 onClick={() => setPeriod(slot.value)}
-                className={`p-4 rounded-xl border text-center transition ${
-                  period === slot.value 
-                    ? 'border-2 border-[#B8846B] bg-[#f9f5f3]' 
-                    : 'bg-white border-stone-300 hover:border-[#c19a7e] hover:bg-[#f9f5f3]'
-                }`}
+                className={`p-4 rounded-xl border text-center transition ${period === slot.value
+                  ? 'border-2 border-[#B8846B] bg-[#f9f5f3]'
+                  : 'bg-white border-stone-300 hover:border-[#c19a7e] hover:bg-[#f9f5f3]'
+                  }`}
               >
                 <div className="font-medium">{slot.label}</div>
                 {slot.surcharge > 0 && (
@@ -329,11 +337,10 @@ export default function DetailsInput() {
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => setDayType('weekday')}
-            className={`p-4 rounded-xl border text-center transition ${
-              dayType === 'weekday' 
-                ? 'border-2  border-[#B8846B]' 
-                : 'bg-white border-stone-300 hover:border-[#c19a7e] hover:bg-[#f9f5f3]'
-            }`}
+            className={`p-4 rounded-xl border text-center transition ${dayType === 'weekday'
+              ? 'border-2  border-[#B8846B] bg-[#f9f5f3]'
+              : 'bg-white border-stone-300 hover:border-[#c19a7e] hover:bg-[#f9f5f3]'
+              }`}
           >
             <div className="font-medium">{translations.weekday || (language === 'th' ? 'วันธรรมดา' : 'Weekday')}</div>
             {type === 'event' && (
@@ -342,20 +349,18 @@ export default function DetailsInput() {
               </div>
             )}
             {isEligibleForDiscount && weekdayDiscountLabel && (
-              <div className={`text-xs mt-1 opacity-75 ${
-                dayType === 'weekday' ? 'text-xs-200' : 'text-xs-600'
-              }`}>
+              <div className={`text-xs mt-1 opacity-75 ${dayType === 'weekday' ? 'text-xs-200' : 'text-xs-600'
+                }`}>
                 {weekdayDiscountLabel}
               </div>
             )}
           </button>
           <button
             onClick={() => setDayType('weekend')}
-            className={`p-4 rounded-xl border text-center transition ${
-              dayType === 'weekend' 
-                ? 'border-2 border-[#B8846B]' 
-                : 'bg-white border-stone-300 hover:border-[#c19a7e] hover:bg-[#f9f5f3]'
-            }`}
+            className={`p-4 rounded-xl border text-center transition ${dayType === 'weekend'
+              ? 'border-2 border-[#B8846B] bg-[#f9f5f3]'
+              : 'bg-white border-stone-300 hover:border-[#c19a7e] hover:bg-[#f9f5f3]'
+              }`}
           >
             <div className="font-medium">{translations.weekend || (language === 'th' ? 'วันหยุด/สุดสัปดาห์' : 'Weekend')}</div>
             {type === 'event' && (
@@ -377,9 +382,9 @@ export default function DetailsInput() {
         <label className="block text-sm text-stone-600 mb-3">
           {translations.specialRequests}
         </label>
-        <textarea 
-          value={notes} 
-          onChange={(e)=>setNotes(e.target.value)}
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
           rows={4}
           placeholder={translations.placeholder}
           className="w-full rounded-xl border border-stone-300 px-4 py-3 focus:outline-none focus:border-2 focus:border-[#B8846B]"

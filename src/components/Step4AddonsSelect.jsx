@@ -117,7 +117,6 @@ export default function AddonsSelect() {
             id: "classic_thai_buffet",
             name: budget4Data.items.classic_thai_buffet.name,
             description: budget4Data.items.classic_thai_buffet.description,
-            minGuests: 30,
             price: 950,
             type: "auto",
             unit: budget4Data.items.classic_thai_buffet.unit
@@ -126,7 +125,6 @@ export default function AddonsSelect() {
             id: "deluxe_international_buffet",
             name: budget4Data.items.deluxe_international_buffet.name,
             description: budget4Data.items.deluxe_international_buffet.description,
-            minGuests: 40,
             price: 1290,
             type: "auto",
             unit: budget4Data.items.deluxe_international_buffet.unit
@@ -194,12 +192,12 @@ export default function AddonsSelect() {
             unit: budget4Data.items.beer_singha.unit
           },
           {
-            id: "wine_house",
-            name: budget4Data.items.wine_house.name,
-            description: budget4Data.items.wine_house.description,
-            price: 9900,
+            id: "cocktail",
+            name: budget4Data.items.cocktail.name,
+            description: budget4Data.items.cocktail.description,
+            price: 29000,
             type: "input",
-            unit: budget4Data.items.wine_house.unit
+            unit: budget4Data.items.cocktail.unit
           }
         ]
       },
@@ -239,7 +237,7 @@ export default function AddonsSelect() {
     if (isBudget4Wedding) {
       return {
         services: {
-          title: language === 'th' ? 'บริการ' : 'Services',
+          title: language === 'th' ? 'พิธีหมั้น' : 'Services',
           icon: '💒',
           categories: ['ceremony']
         },
@@ -257,13 +255,19 @@ export default function AddonsSelect() {
     } else if (type === 'event') {
       // Group event food categories under main tabs
       const eventCategories = Object.keys(addonCategories)
-      const foodCategories = eventCategories.filter(cat => cat !== 'liquor')
+      const foodCategories = eventCategories.filter(cat => cat !== 'liquor' && cat !== 'coffee_break' )
+      const breakCategories = eventCategories.filter(cat => cat === 'coffee_break' )
       
       return {
         catering: {
           title: language === 'th' ? 'อาหารและเครื่องดื่ม' : 'Food & Beverage',
           icon: '🍽️',
           categories: foodCategories.length > 0 ? foodCategories : []
+        },
+        breaks: {
+          title: language === 'th' ? 'กาแฟ & ชาอาหารว่างบ่าย' : 'Coffee Break & Afternoon Tea',
+          icon: '☕',
+          categories: breakCategories.length > 0 ? breakCategories : []
         },
         beverages: {
           title: language === 'th' ? 'เครื่องดื่มแอลกอฮอล์' : 'Alcoholic Beverages',
@@ -356,10 +360,10 @@ export default function AddonsSelect() {
     }
 
     // For event type food categories, allow only single selection ACROSS ALL food categories
-    if (type === 'event' && !isChecked && categoryKey !== 'liquor') {
+    if (type === 'event' && !isChecked && categoryKey !== 'liquor' && categoryKey !== 'coffee_break') {
       // Clear ALL other food items from ALL food categories (except liquor)
       Object.keys(addonCategories).forEach(catKey => {
-        if (catKey !== 'liquor') {
+        if (catKey !== 'liquor' && catKey !== 'coffee_break') {
           const categoryItems = addonCategories[catKey]?.items || []
           categoryItems.forEach(item => {
             if (item.id !== addonId && addons[item.id]) {

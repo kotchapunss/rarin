@@ -104,7 +104,7 @@ export const getPackageCapacity = (eventType, packageId, language) => {
 
 // Helper to parse capacity range from string like "20-60 guests" or "20-60 คน"
 export const parseCapacityRange = (capacityString) => {
-  if (!capacityString) return { min: 50, max: 400 }; // Default
+  if (!capacityString) return { min: 50, max: 999999 }; // Default
   
   // Extract numbers from string like "20-60 guests" or "20-60 คน"
   const match = capacityString.match(/(\d+)-(\d+)/);
@@ -115,7 +115,7 @@ export const parseCapacityRange = (capacityString) => {
     };
   }
   
-  return { min: 50, max: 400 }; // Default fallback
+  return { min: 50, max: 999999 }; // Default fallback
 };
 
 // Get package detail arrays

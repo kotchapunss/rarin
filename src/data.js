@@ -38,6 +38,8 @@ export function buildPackages(language = 'en') {
       limits: pkg.limits,
       food: pkg.food,
       minSpend: pkg.minSpend,
+      weekdayPrice: pkg.weekdayPrice,
+      weekendPrice: pkg.weekendPrice,
       capacity: pkg.capacity,
       duration: pkg.duration
     }))
@@ -108,10 +110,6 @@ export function getTimeOptions() {
 
 export function getBudget4TimeOptions() {
   return config.budget4TimeOptions
-}
-
-export function getGuestRanges() {
-  return config.guestRanges
 }
 
 export function getAddons(type, language = 'en') {

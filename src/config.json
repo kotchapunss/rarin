@@ -111,7 +111,7 @@
             },
             {
                 "id": "w9",
-                "price": 499000,
+                "price": 209000,
                 "budgetId": "budget4",
                 "weekdayDiscountEligible": true,
                 "timeSlots": "06:00 - 14:00 / 18:00 - 22:00",
@@ -128,7 +128,7 @@
                 "isPopular": false
             },
             {
-                "id": "e2", 
+                "id": "e2",
                 "price": 80000,
                 "minSpend": 80000,
                 "area": "Ballad Riverside Restaurant",
@@ -231,23 +231,6 @@
             "isDefault": false
         }
     ],
-    "guestRanges": [
-        {
-            "value": 50,
-            "label": "100 - 300",
-            "range": "(100 - 300)"
-        },
-        {
-            "value": 100,
-            "label": "300 - 500",
-            "range": "(300 - 500)"
-        },
-        {
-            "value": 150,
-            "label": "500+",
-            "range": "(500+)"
-        }
-    ],
     "addons": {
         "wedding": {
             "ceremony": {
@@ -258,7 +241,7 @@
                         "type": "fixed"
                     },
                     {
-                        "id": "monk_blessing", 
+                        "id": "monk_blessing",
                         "price": 15000,
                         "type": "fixed"
                     },
@@ -271,58 +254,6 @@
                         "id": "vow_ceremony",
                         "price": 8000,
                         "type": "fixed"
-                    }
-                ]
-            },
-            "food": {
-                "items": [
-                    {
-                        "id": "classic_thai_buffet",
-                        "price": 1200,
-                        "type": "per_person",
-                        "minGuests": 50
-                    },
-                    {
-                        "id": "deluxe_international_buffet",
-                        "price": 1500,
-                        "type": "per_person",
-                        "minGuests": 50
-                    },
-                    {
-                        "id": "delight_cocktail",
-                        "price": 800,
-                        "type": "per_person",
-                        "minGuests": 30
-                    },
-                    {
-                        "id": "stylish_heavy_cocktail",
-                        "price": 1000,
-                        "type": "per_person",
-                        "minGuests": 30
-                    },
-                    {
-                        "id": "classic_chinese_table",
-                        "price": 12000,
-                        "type": "per_table",
-                        "unit": "10_people"
-                    },
-                    {
-                        "id": "deluxe_chinese_table",
-                        "price": 15000,
-                        "type": "per_table",
-                        "unit": "10_people"
-                    },
-                    {
-                        "id": "stylish_international_buffet",
-                        "price": 1800,
-                        "type": "per_person",
-                        "minGuests": 50
-                    },
-                    {
-                        "id": "western_thai_course_menu",
-                        "price": 2200,
-                        "type": "per_person",
-                        "minGuests": 50
                     }
                 ]
             },
@@ -361,28 +292,33 @@
                 "items": [
                     {
                         "id": "a1",
-                        "price": 280,
-                        "type": "per_person"
+                        "price": 990,
+                        "type": "per_person",
+                        "minGuests": 50
                     },
                     {
                         "id": "a2",
-                        "price": 350,
-                        "type": "per_person"
+                        "price": 1200,
+                        "type": "per_person",
+                        "minGuests": 30
                     },
                     {
                         "id": "a3",
-                        "price": 450,
-                        "type": "per_person"
+                        "price": 1500,
+                        "type": "per_person",
+                        "minGuests": 30
                     },
                     {
                         "id": "a4",
-                        "price": 380,
-                        "type": "per_person"
+                        "price": 2200,
+                        "type": "per_person",
+                        "minGuests": 100
                     },
                     {
                         "id": "a5",
-                        "price": 420,
-                        "type": "per_person"
+                        "price": 2500,
+                        "type": "per_person",
+                        "minGuests": 100
                     }
                 ]
             },
@@ -390,17 +326,17 @@
                 "items": [
                     {
                         "id": "fs1",
-                        "price": 250,
+                        "price": 1200,
                         "type": "per_person"
                     },
                     {
                         "id": "fs2",
-                        "price": 350,
+                        "price": 1500,
                         "type": "per_person"
                     },
                     {
                         "id": "fs3",
-                        "price": 450,
+                        "price": 1900,
                         "type": "per_person"
                     }
                 ]
@@ -409,33 +345,39 @@
                 "items": [
                     {
                         "id": "cm1",
-                        "price": 580,
-                        "type": "per_person"
+                        "price": 4000,
+                        "type": "per_person",
+                        "minGuests": 50
                     },
                     {
                         "id": "cm2",
-                        "price": 680,
-                        "type": "per_person"
+                        "price": 3300,
+                        "type": "per_person",
+                        "minGuests": 100
                     },
                     {
                         "id": "cm3",
-                        "price": 780,
-                        "type": "per_person"
+                        "price": 4200,
+                        "type": "per_person",
+                        "minGuests": 50
                     },
                     {
                         "id": "cm4",
-                        "price": 880,
-                        "type": "per_person"
+                        "price": 3500,
+                        "type": "per_person",
+                        "minGuests": 100
                     },
                     {
                         "id": "cm5",
-                        "price": 980,
-                        "type": "per_person"
+                        "price": 4900,
+                        "type": "per_person",
+                        "minGuests": 50
                     },
                     {
                         "id": "cm6",
-                        "price": 1080,
-                        "type": "per_person"
+                        "price": 4500,
+                        "type": "per_person",
+                        "minGuests": 100
                     }
                 ]
             },
@@ -443,23 +385,27 @@
                 "items": [
                     {
                         "id": "cb1",
-                        "price": 120,
-                        "type": "per_person"
+                        "price": 650,
+                        "type": "per_person",
+                        "minGuests": 20
                     },
                     {
                         "id": "cb2",
-                        "price": 180,
-                        "type": "per_person"
+                        "price": 750,
+                        "type": "per_person",
+                        "minGuests": 20
                     },
                     {
                         "id": "cb3",
-                        "price": 150,
-                        "type": "per_person"
+                        "price": 750,
+                        "type": "per_person",
+                        "minGuests": 20
                     },
                     {
                         "id": "cb4",
-                        "price": 220,
-                        "type": "per_person"
+                        "price": 1950,
+                        "type": "per_person",
+                        "minGuests": 100
                     }
                 ]
             },
@@ -467,23 +413,27 @@
                 "items": [
                     {
                         "id": "a6",
-                        "price": 380,
-                        "type": "per_person"
+                        "price": 1200,
+                        "type": "per_person",
+                        "minGuests": 30
                     },
                     {
                         "id": "a7",
-                        "price": 450,
-                        "type": "per_person"
+                        "price": 1500,
+                        "type": "per_person",
+                        "minGuests": 30
                     },
                     {
                         "id": "a8",
-                        "price": 680,
-                        "type": "per_person"
+                        "price": 2800,
+                        "type": "per_person",
+                        "minGuests": 50
                     },
                     {
                         "id": "a9",
-                        "price": 780,
-                        "type": "per_person"
+                        "price": 2500,
+                        "type": "per_person",
+                        "minGuests": 100
                     }
                 ]
             },
@@ -569,7 +519,7 @@
         "budget4WeekdayDiscount": 40000,
         "weddingFoodLimits": {
             "budget1": {
-                "limitGuests": 50,
+                "limitGuests": 20,
                 "extraGuestPrice": 950
             },
             "budget2": {

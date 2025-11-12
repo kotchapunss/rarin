@@ -62,18 +62,18 @@ export default function BookingConfirmation() {
     try {
       console.log("=== Generating simple PDF fallback ===");
       const pdf = new jsPDF("p", "mm", "a4");
-      
+
       // Set font
       pdf.setFont("helvetica", "normal");
-      
+
       // Header
       pdf.setFontSize(16);
       pdf.text("Rarin - Estimated Cost Summary", 20, 20);
-      
+
       // Package info
       pdf.setFontSize(12);
       let yPos = 40;
-      
+
       pdf.text(`Service Type: ${state.type}`, 20, yPos);
       yPos += 10;
       pdf.text(`Package: ${getPackageName()}`, 20, yPos);
@@ -84,7 +84,7 @@ export default function BookingConfirmation() {
       yPos += 10;
       pdf.text(`Period: ${state.period}`, 20, yPos);
       yPos += 20;
-      
+
       // Total
       pdf.setFontSize(14);
       pdf.text(`Total: ฿${total.toLocaleString()}`, 20, yPos);
@@ -92,7 +92,7 @@ export default function BookingConfirmation() {
       pdf.text(`VAT: ฿${vat.toLocaleString()}`, 20, yPos);
       yPos += 10;
       pdf.text(`Subtotal: ฿${subtotal.toLocaleString()}`, 20, yPos);
-      
+
       return pdf.output("blob");
     } catch (error) {
       console.error("Error generating simple PDF:", error);
@@ -226,7 +226,7 @@ export default function BookingConfirmation() {
       try {
         const fallbackBlob = generateSimplePDF();
         if (fallbackBlob) return fallbackBlob;
-      } catch (_) {}
+      } catch (_) { }
       throw error;
     }
   };
@@ -278,11 +278,11 @@ export default function BookingConfirmation() {
       console.error("=== PDF preview modal failed ===");
       console.error("Error in showPDFPreviewModal:", error);
       setShowPDFPreview(false);
-      
+
       const errorMessage = language === "th"
         ? `ไม่สามารถสร้าง PDF ได้: ${error.message || "กรุณาลองใหม่อีกครั้ง"}`
         : `Failed to generate PDF: ${error.message || "Please try again."}`;
-        
+
       alert(errorMessage);
     }
   };
@@ -301,7 +301,7 @@ export default function BookingConfirmation() {
     const timer = setTimeout(() => {
       setIsComponentReady(true);
     }, 1000); // Wait 1 second for component to be fully ready
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -313,9 +313,8 @@ export default function BookingConfirmation() {
       if (pdfUrl) {
         const link = document.createElement("a");
         link.href = pdfUrl;
-        link.download = `${
-          t.quotationFilename || "ใบประเมินราคา"
-        }-${Date.now()}.pdf`;
+        link.download = `${t.quotationFilename || "ใบประเมินราคา"
+          }-${Date.now()}.pdf`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -334,9 +333,8 @@ export default function BookingConfirmation() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `${
-        t.quotationFilename || "ใบประเมินราคา"
-      }-${Date.now()}.pdf`;
+      link.download = `${t.quotationFilename || "ใบประเมินราคา"
+        }-${Date.now().toString}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -346,11 +344,11 @@ export default function BookingConfirmation() {
     } catch (error) {
       console.error("Error generating PDF:", error);
       console.error("Error details:", error.message, error.stack);
-      
+
       const errorMessage = language === "th"
         ? `ไม่สามารถสร้าง PDF ได้: ${error.message || "กรุณาลองใหม่อีกครั้ง"}`
         : `Failed to generate PDF: ${error.message || "Please try again."}`;
-        
+
       alert(errorMessage);
     }
   };
@@ -363,7 +361,7 @@ export default function BookingConfirmation() {
       URL.revokeObjectURL(pdfUrl);
       setPdfUrl(null);
     }
-    
+
     setShowSubmitModal(true);
   };
 
@@ -386,17 +384,17 @@ export default function BookingConfirmation() {
     setIsSubmitting(true);
     try {
       console.log('Starting form submission...');
-      
+
       // Generate PDF blob
       console.log('Generating PDF blob...');
       let pdfBlob = null;
       let pdfBase64 = null;
-      
+
       try {
         pdfBlob = await generatePDFBlob();
         if (pdfBlob) {
           console.log('PDF blob generated successfully:', pdfBlob.size, 'bytes');
-          
+
           // Convert blob to base64 for EmailJS
           const reader = new FileReader();
           pdfBase64 = await new Promise((resolve, reject) => {
@@ -430,7 +428,7 @@ export default function BookingConfirmation() {
         customer_line_id: submitForm.lineId || '-',
         event_date: submitForm.date || '-',
         special_request: submitForm.specialRequest || 'None',
-        
+
         // Booking details (English only for EmailJS compatibility)
         service_type: state.type === 'wedding' ? 'Wedding' : state.type === 'event' ? 'Event' : 'Photo Shoot',
         package_name: getPackageName(),
@@ -438,7 +436,7 @@ export default function BookingConfirmation() {
         day_type: state.dayType === 'weekday' ? 'Weekday' : 'Weekend/Holiday',
         period: state.period,
         total_price: `${total.toLocaleString()} THB`,
-        
+
         // Detailed pricing breakdown for email table
         base_price: state.type === 'event' ? '-' : `${basePrice.toLocaleString()} THB`,
         addons_total: `${(addonsTotal || 0).toLocaleString()} THB`,
@@ -448,7 +446,7 @@ export default function BookingConfirmation() {
         total_discounts: (weekdayDiscount + Math.abs(marketingDiscounts || 0)) > 0 ? `${(weekdayDiscount + Math.abs(marketingDiscounts || 0)).toLocaleString()} THB` : '-',
         subtotal: `${subtotal.toLocaleString()} THB`,
         vat_amount: `${vat.toLocaleString()} THB`,
-        
+
         // Additional details
         booking_summary: JSON.stringify({
           type: state.type,
@@ -465,7 +463,7 @@ export default function BookingConfirmation() {
             quantity: addon.quantity
           }))
         }, null, 2),
-        
+
         // Email body content (keeping Thai in body as it's in a text block)
         email_body: `Booking Details from ${submitForm.email}
 
@@ -495,40 +493,40 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
         emailData.pdf_attachment = pdfBase64;
         emailData.pdf_filename = `booking-quote-${Date.now()}.pdf`;
       }
-      
+
       console.log('Sending email with EmailJS...');
-      
+
       // Check if EmailJS is configured properly (updated to use actual IDs)
-      if (EMAILJS_PUBLIC_KEY === 'your_public_key_here' || 
-          EMAILJS_SERVICE_ID === 'service_rarin' || 
-          EMAILJS_TEMPLATE_ID === 'template_rarin_booking' ||
-          EMAILJS_PUBLIC_KEY === 'N0Z9CM_EdE46WDfka' || 
-          EMAILJS_SERVICE_ID === 'service_8yk3ezo' || 
-          EMAILJS_TEMPLATE_ID === 'template_y8ca0gi') {
-        
+      if (EMAILJS_PUBLIC_KEY === 'your_public_key_here' ||
+        EMAILJS_SERVICE_ID === 'service_rarin' ||
+        EMAILJS_TEMPLATE_ID === 'template_rarin_booking' ||
+        EMAILJS_PUBLIC_KEY === 'N0Z9CM_EdE46WDfka' ||
+        EMAILJS_SERVICE_ID === 'service_8yk3ezo' ||
+        EMAILJS_TEMPLATE_ID === 'template_y8ca0gi') {
+
         // Since we have the actual credentials now, let's log the email data for debugging
         console.log('Email data being sent:', {
           ...emailData,
           pdf_attachment: pdfBase64 ? `[PDF Base64 - ${pdfBase64.length} characters]` : 'No PDF'
         });
       }
-      
+
       // Send email using EmailJS
       const result = await emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
         emailData
       );
-      
+
       console.log('Email sent successfully:', result);
 
       // Show success message
-      const successMessage = language === 'th' 
-        ? 'ส่งข้อมูลเรียบร้อยแล้ว! ' 
+      const successMessage = language === 'th'
+        ? 'ส่งข้อมูลเรียบร้อยแล้ว! '
         : 'Request submitted successfully!';
 
       alert(successMessage);
-      
+
       setShowSubmitModal(false);
       setSubmitForm({
         email: '',
@@ -541,15 +539,15 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
     } catch (error) {
       console.error('Error submitting request:', error);
       console.error('Error details:', error.message, error.stack);
-      
-      let errorMessage = language === 'th' 
-        ? 'เกิดข้อผิดพลาดในการส่งอีเมล กรุณาลองใหม่อีกครั้ง' 
+
+      let errorMessage = language === 'th'
+        ? 'เกิดข้อผิดพลาดในการส่งอีเมล กรุณาลองใหม่อีกครั้ง'
         : 'Failed to send email. Please try again.';
-        
+
       if (error.text) {
         errorMessage += ` (${error.text})`;
       }
-      
+
       alert(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -560,16 +558,16 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
     try {
       console.log("=== Calculating total ===");
       console.log("Current state:", state);
-      
+
       // Use the same calculation rules as Summary.calcTotal to ensure consistent totals
       const selectedPackage = getPackages(state.type).find(
         (p) => p.id === state.packageId
       );
       console.log("Selected package:", selectedPackage);
-      
+
       const settings = getSettings();
       console.log("Settings:", settings);
-      
+
       const budget4TimeOptions = getBudget4TimeOptions();
 
       // Calculate base price based on package type and day type
@@ -591,200 +589,200 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
 
       console.log("Base price:", basePrice);
 
-    // Separate positive addons from negative (discounts)
-    const positiveAddons = Object.values(state.addons || {}).reduce(
-      (acc, v) => {
-        const n = typeof v === "number" ? v : Number(v) || 0;
-        return acc + (n > 0 ? n : 0);
-      },
-      0
-    );
+      // Separate positive addons from negative (discounts)
+      const positiveAddons = Object.values(state.addons || {}).reduce(
+        (acc, v) => {
+          const n = typeof v === "number" ? v : Number(v) || 0;
+          return acc + (n > 0 ? n : 0);
+        },
+        0
+      );
 
-    const marketingDiscounts = Object.values(state.addons || {}).reduce(
-      (acc, v) => {
-        const n = typeof v === "number" ? v : Number(v) || 0;
-        return acc + (n < 0 ? n : 0);
-      },
-      0
-    );
+      const marketingDiscounts = Object.values(state.addons || {}).reduce(
+        (acc, v) => {
+          const n = typeof v === "number" ? v : Number(v) || 0;
+          return acc + (n < 0 ? n : 0);
+        },
+        0
+      );
 
-    const addonsSum = positiveAddons + marketingDiscounts;
+      const addonsSum = positiveAddons + marketingDiscounts;
 
-    // Calculate extra guest charges based on package capacity
-    let extraGuestsCost = 0;
-    let extraGuestsCount = 0;
-    let extraGuestUnitPrice = 0;
+      // Calculate extra guest charges based on package capacity
+      let extraGuestsCost = 0;
+      let extraGuestsCount = 0;
+      let extraGuestUnitPrice = 0;
 
-    if (selectedPackage && state.people > 0) {
-      if (state.type === 'wedding' && selectedPackage.budgetId !== 'budget4') {
-        // For wedding type (except budget4), use food budget limits from settings
-        const weddingFoodLimits = settings.weddingFoodLimits;
-        const budgetLimit = weddingFoodLimits?.[selectedPackage.budgetId];
-        
-        if (budgetLimit) {
-          const foodLimitGuests = budgetLimit.limitGuests;
-          extraGuestUnitPrice = budgetLimit.extraGuestPrice;
-          
-          // Calculate extra guests if current guest count exceeds food limit
-          if (state.people > foodLimitGuests) {
-            extraGuestsCount = state.people - foodLimitGuests;
+      if (selectedPackage && state.people > 0) {
+        if (state.type === 'wedding' && selectedPackage.budgetId !== 'budget4') {
+          // For wedding type (except budget4), use food budget limits from settings
+          const weddingFoodLimits = settings.weddingFoodLimits;
+          const budgetLimit = weddingFoodLimits?.[selectedPackage.budgetId];
+
+          if (budgetLimit) {
+            const foodLimitGuests = budgetLimit.limitGuests;
+            extraGuestUnitPrice = budgetLimit.extraGuestPrice;
+
+            // Calculate extra guests if current guest count exceeds food limit
+            if (state.people > foodLimitGuests) {
+              extraGuestsCount = state.people - foodLimitGuests;
+              extraGuestsCost = extraGuestsCount * extraGuestUnitPrice;
+            }
+          }
+        } else {
+          // For event, photo types, and wedding budget4 packages, use existing capacity-based calculation
+          // Get package capacity
+          const capacityString = getPackageCapacity(
+            state.type,
+            state.packageId,
+            language
+          );
+          const { max: maxCapacity } = parseCapacityRange(capacityString);
+
+          // Calculate extra guests if current guest count exceeds max capacity
+          if (state.people > maxCapacity) {
+            extraGuestsCount = state.people - maxCapacity;
+
+            // Find selected food addon to get price per person
+            const configAddons = getAddonCategories(state.type);
+            let foodAddonPrice = 0;
+
+            // Look through all addon categories to find selected food items
+            if (configAddons) {
+              Object.values(configAddons).forEach((category) => {
+                if (category.items) {
+                  category.items.forEach((item) => {
+                    // Check if this addon is selected and is a per_person food item
+                    const addonValue = state.addons?.[item.id];
+                    if (
+                      addonValue &&
+                      addonValue > 0 &&
+                      (item.type === "per_person" || item.type === "auto")
+                    ) {
+                      // Use this food item's price as the extra guest price
+                      if (item.price > foodAddonPrice) {
+                        foodAddonPrice = item.price;
+                      }
+                    }
+                  });
+                }
+              });
+            }
+
+            // If no food addon selected, use default price from settings
+            extraGuestUnitPrice =
+              foodAddonPrice > 0 ? foodAddonPrice : settings.extraGuestPrice;
             extraGuestsCost = extraGuestsCount * extraGuestUnitPrice;
           }
         }
-      } else {
-        // For event, photo types, and wedding budget4 packages, use existing capacity-based calculation
-        // Get package capacity
-        const capacityString = getPackageCapacity(
-          state.type,
-          state.packageId,
-          language
-        );
-        const { max: maxCapacity } = parseCapacityRange(capacityString);
-
-        // Calculate extra guests if current guest count exceeds max capacity
-        if (state.people > maxCapacity) {
-          extraGuestsCount = state.people - maxCapacity;
-
-          // Find selected food addon to get price per person
-          const configAddons = getAddonCategories(state.type);
-          let foodAddonPrice = 0;
-
-          // Look through all addon categories to find selected food items
-          if (configAddons) {
-            Object.values(configAddons).forEach((category) => {
-              if (category.items) {
-                category.items.forEach((item) => {
-                  // Check if this addon is selected and is a per_person food item
-                  const addonValue = state.addons?.[item.id];
-                  if (
-                    addonValue &&
-                    addonValue > 0 &&
-                    (item.type === "per_person" || item.type === "auto")
-                  ) {
-                    // Use this food item's price as the extra guest price
-                    if (item.price > foodAddonPrice) {
-                      foodAddonPrice = item.price;
-                    }
-                  }
-                });
-              }
-            });
-          }
-
-          // If no food addon selected, use default price from settings
-          extraGuestUnitPrice =
-            foodAddonPrice > 0 ? foodAddonPrice : settings.extraGuestPrice;
-          extraGuestsCost = extraGuestsCount * extraGuestUnitPrice;
-        }
       }
-    }
 
-    // Time surcharge logic
-    let timeSurcharge = 0;
-    let timeSurchargeLabel = "";
+      // Time surcharge logic
+      let timeSurcharge = 0;
+      let timeSurchargeLabel = "";
 
-    if (selectedPackage?.budgetId === "budget4") {
-      const selectedTimeOption = budget4TimeOptions.find(
-        (option) => option.value === state.period
-      );
-      if (selectedTimeOption && selectedTimeOption.surcharge > 0) {
-        timeSurcharge = selectedTimeOption.surcharge;
-        if (selectedTimeOption.value === "afternoon") {
-          timeSurchargeLabel = "ค่าบริการครึ่งวันบ่าย";
-        } else if (selectedTimeOption.value === "full_day") {
-          timeSurchargeLabel = "ค่าบริการเต็มวัน";
-        }
-      }
-    } else {
-      timeSurcharge =
-        state.period &&
-        (state.period.includes("Full Day") || state.period.includes("เต็มวัน"))
-          ? settings.fullDaySurcharge
-          : 0;
-      if (timeSurcharge > 0) timeSurchargeLabel = "ค่าบริการเต็มวัน";
-    }
-
-    // Calculate subtotal before discounts - different for event type
-    let subtotalBeforeDiscounts;
-    if (state.type === 'event') {
-      // For event type, don't include base package price in calculations
-      // Only show minimum spending requirement and current addon spending
-      subtotalBeforeDiscounts = addonsSum + extraGuestsCost + timeSurcharge;
-    } else {
-      // For other types, use normal calculation
-      subtotalBeforeDiscounts = basePrice + addonsSum + extraGuestsCost + timeSurcharge;
-    }
-
-    // Weekday discounts
-    let weekdayDiscount = 0;
-    let weekdayDiscountLabel = "";
-    if (state.dayType === "weekday") {
       if (selectedPackage?.budgetId === "budget4") {
-        weekdayDiscount = settings.budget4WeekdayDiscount;
-        weekdayDiscountLabel = "ส่วนลดวันธรรมดา (฿40,000)";
-      } else if (selectedPackage?.weekdayDiscountEligible === true) {
-        weekdayDiscount = settings.weekdayDiscount;
-        weekdayDiscountLabel = "ส่วนลดวันธรรมดา (฿20,000)";
+        const selectedTimeOption = budget4TimeOptions.find(
+          (option) => option.value === state.period
+        );
+        if (selectedTimeOption && selectedTimeOption.surcharge > 0) {
+          timeSurcharge = selectedTimeOption.surcharge;
+          if (selectedTimeOption.value === "afternoon") {
+            timeSurchargeLabel = "ค่าบริการครึ่งวันบ่าย";
+          } else if (selectedTimeOption.value === "full_day") {
+            timeSurchargeLabel = "ค่าบริการเต็มวัน";
+          }
+        }
+      } else {
+        timeSurcharge =
+          state.period &&
+            (state.period.includes("Full Day") || state.period.includes("เต็มวัน"))
+            ? settings.fullDaySurcharge
+            : 0;
+        if (timeSurcharge > 0) timeSurchargeLabel = "ค่าบริการเต็มวัน";
       }
-    }
 
-    const totalDiscounts = weekdayDiscount + Math.abs(marketingDiscounts);
+      // Calculate subtotal before discounts - different for event type
+      let subtotalBeforeDiscounts;
+      if (state.type === 'event') {
+        // For event type, don't include base package price in calculations
+        // Only show minimum spending requirement and current addon spending
+        subtotalBeforeDiscounts = addonsSum + extraGuestsCost + timeSurcharge;
+      } else {
+        // For other types, use normal calculation
+        subtotalBeforeDiscounts = basePrice + addonsSum + extraGuestsCost + timeSurcharge;
+      }
 
-    // Final subtotal after discounts (before VAT)
-    let subtotal;
-    if (state.type === 'event') {
-      // For event type, calculate from addons only
-      subtotal = subtotalBeforeDiscounts - totalDiscounts;
-    } else {
-      // For other types, use normal calculation
-      subtotal = subtotalBeforeDiscounts - totalDiscounts;
-    }
+      // Weekday discounts
+      let weekdayDiscount = 0;
+      let weekdayDiscountLabel = "";
+      if (state.dayType === "weekday") {
+        if (selectedPackage?.budgetId === "budget4") {
+          weekdayDiscount = settings.budget4WeekdayDiscount;
+          weekdayDiscountLabel = "ส่วนลดวันธรรมดา (฿40,000)";
+        } else if (selectedPackage?.weekdayDiscountEligible === true) {
+          weekdayDiscount = settings.weekdayDiscount;
+          weekdayDiscountLabel = "ส่วนลดวันธรรมดา (฿20,000)";
+        }
+      }
 
-    const vat = Math.round(subtotal * settings.vatRate);
-    const total = subtotal + vat;
+      const totalDiscounts = weekdayDiscount + Math.abs(marketingDiscounts);
 
-    // Calculate minimum spending for event type
-    let minimumSpending = 0;
-    let currentAddonSpending = 0;
-    let isMinimumMet = true;
-    let shortfall = 0;
+      // Final subtotal after discounts (before VAT)
+      let subtotal;
+      if (state.type === 'event') {
+        // For event type, calculate from addons only
+        subtotal = subtotalBeforeDiscounts - totalDiscounts;
+      } else {
+        // For other types, use normal calculation
+        subtotal = subtotalBeforeDiscounts - totalDiscounts;
+      }
 
-    if (state.type === 'event' && selectedPackage) {
-      minimumSpending = selectedPackage.minSpend || 0;
-      
-      // Calculate current addon spending (food & beverage + alcoholic packages)
-      currentAddonSpending = positiveAddons;
-      
-      // Check if minimum is met
-      isMinimumMet = currentAddonSpending >= minimumSpending;
-      shortfall = isMinimumMet ? 0 : minimumSpending - currentAddonSpending;
-    }
+      const vat = Math.round(subtotal * settings.vatRate);
+      const total = subtotal + vat;
 
-    return {
-      basePrice,
-      addonsTotal: positiveAddons, // positive addon sum (for display if needed)
-      extraGuestsCost,
-      extraGuestsCount,
-      extraGuestUnitPrice,
-      subtotal,
-      vat,
-      total,
-      weekdayDiscount,
-      weekdayDiscountLabel,
-      isEligibleForDiscount:
-        selectedPackage?.budgetId === "budget4" ||
-        selectedPackage?.weekdayDiscountEligible === true,
-      selectedPackage,
-      timeSurcharge,
-      timeSurchargeLabel,
-      subtotalBeforeDiscounts,
-      marketingDiscounts,
-      // Event type minimum spending data
-      minimumSpending,
-      currentAddonSpending,
-      isMinimumMet,
-      shortfall,
-    };
+      // Calculate minimum spending for event type
+      let minimumSpending = 0;
+      let currentAddonSpending = 0;
+      let isMinimumMet = true;
+      let shortfall = 0;
+
+      if (state.type === 'event' && selectedPackage) {
+        minimumSpending = selectedPackage.minSpend || 0;
+
+        // Calculate current addon spending (food & beverage + alcoholic packages)
+        currentAddonSpending = positiveAddons;
+
+        // Check if minimum is met
+        isMinimumMet = currentAddonSpending >= minimumSpending;
+        shortfall = isMinimumMet ? 0 : minimumSpending - currentAddonSpending;
+      }
+
+      return {
+        basePrice,
+        addonsTotal: positiveAddons, // positive addon sum (for display if needed)
+        extraGuestsCost,
+        extraGuestsCount,
+        extraGuestUnitPrice,
+        subtotal,
+        vat,
+        total,
+        weekdayDiscount,
+        weekdayDiscountLabel,
+        isEligibleForDiscount:
+          selectedPackage?.budgetId === "budget4" ||
+          selectedPackage?.weekdayDiscountEligible === true,
+        selectedPackage,
+        timeSurcharge,
+        timeSurchargeLabel,
+        subtotalBeforeDiscounts,
+        marketingDiscounts,
+        // Event type minimum spending data
+        minimumSpending,
+        currentAddonSpending,
+        isMinimumMet,
+        shortfall,
+      };
     } catch (error) {
       console.error("Error in calculateTotal:", error);
       // Return default values on error
@@ -854,7 +852,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
   // Get maximum capacity for the selected package
   const getMaxCapacity = () => {
     if (!selectedPackage) return 0;
-    
+
     if (state.type === 'wedding' && selectedPackage.budgetId !== 'budget4') {
       // For wedding packages (except budget4), return the food budget limit as the capacity
       const settings = getSettings();
@@ -1142,11 +1140,24 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
 
           {/* Modal Footer */}
           <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-white">
+            <div
+                style={{
+                  marginTop: "10px",
+                  marginLeft: "20px",
+                  fontSize: "10px",
+                  color: "#666",
+                  textAlign: "left"
+                }}
+              >
+                เพื่อความถูกต้อง กรุณาใช้เบราว์เซอร์ Chrome หรือ Safari
+              </div>
             <div className="text-sm text-gray-600">
               {numPages &&
                 `${language === "th" ? "จำนวนหน้า" : "Pages"}: ${numPages}`}
             </div>
+            
             <div className="flex gap-3">
+              
               <button
                 onClick={() => {
                   setShowPDFPreview(false);
@@ -1211,7 +1222,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
           {/* Modal Body */}
           <div className="p-6">
             <p className="text-gray-600 text-sm mb-6">
-              {language === "th" 
+              {language === "th"
                 ? "กรอกข้อมูลของท่านเพื่อให้เราส่งใบเสนอราคาและโปรไฟล์ของเรา"
                 : "Fill in your information so we can send you our quote and profile"
               }
@@ -1281,8 +1292,8 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                   Special Request
                 </label>
                 <textarea
-                  placeholder={language === "th" 
-                    ? "กรอกความต้องการและข้อคิดเห็นเพิ่มเติม ระบุงานใหม่งานเก่า" 
+                  placeholder={language === "th"
+                    ? "กรอกความต้องการและข้อคิดเห็นเพิ่มเติม ระบุงานใหม่งานเก่า"
                     : "Fill in additional requirements and comments"}
                   value={submitForm.specialRequest}
                   onChange={(e) => handleFormChange('specialRequest', e.target.value)}
@@ -1300,7 +1311,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
               disabled={isSubmitting}
               className="w-full bg-[#B8846B] text-white py-3 px-4 rounded-xl font-medium hover:bg-[#A0735A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting 
+              {isSubmitting
                 ? (language === "th" ? "กำลังส่ง..." : "Submitting...")
                 : (language === "th" ? "ส่งข้อมูล" : "Submit Data")
               }
@@ -1335,7 +1346,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
           {/* PDF Header */}
           <div
             style={{
-              backgroundColor: "#B8846B",
+              backgroundColor: "#8b634b",
               color: "white",
               padding: "20px",
               borderRadius: "8px 8px 0 0",
@@ -1349,7 +1360,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                 alignItems: "center",
               }}
             >
-              <div style={{marginTop: "-15px"}}>
+              <div style={{ marginTop: "-15px" }}>
                 <h2
                   style={{
                     fontSize: "18px",
@@ -1424,7 +1435,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                   {String(new Date().getMinutes()).padStart(2, "0")}
                 </div>
                 <div>วันที่: {new Date().toLocaleDateString("th-TH")}</div>
-                <div style={{ color: "#B8846B", fontWeight: "bold" }}>ร่าง</div>
+                {/* <div style={{ color: "#B8846B", fontWeight: "bold" }}>ร่าง</div> */}
               </div>
             </div>
           </div>
@@ -1451,10 +1462,10 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
               </h3>
               <div style={{ fontSize: "12px", lineHeight: "1.8" }}>
                 <div>
-                  <strong>ระริณ ริเวอร์ไซต์</strong>
+                  <strong>บริษัท ลลิล เวดดิ้ง จำกัด (สำนักงานใหญ่)</strong>
                 </div>
-                <div>เลขที่ 438 ซอย เอบวงศ์ 111 แยก 15</div>
-                <div>แขวงบางจาก เขตพระโขนง กรุงเทพมหานคร 10260</div>
+                <div>59 ซอย ราษฎร์บูรณะ 11 ถนนราษฎร์บูรณะ</div>
+                <div>แขวงบางปะกอก เขตราษฎร์บูรณะ กรุงเทพมหานคร 10140</div>
                 <div>
                   <strong>ความต้องการพิเศษ:</strong> {state.notes || "-"}
                 </div>
@@ -1468,7 +1479,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                   textAlign: "right",
                 }}
               >
-                <strong>เลขประจำตัว:</strong>
+                <strong>เลขประจำตัวผู้เสียภาษี</strong>
               </h3>
               <div style={{ fontSize: "12px", lineHeight: "1.8" }}>
                 <div
@@ -1476,10 +1487,10 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                     textAlign: "right",
                   }}
                 >
-                  <div>DID0555581670</div>
+                  <div>0105567007301</div>
                   <strong>ติดต่อ:</strong>
-                  <div>029464626</div>
-                  <div>hello@rarin.com</div>
+                  <div>0619461646</div>
+                  <div>www.rarinbkk.com</div>
                 </div>
               </div>
             </div>
@@ -1714,9 +1725,9 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                   <td style={{ padding: "12px 8px", fontSize: "12px" }}>
                     {String(
                       selectedAddons.length +
-                        (extraGuestsCost > 0 ? 1 : 0) +
-                        (timeSurcharge > 0 ? 1 : 0) +
-                        2
+                      (extraGuestsCost > 0 ? 1 : 0) +
+                      (timeSurcharge > 0 ? 1 : 0) +
+                      2
                     ).padStart(3, "0")}
                   </td>
                   <td
@@ -1784,28 +1795,33 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
               <div
                 style={{ fontSize: "12px", color: "#444", lineHeight: "1.6" }}
               >
-                {state.people > 0 && <div>จำนวนแขก: {state.people} ท่าน</div>}
-                <div>
-                  ช่วงเวลา:{" "}
-                  {state.period === "morning"
-                    ? "ช่วงเช้า"
-                    : state.period === "afternoon"
-                    ? "บ่ายเวลา"
-                    : "เต็มวัน"}
-                </div>
-                <div>
-                  ประเภทวัน:{" "}
-                  {state.dayType === "weekday"
-                    ? "วันธรรมดา"
-                    : "วันหยุดสุดสัปดาห์"}
-                </div>
+
+                {state.people > 0 && state.type !== "photo" && <div>จำนวนแขก: {state.people} ท่าน</div>}
+                {state.type !== "photo" && (
+                  <div>
+                    ช่วงเวลา:{" "}
+                    {state.period === "morning"
+                      ? "ช่วงเช้า"
+                      : state.period === "afternoon"
+                        ? "บ่ายเวลา"
+                        : "เต็มวัน"}
+                  </div>
+                )}
+                {state.type !== "photo" && (
+                  <div>
+                    ประเภทวัน:{" "}
+                    {state.dayType === "weekday"
+                      ? "วันธรรมดา"
+                      : "วันหยุดสุดสัปดาห์"}
+                  </div>
+                )}
                 <div>
                   ประเภท:{" "}
                   {state.type === "wedding"
                     ? "งานแต่งงาน"
                     : state.type === "event"
-                    ? "งานอีเวนต์"
-                    : "ถ่ายภาพ"}
+                      ? "งานอีเวนต์"
+                      : "ถ่ายภาพ"}
                 </div>
 
                 <p>ราคานี้เป็นราคาประเมินเบื้องต้น และอาจมีการเปลี่ยนแปลง</p>
@@ -1865,17 +1881,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
             </div>
           </div>
 
-          {/* Footer */}
-          <div
-            style={{
-              marginTop: "40px",
-              fontSize: "10px",
-              color: "#666",
-              textAlign: "center",
-            }}
-          >
-            เพื่อความถูกต้อง กรุณาใช้เบราว์เซอร์ Chrome หรือ Safari
-          </div>
+
         </div>
       </div>
 
@@ -1962,11 +1968,11 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                   <div className="mb-3 border-gray-200">
                     <div className="flex justify-between items-center mb-2">
                       <span>
-                        {state.type === 'event' 
-                          ? (language === "th" 
-                              ? `${t.packageType || "ค่าแพ็กเกจ"} (${getPackageName()}) - ยอดใช้จ่ายขั้นต่ำ: ฿${minimumSpending.toLocaleString()}`
-                              : `${t.packageType || "Package"} (${getPackageName()}) - Minimum Spending: ฿${minimumSpending.toLocaleString()}`
-                            )
+                        {state.type === 'event'
+                          ? (language === "th"
+                            ? `${t.packageType || "ค่าแพ็กเกจ"} (${getPackageName()}) - ยอดใช้จ่ายขั้นต่ำ: ฿${minimumSpending.toLocaleString()}`
+                            : `${t.packageType || "Package"} (${getPackageName()}) - Minimum Spending: ฿${minimumSpending.toLocaleString()}`
+                          )
                           : `${t.packageType || "ค่าแพ็กเกจ"} (${getPackageName()})`
                         }
                       </span>
@@ -1977,7 +1983,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                     {selectedPackage && state.people > 0 && (
                       <div className="text-xs text-gray-500 space-y-1">
                         <div>
-                      
+
                           {language === "th"
                             ? "จำนวนแขก: "
                             : "Number of guests: "}
@@ -2006,7 +2012,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                   {positiveSelectedAddons.length > 0 && (
                     <div className="mt-3 border-t pt-3">
                       <div className="text-sm text-gray-600 mb-2">
-                        {state.type === 'event' 
+                        {state.type === 'event'
                           ? (language === "th" ? "บริการที่เลือก:" : "Selected Services:")
                           : (language === "th" ? "บริการเสริม:" : "Add-on Services:")
                         }
@@ -2049,41 +2055,41 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                   {/* Discounts Section (marketing discounts + weekday discount) - Moved to last */}
                   {(negativeSelectedAddons.length > 0 ||
                     weekdayDiscount > 0) && (
-                    <div className="mt-3 border-t pt-3">
-                      <div className="font-medium text-[#B8846B] mb-2">
-                        {language === "th"
-                          ? "ส่วนลดทั้งหมด"
-                          : "Total Discounts"}
-                      </div>
-                      {negativeSelectedAddons.map((addon, index) => (
-                        <div
-                          key={addon.id}
-                          className="flex justify-between text-sm ml-4 text-[#B8846B]"
-                        >
-                          <span>• {addon.name}</span>
-                          <span>
-                            -฿{Math.abs(addon.totalPrice).toLocaleString()}
-                          </span>
+                      <div className="mt-3 border-t pt-3">
+                        <div className="font-medium text-[#B8846B] mb-2">
+                          {language === "th"
+                            ? "ส่วนลดทั้งหมด"
+                            : "Total Discounts"}
                         </div>
-                      ))}
+                        {negativeSelectedAddons.map((addon, index) => (
+                          <div
+                            key={addon.id}
+                            className="flex justify-between text-sm ml-4 text-[#B8846B]"
+                          >
+                            <span>• {addon.name}</span>
+                            <span>
+                              -฿{Math.abs(addon.totalPrice).toLocaleString()}
+                            </span>
+                          </div>
+                        ))}
 
-                      {weekdayDiscount > 0 && (
-                        <div className="flex justify-between text-sm ml-4 text-[#B8846B]">
-                          <span>• {weekdayDiscountLabel}</span>
-                          <span>-฿{weekdayDiscount.toLocaleString()}</span>
-                        </div>
-                      )}
+                        {weekdayDiscount > 0 && (
+                          <div className="flex justify-between text-sm ml-4 text-[#B8846B]">
+                            <span>• {weekdayDiscountLabel}</span>
+                            <span>-฿{weekdayDiscount.toLocaleString()}</span>
+                          </div>
+                        )}
 
-                      <div className="mt-2">
-                        <div className="flex justify-between text-sm text-[#B8846B] font-medium ml-4">
-                          <span>
-                            {language === "th" ? "รวมส่วนลด" : "Total Discount"}
-                          </span>
-                          <span>-฿{totalDiscounts.toLocaleString()}</span>
+                        <div className="mt-2">
+                          <div className="flex justify-between text-sm text-[#B8846B] font-medium ml-4">
+                            <span>
+                              {language === "th" ? "รวมส่วนลด" : "Total Discount"}
+                            </span>
+                            <span>-฿{totalDiscounts.toLocaleString()}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               </div>
 
@@ -2106,7 +2112,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
               </div>
 
               {/* Main Action Button */}
-              <button 
+              <button
                 onClick={handleSubmitRequest}
                 className="w-full bg-[#B8846B] text-white py-4 px-6 rounded-xl font-semibold hover:bg-[#A0735A] transition-colors mb-4"
               >
@@ -2121,7 +2127,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                 >
                   {t.backToEdit || "กลับไปแก้ไข"}
                 </button>
-                <button 
+                <button
                   onClick={() => window.open("https://line.me/R/ti/p/@605fnobr", "_blank")}
                   className="bg-gray-400 text-white py-3 px-4 rounded-xl font-medium hover:bg-gray-500 transition-colors"
                 >
