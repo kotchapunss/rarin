@@ -315,7 +315,7 @@ export default function BookingConfirmation() {
     try {
       console.log("Starting PDF download...");
       const date = new Date();
-      const dt = date.getDate() +"-"+date.getMonth() +"-"+ date.getFullYear() + "";
+      const dt = date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear() + "";
 
       // If we already have a PDF blob URL from preview, just download it
       if (pdfUrl) {
@@ -1154,26 +1154,16 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
           </div>
 
           {/* Modal Footer */}
-          <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-white">
-            <div
-                style={{
-                  marginTop: "10px",
-                  marginLeft: "20px",
-                  fontSize: "10px",
-                  color: "#666",
-                  textAlign: "left"
-                }}
-              >
-                เพื่อความถูกต้อง กรุณาใช้เบราว์เซอร์ Chrome หรือ Safari
-              </div>
-            <div className="text-sm text-gray-600">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border-t border-gray-200 bg-white gap-2 sm:gap-0">
+            <div className="text-xs text-gray-500 text-left sm:text-sm order-3 sm:order-1">
+              เพื่อความถูกต้อง กรุณาใช้เบราว์เซอร์ Chrome หรือ Safari
+            </div>
+            <div className="text-sm text-gray-600 order-2">
               {numPages &&
                 `${language === "th" ? "จำนวนหน้า" : "Pages"}: ${numPages}`}
             </div>
             
-            <div className="flex gap-3">
-              
-              <button
+            <div className="flex gap-3 order-1 sm:order-3">              <button
                 onClick={() => {
                   setShowPDFPreview(false);
                   if (pdfUrl) {
@@ -1222,7 +1212,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
           {/* Modal Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <h2 className="text-xl font-semibold text-gray-800">
-              {language === "th" ? "รับข้อมูลใบเสนอราคาและโปรโมชัน" : "Submit Request for Quote and Promotions"}
+              {language === "th" ? "รับข้อมูลใบเสนอราคาและโปรโมชัน" : "Submit Request for Quote & Promotions"}
             </h2>
             <button
               onClick={() => setShowSubmitModal(false)}
@@ -1290,14 +1280,14 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
 
               {/* Date */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                   {language === "th" ? "วันจัดงาน" : "Event Date"}
                 </label>
                 <input
                   type="date"
                   value={submitForm.date}
                   onChange={(e) => handleFormChange('date', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B8846B] focus:border-transparent"
+                  className="w-full px-3 py-2 sm:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B8846B] focus:border-transparent min-h-[44px] text-base"
                 />
               </div>
 
@@ -2135,8 +2125,8 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                   {t.customerInformation || "ข้อมูลลูกค้า"}
                 </h3>
                 <p className="text-xs text-gray-500 mb-2">
-                  {language === 'th' 
-                    ? 'กรุณากรอกข้อมูลของคุณเพื่อใช้ในการออกใบประเมินราคา' 
+                  {language === 'th'
+                    ? 'กรุณากรอกข้อมูลของคุณเพื่อใช้ในการออกใบประเมินราคา'
                     : 'Please fill in your information for the quotation'}
                 </p>
                 <div className="bg-gray-50 p-3 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-3">

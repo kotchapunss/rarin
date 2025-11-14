@@ -11,7 +11,10 @@ export default function AddonsSelect() {
   const [activeSubTab, setActiveSubTab] = useState('')
   const [showLeftArrow, setShowLeftArrow] = useState(false)
   const [showRightArrow, setShowRightArrow] = useState(false)
+  const [showMainLeftArrow, setShowMainLeftArrow] = useState(false)
+  const [showMainRightArrow, setShowMainRightArrow] = useState(false)
   const scrollContainerRef = React.useRef(null)
+  const mainTabsContainerRef = React.useRef(null)
 
   // Helper function to get nested translation
   const getNestedTranslation = (path) => {
@@ -291,16 +294,21 @@ export default function AddonsSelect() {
 
   // Check scroll position to show/hide arrows
   const checkScrollPosition = () => {
-    const container = scrollContainerRef.current
-    if (!container) return
+    // Check sub tabs container
+    const subContainer = scrollContainerRef.current
+    if (subContainer) {
+      const { scrollLeft, scrollWidth, clientWidth } = subContainer
+      setShowLeftArrow(scrollLeft > 10)
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10)
+    }
 
-    const { scrollLeft, scrollWidth, clientWidth } = container
-    
-    // Show left arrow if scrolled right
-    setShowLeftArrow(scrollLeft > 10)
-    
-    // Show right arrow if not at the end
-    setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10)
+    // Check main tabs container
+    const mainContainer = mainTabsContainerRef.current
+    if (mainContainer) {
+      const { scrollLeft, scrollWidth, clientWidth } = mainContainer
+      setShowMainLeftArrow(scrollLeft > 10)
+      setShowMainRightArrow(scrollLeft < scrollWidth - clientWidth - 10)
+    }
   }
 
   // Set default active tabs when structure changes
@@ -351,6 +359,17 @@ export default function AddonsSelect() {
     // For budget4 wedding, clear other selections in the same category (single selection per category)
     if (isBudget4Wedding && !isChecked) {
       // Clear other items in the same category
+      const categoryItems = addonCategories[categoryKey]?.items || []
+      categoryItems.forEach(item => {
+        if (item.id !== addonId && addons[item.id]) {
+          toggleAddon(item.id, 0)
+        }
+      })
+    }
+
+    // For event type coffee_break category, allow only single selection within the category
+    if (type === 'event' && !isChecked && categoryKey === 'coffee_break') {
+      // Clear other items in the coffee_break category
       const categoryItems = addonCategories[categoryKey]?.items || []
       categoryItems.forEach(item => {
         if (item.id !== addonId && addons[item.id]) {
@@ -461,11 +480,11 @@ export default function AddonsSelect() {
   return (
     <div className="space-y-6">
       {/* Step Header - Wedding Step 5, Others Step 4 */}
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+      <div className="text-center px-4">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
           {isWeddingFlow ? translations.step5WeddingTitle : translations.step4Title}
         </h2>
-        <p className="text-gray-600">
+        <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
           {isWeddingFlow ? translations.step5WeddingDescription : translations.step4Description}
         </p>
       </div>
@@ -473,21 +492,47 @@ export default function AddonsSelect() {
       {/* Main Tabs Navigation */}
       {Object.keys(mainTabStructure).length > 1 && (
         <div className="mb-8">
-          <div className="flex gap-3 ">
-            {Object.entries(mainTabStructure).map(([mainTabKey, mainTabData]) => (
-              <button
-                key={mainTabKey}
-                onClick={() => handleMainTabChange(mainTabKey)}
-                className={`flex items-center justify-center px-4 py-1 text-sm font-medium transition-all rounded-full border-2 ${
-                  activeMainTab === mainTabKey
-                    ? 'bg-[#B8846B] text-white border-[#B8846B]'
-                    : 'bg-white text-gray-700 border-gray-200 hover:border-[#d4b5a0] hover:text-[#B8846B]'
-                }`}
-              >
-                <span className="mr-2 text-lg">{mainTabData.icon}</span>
-                <span className="font-medium">{mainTabData.title}</span>
-              </button>
-            ))}
+          <div className="relative">
+            <div 
+              ref={mainTabsContainerRef}
+              className="overflow-x-auto scrollbar-hide"
+              onScroll={checkScrollPosition}
+            >
+              <div className="flex gap-3 min-w-max px-1">
+                {Object.entries(mainTabStructure).map(([mainTabKey, mainTabData]) => (
+                  <button
+                    key={mainTabKey}
+                    onClick={() => handleMainTabChange(mainTabKey)}
+                    className={`flex items-center justify-center px-4 py-1 text-sm font-medium transition-all rounded-full border-2 whitespace-nowrap ${
+                      activeMainTab === mainTabKey
+                        ? 'bg-[#B8846B] text-white border-[#B8846B]'
+                        : 'bg-white text-gray-700 border-gray-200 hover:border-[#d4b5a0] hover:text-[#B8846B]'
+                    }`}
+                  >
+                    <span className="mr-2 text-lg">{mainTabData.icon}</span>
+                    <span className="font-medium">{mainTabData.title}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Left scroll indicator for main tabs */}
+            {showMainLeftArrow && (
+              <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none flex items-center justify-start pl-2">
+                <svg className="w-4 h-4 text-gray-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </div>
+            )}
+            
+            {/* Right scroll indicator for main tabs */}
+            {showMainRightArrow && (
+              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none flex items-center justify-end pr-2">
+                <svg className="w-4 h-4 text-gray-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -558,24 +603,22 @@ export default function AddonsSelect() {
         return (
           <div className="space-y-6">
             {/* Content Header */}
-            <div className="bg-white p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold text-gray-900">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                   {getNestedTranslation(`addons.${type}.categories.${currentCategoryKey}`) || 
                    currentCategory.title}
                 </h3>
-                
-               
               </div>
 
               {/* Selection notes */}
-          
-                <div className="text-sm text-gray-700 ">
+              <div className="space-y-1">
+                <div className="text-xs sm:text-sm text-gray-700">
                   {language === 'th' 
                     ? 'ราคายังไม่รวม VAT 7%' : 'Price excludes VAT 7%'
                   }
                 </div>
-                <div className="text-sm text-gray-700 ">
+                <div className="text-xs sm:text-sm text-gray-700">
                   {/* Added note for imported alcohol in event type and valid for i18n*/}
                   {
                     language === 'th' && type === 'event' && currentCategoryKey === 'liquor'
@@ -584,9 +627,8 @@ export default function AddonsSelect() {
                         ? 'Note: For imported alcohol, specific conditions apply. The venue will provide staff, glasses, and ice throughout the event.'
                         : ''
                   }
-                 
                 </div>
-           
+              </div>
             </div>
             
             <div className={`${
@@ -604,33 +646,13 @@ export default function AddonsSelect() {
                   return (
                     <div
                       key={item.id}
-                      className={`relative pt-10 px-6 pb-6 border rounded-xl cursor-pointer transition-all hover:shadow-md bg-white ${
+                      className={`relative pt-6 sm:pt-6 px-4 sm:px-6 pb-4 sm:pb-6 border rounded-xl cursor-pointer transition-all hover:shadow-md bg-white ${
                         checked ? 'border-2 border-[#B8846B] bg-[#f9f5f3]/30' : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => handleCeremonyClick(item.id, item.price, currentCategoryKey)}
                     >
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (checked) {
-                            toggleAddon(item.id, 0)
-                          } else {
-                            handleCeremonyClick(item.id, item.price, currentCategoryKey)
-                          }
-                        }}
-                        className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${checked ? 'bg-[#B8846B]' : ''}`}
-                        aria-pressed={checked}
-                        title={checked ? (translations.deselect || (language === 'th' ? 'ยกเลิกการเลือก' : 'Deselect')) : (translations.select || (language === 'th' ? 'เลือก' : 'Select'))}
-                      >
-                        {checked && (
-                          <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </button>
-
-                      <div className="mb-3">
-                        <div className="font-semibold text-stone-800 text-lg">{itemName}</div>
+                      <div className="relative">
+                        <div className="font-semibold text-stone-800 text-base sm:text-lg">{itemName}</div>
                         {item.minGuests && (
                           <div className="text-xs text-gray-500 font-medium mt-1">
                             {translations.minimumGuests || (language === 'th' ? 'ขั้นต่ำ' : 'Min.')} {item.minGuests} {translations.guests || (language === 'th' ? 'คน' : 'guests')}
@@ -639,15 +661,40 @@ export default function AddonsSelect() {
                         <div className="text-sm text-stone-600 mt-1">
                           {item.description}
                         </div>
-                      </div>
-
-                      <div className="absolute top-12 right-3 text-right text-sm">
-                        <span className="text-stone-500 text-xs mr-2">{translations.price || (language === 'th' ? 'ราคา' : 'Price')}</span>
-                        <span className="text-stone-700">฿{item.price.toLocaleString()}</span>
+                        
+                        {/* Price and checker button positioned at bottom right of content */}
+                        <div className="absolute top-0 right-0 flex items-center gap-2">
+                          <div className="text-sm text-stone-700 font-medium">
+                            {language === "th" ? `ราคา : ฿${item.price.toLocaleString()}` : `Price: ฿${item.price.toLocaleString()}`}
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              if (checked) {
+                                toggleAddon(item.id, 0)
+                              } else {
+                                handleCeremonyClick(item.id, item.price, currentCategoryKey)
+                              }
+                            }}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors border-2 ${
+                              checked 
+                                ? 'bg-[#B8846B] border-[#B8846B]' 
+                                : 'border-gray-300 hover:border-[#d4b5a0]'
+                            }`}
+                            aria-pressed={checked}
+                            title={checked ? (translations.deselect || (language === 'th' ? 'ยกเลิกการเลือก' : 'Deselect')) : (translations.select || (language === 'th' ? 'เลือก' : 'Select'))}
+                          >
+                            {checked && (
+                              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M5 13l4 4L19 7" />
+                              </svg>
+                            )}
+                          </button>
+                        </div>
                       </div>
 
                       {item.details && (
-                        <div>
+                        <div className="mt-4">
                           <div className="text-sm font-medium text-stone-700 mb-2">{translations.included || (language === 'th' ? 'รวมในแพ็กเกจ' : 'Included')}</div>
                           <ul className="text-sm text-gray-700 space-y-1">
                             {item.details.slice(0, 6).map((detail, i) => (
@@ -670,7 +717,7 @@ export default function AddonsSelect() {
                   const itemUnit = item.unit
                   
                   return (
-                    <div key={item.id} className={`relative pt-8 px-4 pb-4 border-2 rounded-xl transition-all ${
+                    <div key={item.id} className={`relative pt-6 sm:pt-8 px-4 sm:px-6 pb-4 sm:pb-6 border-2 rounded-xl transition-all ${
                       checked ? 'border-[#B8846B] bg-[#f9f5f3]' : 'border-stone-300 hover:border-[#d4b5a0]'
                     }`}>
                       <div className="flex items-start justify-between gap-3">
@@ -684,7 +731,7 @@ export default function AddonsSelect() {
                           </div>
                           {quantity > 0 && (
                             <div className="mt-3 text-sm font-medium text-gray-500 bg-gray-100 px-3 py-2 rounded-lg inline-block">
-                              {translations.total || (language === 'th' ? 'ยอดรวม' : 'Total')}: ฿{totalPrice.toLocaleString()} ({quantity} {itemUnit})
+                              {translations.total || (language === 'th' ? 'ยอดรวม' : 'Total')}: ฿{totalPrice.toLocaleString()} ({quantity} / {itemUnit})
                             </div>
                           )}
                         </div>
@@ -719,7 +766,7 @@ export default function AddonsSelect() {
                   return (
                     <div
                       key={item.id}
-                      className={`relative pt-8 px-4 pb-4 border-2 rounded-xl cursor-pointer transition-all hover:shadow-md ${
+                      className={`relative pt-6 sm:pt-8 px-4 sm:px-6 pb-4 sm:pb-6 border-2 rounded-xl cursor-pointer transition-all hover:shadow-md ${
                         isChecked ? 'border-[#B8846B] bg-[#f9f5f3]' : 'border-stone-300 hover:border-[#d4b5a0]'
                       }`}
                       onClick={() => handleAutoAddonToggle(item.id, item.price, item.unit, currentCategoryKey)}
@@ -740,7 +787,7 @@ export default function AddonsSelect() {
                         )}
                       </button>
 
-                      <div className="mb-3">
+                      <div className="mb-3 pr-12">
                         <div className="font-semibold text-stone-800 text-lg">{itemName}</div>
                         {item.minGuests && (
                           <div className="text-xs text-gray-500 font-medium mt-1">
@@ -758,7 +805,7 @@ export default function AddonsSelect() {
                         </div>
                         {isChecked && (
                           <div className="text-xs font-medium text-gray-500 bg-gray-100/50 px-3 py-1 rounded-lg inline-block mt-2">
-                            {translations.total || (language === 'th' ? 'ยอดรวม' : 'Total')}: ฿{totalPrice.toLocaleString()} ({quantity} {itemUnit})
+                            {translations.total || (language === 'th' ? 'ยอดรวม' : 'Total')}: ฿{totalPrice.toLocaleString()} ({quantity} / {itemUnit})
                           </div>
                         )}
                       </div>
@@ -783,7 +830,7 @@ export default function AddonsSelect() {
                   return (
                     <div
                       key={item.id}
-                      className={`relative pt-8 px-4 pb-4 border-2 rounded-xl cursor-pointer transition-all hover:shadow-md ${
+                      className={`relative pt-6 sm:pt-8 px-4 sm:px-6 pb-4 sm:pb-6 border-2 rounded-xl cursor-pointer transition-all hover:shadow-md ${
                         isChecked ? 'border-[#B8846B] bg-[#f9f5f3]' : 'border-stone-300 hover:border-[#d4b5a0]'
                       }`}
                       onClick={() => handleAutoAddonToggle(item.id, item.price, item.unit, currentCategoryKey)}
@@ -822,7 +869,7 @@ export default function AddonsSelect() {
                         </div>
                         {isChecked && (
                           <div className="text-xs font-medium text-gray-500 bg-gray-100/50 px-3 py-1 rounded-lg inline-block mt-2">
-                            {translations.total || (language === 'th' ? 'ยอดรวม' : 'Total')}: ฿{totalPrice.toLocaleString()} ({quantity} {itemUnit})
+                            {translations.total || (language === 'th' ? 'ยอดรวม' : 'Total')}: ฿{totalPrice.toLocaleString()} ({quantity} / {itemUnit})
                           </div>
                         )}
                       </div>
@@ -836,7 +883,7 @@ export default function AddonsSelect() {
                   return (
                     <div
                       key={item.id}
-                      className={`relative pt-8 px-4 pb-4 border-2 rounded-xl cursor-pointer transition-all hover:shadow-md ${
+                      className={`relative pt-6 sm:pt-8 px-4 sm:px-6 pb-4 sm:pb-6 border-2 rounded-xl cursor-pointer transition-all hover:shadow-md ${
                         isChecked ? 'border-[#B8846B] bg-[#f9f5f3]' : 'border-stone-300 hover:border-[#d4b5a0]'
                       }`}
                       onClick={() => handleDiscountToggle(item.id, item.discount)}
