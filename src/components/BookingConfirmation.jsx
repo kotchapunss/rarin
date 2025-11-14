@@ -2169,7 +2169,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                 onClick={handleSubmitRequest}
                 className="w-full bg-[#B8846B] text-white py-4 px-6 rounded-xl font-semibold hover:bg-[#A0735A] transition-colors mb-4"
               >
-                {t.submitRequest || "ส่งคำขอจอง"}
+                {t.submitRequest || "ส่งข้อมูล"}
               </button>
 
               {/* Bottom Action Buttons */}
