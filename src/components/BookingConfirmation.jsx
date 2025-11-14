@@ -57,6 +57,11 @@ export default function BookingConfirmation() {
     specialRequest: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState({
+    name: '',
+    tel: '',
+    email: ''
+  });
 
   // Fallback simple PDF generation without html2canvas
   const generateSimplePDF = () => {
@@ -1377,8 +1382,11 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                 >
                   ใบประเมินราคาเบื้องต้น
                 </h2>
-                <p style={{ fontSize: "14px", opacity: "0.9", margin: "0" }}>
+                <p style={{ fontSize: "14px", opacity: "0.9", margin: "0 0 5px 0" }}>
                   Estimated Cost Summary
+                </p>
+                <p style={{ fontSize: "12px", opacity: "0.8", margin: "0" }}>
+                  ชื่อลูกค้า: {customerInfo.name || "ยังไม่ระบุ"} | เบอร์โทร: {customerInfo.tel || "ยังไม่ระบุ"} | อีเมล: {customerInfo.email || "ยังไม่ระบุ"}
                 </p>
               </div>
               <div>
@@ -1418,18 +1426,21 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                   margin: "0 0 15px 0",
                 }}
               >
-                Contact Information
+                Customer Information
               </h3>
               <div style={{ fontSize: "12px", lineHeight: "1.6" }}>
                 <div>
-                  <strong>Tel:</strong> ({submitForm.phone || state.details?.tel || "ยังไม่ระบุ"})
+                  <strong>Name:</strong> {customerInfo.name || "ยังไม่ระบุ"}
                 </div>
                 <div>
-                  <strong>Email:</strong> ({submitForm.email || state.details?.email || "ยังไม่ระบุ"})
+                  <strong>Tel:</strong> {customerInfo.tel || submitForm.phone || state.details?.tel || "ยังไม่ระบุ"}
                 </div>
                 <div>
-                  <strong>Line ID:</strong> ({submitForm.lineId || state.details?.lineId || "ยังไม่ระบุ"})
+                  <strong>Email:</strong> {customerInfo.email || submitForm.email || state.details?.email || "ยังไม่ระบุ"}
                 </div>
+                {/* <div>
+                  <strong>Line ID:</strong> {submitForm.lineId || state.details?.lineId || "ยังไม่ระบุ"}
+                </div> */}
               </div>
             </div>
             <div style={{ textAlign: "right" }}>
@@ -1458,24 +1469,21 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
           >
             {/* Left side - Customer Contact */}
             <div>
-              <h3
+              {/* <h3
                 style={{
                   fontWeight: "bold",
                   marginBottom: "1px",
                   paddingBottom: "1px",
                 }}
               >
-                ผู้ติดต่อ:
-              </h3>
+                ผู้ออกใบเสนอราคา:
+              </h3> */}
               <div style={{ fontSize: "12px", lineHeight: "1.8" }}>
                 <div>
                   <strong>บริษัท ลลิล เวดดิ้ง จำกัด (สำนักงานใหญ่)</strong>
                 </div>
                 <div>59 ซอย ราษฎร์บูรณะ 11 ถนนราษฎร์บูรณะ</div>
                 <div>แขวงบางปะกอก เขตราษฎร์บูรณะ กรุงเทพมหานคร 10140</div>
-                <div>
-                  <strong>ความต้องการพิเศษ:</strong> {state.notes || "-"}
-                </div>
               </div>
             </div>
 
@@ -1803,10 +1811,10 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                 style={{ fontSize: "12px", color: "#444", lineHeight: "1.6" }}
               >
 
-                {state.people > 0 && state.type !== "photo" && <div>จำนวนแขก: {state.people} ท่าน</div>}
+                {state.people > 0 && state.type !== "photo" && <div><strong>จำนวนแขก:</strong> {state.people} ท่าน</div>}
                 {state.type !== "photo" && (
                   <div>
-                    ช่วงเวลา:{" "}
+                    <strong>ช่วงเวลา:</strong>{" "}
                     {state.period === "morning"
                       ? "ช่วงเช้า"
                       : state.period === "afternoon"
@@ -1816,19 +1824,22 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                 )}
                 {state.type !== "photo" && (
                   <div>
-                    ประเภทวัน:{" "}
+                    <strong>ประเภทวัน:</strong>{" "}
                     {state.dayType === "weekday"
                       ? "วันธรรมดา"
                       : "วันหยุดสุดสัปดาห์"}
                   </div>
                 )}
                 <div>
-                  ประเภท:{" "}
+                  <strong>ประเภท:</strong>{" "}
                   {state.type === "wedding"
                     ? "งานแต่งงาน"
                     : state.type === "event"
                       ? "งานอีเวนต์"
                       : "ถ่ายภาพ"}
+                </div>
+                <div>
+                  <strong>ความต้องการพิเศษ:</strong> {state.notes || "-"}
                 </div>
 
                 <p>ราคานี้เป็นราคาประเมินเบื้องต้น และอาจมีการเปลี่ยนแปลง</p>
@@ -1963,6 +1974,41 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                 <p className="text-gray-600">
                   {t.estimationDescription || "สรุปราคาสำหรับงานของคุณ"}
                 </p>
+              </div>
+
+              {/* Customer Information Section */}
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-gray-600 mb-1">
+                  {t.customerInformation || "ข้อมูลลูกค้า"}
+                </h3>
+                <p className="text-xs text-gray-500 mb-2">
+                  {language === 'th' 
+                    ? 'กรุณากรอกข้อมูลของคุณเพื่อใช้ในการออกใบประเมินราคา' 
+                    : 'Please fill in your information for the quotation'}
+                </p>
+                <div className="bg-gray-50 p-3 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <input
+                    type="text"
+                    value={customerInfo.name}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+                    className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#B8846B] focus:border-transparent"
+                    placeholder={language === 'th' ? 'ชื่อลูกค้า' : 'Customer name'}
+                  />
+                  <input
+                    type="tel"
+                    value={customerInfo.tel}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, tel: e.target.value })}
+                    className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#B8846B] focus:border-transparent"
+                    placeholder={language === 'th' ? 'เบอร์โทรศัพท์' : 'Telephone'}
+                  />
+                  <input
+                    type="email"
+                    value={customerInfo.email}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
+                    className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#B8846B] focus:border-transparent"
+                    placeholder={language === 'th' ? 'อีเมล' : 'Email'}
+                  />
+                </div>
               </div>
 
               {/* Package Summary */}
