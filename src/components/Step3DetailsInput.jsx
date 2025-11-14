@@ -9,7 +9,8 @@ import {
   getTimeOptionLabel,
   getTimeOptionTime,
   getPackageCapacity,
-  parseCapacityRange
+  parseCapacityRange,
+  getNestedTranslation
 } from '../i18n'
 
 export default function DetailsInput() {
@@ -22,7 +23,7 @@ export default function DetailsInput() {
   // Check if we're in wedding flow to determine correct step titles
   const isWeddingFlow = type === 'wedding'
 
-  // Helper function to render food budget warning
+  // Helper function to render food budget warning for wedding type
   const renderFoodBudgetWarning = () => {
     if (type !== 'wedding' || !selectedPackage || selectedPackage.budgetId === 'budget4' || people <= 0) {
       return null
@@ -43,7 +44,53 @@ export default function DetailsInput() {
     return (
       <div className="text-amber-600 text-sm mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
         <div className="flex items-start gap-2">
+          <svg
+            className="icon-info w-3 h-3 text-amber-600"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM9 9a1 1 0 112 0v4a1 1 0 11-2 0V9zm1-4a1.25 1.25 0 100 2.5A1.25 1.25 0 0010 5z"
+              clipRule="evenodd"
+            />
+          </svg>
 
+          <div>
+            <p className="font-medium">
+              {language === 'th'
+                ? `อาหารเบสิคไทยบุฟเฟ่ห์สำหรับแพ็กเกจนี้รองรับแขกสูงสุด ${foodLimitGuests} ท่าน`
+                : `Basic Thai Buffet for this package supports up to ${foodLimitGuests} guests`}
+            </p>
+            <p className="text-xs mt-1">
+              {language === 'th'
+                ? `คำนวณค่าอาหารเพิ่มเติม ${extraGuests} ท่าน × ฿${extraGuestPrice.toLocaleString()} = ฿${extraCost.toLocaleString()}`
+                : `Calculate extra ${extraGuests} guests × ฿${extraGuestPrice.toLocaleString()} = ฿${extraCost.toLocaleString()}`}
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Helper function to render event maximum guests warning
+  const renderEventMaximumGuestsWarning = () => {
+    if (type !== 'event' || !selectedPackage || people <= 0) {
+      return null
+    }
+
+    // Get maxCapacity from i18n data
+    const maxCapacityFromI18n = getNestedTranslation(`packagesData.event.${packageId}.maxCapacity`, language)
+    const maxCapacity = maxCapacityFromI18n || 0
+
+    if (!maxCapacity || people <= maxCapacity) {
+      return null
+    }
+
+    return (
+      <div className="text-amber-600 text-sm mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+        <div className="flex items-start gap-2">
           <svg
             className="icon-info w-3 h-3 text-amber-600"
             fill="currentColor"
@@ -57,15 +104,15 @@ export default function DetailsInput() {
             />
           </svg>
           <div>
-            <p className="text-xs">
+            <p className="font-medium">
               {language === 'th'
-                ? ` อาหารเบสิคไทยบุฟเฟ่ห์สำหรับแพ็คเกจนี้รองรับแขกจำนวน ${foodLimitGuests} ท่าน`
-                : ` Basic Thai buffet food for this package supports up to ${foodLimitGuests} guests`}
+                ? `จำนวนแขกเกินขีดจำกัด: แพ็กเกจนี้รองรับแขกสูงสุด ${maxCapacity} ท่าน`
+                : `This package supports maximum ${maxCapacity} guests`}
             </p>
             <p className="text-xs mt-1">
               {language === 'th'
-                ? `คำนวณแขกเพิ่มเติม ${extraGuests} ท่าน × ฿${extraGuestPrice.toLocaleString()} = ฿${extraCost.toLocaleString()}`
-                : `Calculate extra ${extraGuests} guests × ฿${extraGuestPrice.toLocaleString()} = ฿${extraCost.toLocaleString()}`}
+                ? `กรุณาลดจำนวนแขกหรือเลือกแพ็กเกจที่รองรับแขกได้มากกว่า`
+                : `Please select a package that supports more guests`}
             </p>
           </div>
         </div>
@@ -267,8 +314,8 @@ export default function DetailsInput() {
             <input
               type="input"
               value={people}
-              min={minGuests}
-              max={maxGuests}
+              // min={minGuests}
+              // max={maxGuests}
               onChange={(e) => setPeople(parseInt(e.target.value || '0', 10))}
               placeholder={language === 'th' ? 'ระบุจำนวนแขก' : 'Enter number of guests'}
               className={`w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2 text-lg transition-colors ${isValidPeople
@@ -290,6 +337,9 @@ export default function DetailsInput() {
             )}
             {/* Warning for wedding packages when guests exceed food budget limit */}
             {renderFoodBudgetWarning()}
+
+            {/* Warning for event packages when guests exceed maximum capacity */}
+            {renderEventMaximumGuestsWarning()}
           </div>
         </div>
       )}
