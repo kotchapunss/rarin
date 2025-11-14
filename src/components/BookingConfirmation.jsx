@@ -528,8 +528,8 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
 
       // Show success message
       const successMessage = language === 'th'
-        ? 'ส่งข้อมูลเรียบร้อยแล้ว! '
-        : 'Request submitted successfully!';
+        ? 'ส่งข้อมูลเรียบร้อยแล้ว! ทางทีมงานจะติดต่อกลับไปให้เร็วที่สุด'
+        : 'Request submitted successfully! Our team will get back to you shortly.';
 
       alert(successMessage);
 
@@ -1385,9 +1385,6 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                 <p style={{ fontSize: "14px", opacity: "0.9", margin: "0 0 5px 0" }}>
                   Estimated Cost Summary
                 </p>
-                <p style={{ fontSize: "12px", opacity: "0.8", margin: "0" }}>
-                  ชื่อลูกค้า: {customerInfo.name || "ยังไม่ระบุ"} | เบอร์โทร: {customerInfo.tel || "ยังไม่ระบุ"} | อีเมล: {customerInfo.email || "ยังไม่ระบุ"}
-                </p>
               </div>
               <div>
                 <img
@@ -1976,41 +1973,6 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                 </p>
               </div>
 
-              {/* Customer Information Section */}
-              <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-600 mb-1">
-                  {t.customerInformation || "ข้อมูลลูกค้า"}
-                </h3>
-                <p className="text-xs text-gray-500 mb-2">
-                  {language === 'th' 
-                    ? 'กรุณากรอกข้อมูลของคุณเพื่อใช้ในการออกใบประเมินราคา' 
-                    : 'Please fill in your information for the quotation'}
-                </p>
-                <div className="bg-gray-50 p-3 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <input
-                    type="text"
-                    value={customerInfo.name}
-                    onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                    className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#B8846B] focus:border-transparent"
-                    placeholder={language === 'th' ? 'ชื่อลูกค้า' : 'Customer name'}
-                  />
-                  <input
-                    type="tel"
-                    value={customerInfo.tel}
-                    onChange={(e) => setCustomerInfo({ ...customerInfo, tel: e.target.value })}
-                    className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#B8846B] focus:border-transparent"
-                    placeholder={language === 'th' ? 'เบอร์โทรศัพท์' : 'Telephone'}
-                  />
-                  <input
-                    type="email"
-                    value={customerInfo.email}
-                    onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
-                    className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#B8846B] focus:border-transparent"
-                    placeholder={language === 'th' ? 'อีเมล' : 'Email'}
-                  />
-                </div>
-              </div>
-
               {/* Package Summary */}
               <div className="mb-8">
                 <h3 className="font-semibold text-gray-800 mb-4">
@@ -2162,6 +2124,47 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                   {t.priceDisclaimer ||
                     "* ราคานี้เป็นการประเมินเบื้องต้นที่อาจมีการเปลี่ยนแปลง เมื่อดำเนินการตามระบบนี้จริงขึ้นอยู่"}
                 </p>
+              </div>
+
+              {/* Customer Information Section */}
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-gray-600 mb-1">
+                  {t.customerInformation || "ข้อมูลลูกค้า"}
+                </h3>
+                <p className="text-xs text-gray-500 mb-2">
+                  {language === 'th' 
+                    ? 'กรุณากรอกข้อมูลของคุณเพื่อใช้ในการออกใบประเมินราคา' 
+                    : 'Please fill in your information for the quotation'}
+                </p>
+                <div className="bg-gray-50 p-3 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <input
+                    type="text"
+                    value={customerInfo.name}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+                    className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#B8846B] focus:border-transparent"
+                    placeholder={language === 'th' ? 'ชื่อลูกค้า' : 'Customer name'}
+                  />
+                  <input
+                    type="tel"
+                    value={customerInfo.tel}
+                    onChange={(e) => {
+                      setCustomerInfo({ ...customerInfo, tel: e.target.value })
+                      setSubmitForm({ ...submitForm, phone: e.target.value })
+                    }}
+                    className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#B8846B] focus:border-transparent"
+                    placeholder={language === 'th' ? 'เบอร์โทรศัพท์' : 'Telephone'}
+                  />
+                  <input
+                    type="email"
+                    value={customerInfo.email}
+                    onChange={(e) => {
+                      setCustomerInfo({ ...customerInfo, email: e.target.value })
+                      setSubmitForm({ ...submitForm, email: e.target.value })
+                    }}
+                    className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#B8846B] focus:border-transparent"
+                    placeholder={language === 'th' ? 'อีเมล' : 'Email'}
+                  />
+                </div>
               </div>
 
               {/* Main Action Button */}
