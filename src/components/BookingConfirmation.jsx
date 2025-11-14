@@ -314,13 +314,15 @@ export default function BookingConfirmation() {
   const generatePDF = async () => {
     try {
       console.log("Starting PDF download...");
+      const date = new Date();
+      const dt = date.getDate() +"-"+date.getMonth() +"-"+ date.getFullYear() + "";
 
       // If we already have a PDF blob URL from preview, just download it
       if (pdfUrl) {
         const link = document.createElement("a");
         link.href = pdfUrl;
         link.download = `${t.quotationFilename || "ใบประเมินราคา"
-          }-${Date.now()}.pdf`;
+          }-${dt}.pdf`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -340,7 +342,7 @@ export default function BookingConfirmation() {
       const link = document.createElement("a");
       link.href = url;
       link.download = `${t.quotationFilename || "ใบประเมินราคา"
-        }-${Date.now().toString}.pdf`;
+        }-${dt}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -1219,7 +1221,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
           {/* Modal Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <h2 className="text-xl font-semibold text-gray-800">
-              {language === "th" ? "รับข้อมูลเสนอและโปรไฟล์ปานซื่อ" : "Submit Request and Profile"}
+              {language === "th" ? "รับข้อมูลใบเสนอราคาและโปรโมชัน" : "Submit Request for Quote and Promotions"}
             </h2>
             <button
               onClick={() => setShowSubmitModal(false)}
@@ -1235,8 +1237,8 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
           <div className="p-6">
             <p className="text-gray-600 text-sm mb-6">
               {language === "th"
-                ? "กรอกข้อมูลของท่านเพื่อให้เราส่งใบเสนอราคาและโปรไฟล์ของเรา"
-                : "Fill in your information so we can send you our quote and profile"
+                ? "กรอกข้อมูลของท่านเพื่อให้เราส่งใบเสนอราคาและโปรโมชันของเรา"
+                : "Fill in your information so we can send you our quote and promotions"
               }
             </p>
 
