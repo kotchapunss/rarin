@@ -11,6 +11,7 @@ export const useStore = create((set) => ({
   period: 'morning', // morning | afternoon | evening
   dayType: 'weekend', // weekday | weekend
   addons: {},
+  addonsQuantity: {},
   notes: '',
   language: 'en', // en | th
   hasAttemptedBooking: false, // Track if user has attempted to proceed without meeting minimum spending
@@ -27,16 +28,19 @@ export const useStore = create((set) => ({
   setDayType: (dt) => set({ dayType: dt }),
   // Set an addon value. If price is 0 or falsy, the addon is removed.
   // This replaces the previous toggle-only behavior so callers can explicitly set quantities/prices.
-  toggleAddon: (id, price) => set((s) => {
+  toggleAddon: (id, price, quantity) => set((s) => {
     const next = { ...s.addons }
+    const nextQuantity = { ...s.addonsQuantity }
     // If price is 0, null, or undefined -> remove the addon
     if (price === 0 || price === null || typeof price === 'undefined') {
       if (next[id]) delete next[id]
+      if (nextQuantity[id]) delete nextQuantity[id]
     } else {
       // Otherwise set the explicit price (can be negative for discounts)
       next[id] = price
+      nextQuantity[id] = quantity; // Default quantity to 1 when setting a price
     }
-    return { addons: next }
+    return { addons: next, addonsQuantity: nextQuantity }
   }),
   setNotes: (v) => set({ notes: v }),
   setLanguage: (lang) => set((state) => {

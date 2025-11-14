@@ -944,7 +944,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
         beer_singha: { name: { th: "เบียร์สิงห์", en: "Singha Beer" } },
         beer_asahi: { name: { th: "เบียร์อาซาฮี", en: "Asahi Beer" } },
         wine_house: { name: { th: "ไวน์ House Wine", en: "House Wine" } },
-
+        cocktail: { name: { th: "ค็อกเทล", en: "Cocktail" } },
         // Marketing Discounts
         collab_program: {
           name: { th: "โปรแกรม Couple Collab", en: "Couple Collab Program" },
@@ -957,6 +957,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
       // Iterate known service keys and include only non-zero numeric values
       Object.keys(customServices).forEach((addonId) => {
         const raw = state.addons?.[addonId];
+        const quantity = state.addonsQuantity?.[addonId];
         const value = typeof raw === "number" ? raw : raw ? Number(raw) : 0;
         if (!customServices[addonId]) return;
         if (value === 0 || Number.isNaN(value)) return;
@@ -977,8 +978,8 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
         addonsList.push({
           id: addonId,
           name: serviceName,
+          quantity: quantity || 1,
           totalPrice: value,
-          quantity: 1,
           unitPrice: value,
         });
       });

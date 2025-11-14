@@ -414,6 +414,7 @@ export default function Summary() {
         beer_singha: { name: { th: "เบียร์สิงห์", en: "Singha Beer" } },
         beer_asahi: { name: { th: "เบียร์อาซาฮี", en: "Asahi Beer" } },
         wine_house: { name: { th: "ไวน์ House Wine", en: "House Wine" } },
+        cocktail: { name: { th: "ค็อกเทล", en: "Cocktail" } },
 
         // Marketing Discounts
         collab_program: {
@@ -427,6 +428,7 @@ export default function Summary() {
       // Iterate known service keys (defensive) and include only non-zero numeric values
       Object.keys(customServices).forEach((addonId) => {
         const raw = state.addons?.[addonId];
+        const quantity = state.addonsQuantity?.[addonId];
         const value = typeof raw === "number" ? raw : raw ? Number(raw) : 0;
         if (!customServices[addonId]) return;
         if (value === 0 || Number.isNaN(value)) return;
@@ -451,6 +453,7 @@ export default function Summary() {
         addonsList.push({
           name: serviceName,
           value: value,
+          quantity: quantity || 1,
           isDiscount: value < 0,
         });
       });
@@ -539,7 +542,7 @@ export default function Summary() {
     }
 
     return addonsList;
-  }, [state.addons, state.language, state.type]);
+  }, [state.addons, state.language, state.type, state.people]);
 
   const handleReset = () => {
     // Reset all state and go back to step 1

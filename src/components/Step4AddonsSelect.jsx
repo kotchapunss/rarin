@@ -337,10 +337,10 @@ export default function AddonsSelect() {
     setQuantities(newQuantities)
     
     if (quantity > 0) {
-      toggleAddon(addonId, price * quantity)
+      toggleAddon(addonId, price * quantity, quantity)
     } else {
       if (addons[addonId]) {
-        toggleAddon(addonId, 0)
+        toggleAddon(addonId, 0, 0)
       }
     }
   }
@@ -383,7 +383,7 @@ export default function AddonsSelect() {
       if (unitText === '10 ท่าน' || unitText === '10 people') {
         quantity = Math.ceil((people || 1) / 10)
       }
-      toggleAddon(addonId, unitPrice * quantity)
+      toggleAddon(addonId, unitPrice * quantity, quantity)
     }
   }
 
