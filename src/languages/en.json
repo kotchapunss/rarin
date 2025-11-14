@@ -847,6 +847,7 @@
   "basePackage": "Base package",
   "addOns": "Add-ons",
   "extraGuests": "Extra guests",
+  "extraGuestsCalculation": "Extra guests calculation",
   "foodBudgetExceeded": "Guests exceed food budget",
   "guestsOverLimit": "Over",
   "extraGuestCost": "Extra guest cost",

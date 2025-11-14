@@ -1696,7 +1696,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                     ).padStart(3, "0")}
                   </td>
                   <td style={{ padding: "12px 8px", fontSize: "12px" }}>
-                    แขกเพิ่มเติม ({extraGuestsCount} ท่าน)
+                    {getTranslation("extraGuests", language)} ({extraGuestsCount} {language === 'th' ? 'ท่าน' : 'people'})
                   </td>
                   <td
                     style={{
@@ -1961,7 +1961,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                   {t.estimationSummary || "สรุปการคำนวณ"}
                 </h1>
                 <p className="text-gray-600">
-                  {t.estimationDescription || "สรุปราคาสำหรับการใช้งานเดีย"}
+                  {t.estimationDescription || "สรุปราคาสำหรับงานของคุณ"}
                 </p>
               </div>
 
@@ -2051,7 +2051,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                     <div className="mt-3 border-t pt-3">
                       <div className="flex justify-between items-center text-sm">
                         <span>
-                          คำนวณแขกเพิ่มเติม ({extraGuestsCount} ท่าน × ฿
+                          {t.extraGuestsCalculation || "คำนวณแขกเพิ่มเติม"} ({extraGuestsCount} {language === 'th' ? 'ท่าน' : 'people'} × ฿
                           {extraGuestUnitPrice.toLocaleString()})
                         </span>
                         <span>฿{extraGuestsCost.toLocaleString()}</span>

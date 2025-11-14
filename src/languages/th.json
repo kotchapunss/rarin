@@ -847,6 +847,7 @@
   "basePackage": "แพ็กเกจพื้นฐาน",
   "addOns": "บริการเสริม",
   "extraGuests": "แขกเพิ่มเติม",
+  "extraGuestsCalculation": "คำนวณแขกเพิ่มเติม",
   "foodBudgetExceeded": "แขกเกินงบอาหาร",
   "guestsOverLimit": "จำนวนแขกเกิน",
   "extraGuestCost": "ค่าแขกเพิ่มเติม",
