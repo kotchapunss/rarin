@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useStore } from "../store";
 import {
   useTranslations,
+  getTranslation,
   getPackageCapacity,
   parseCapacityRange,
 } from "../i18n";
@@ -629,8 +630,9 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
               extraGuestsCost = extraGuestsCount * extraGuestUnitPrice;
             }
           }
-        } else {
-          // For event, photo types, and wedding budget4 packages, use existing capacity-based calculation
+        } else if (state.type === 'photo' || (state.type === 'wedding' && selectedPackage.budgetId === 'budget4')) {
+          // For photo types and wedding budget4 packages only, use existing capacity-based calculation
+          // Event types do not have extra guest charges - they work on minimum spending model
           // Get package capacity
           const capacityString = getPackageCapacity(
             state.type,
@@ -675,6 +677,8 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
             extraGuestsCost = extraGuestsCount * extraGuestUnitPrice;
           }
         }
+        // For event types, we don't calculate extra guest charges at all
+        // Event packages work on minimum spending model, not capacity + extra guest fees
       }
 
       // Time surcharge logic
@@ -688,9 +692,9 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
         if (selectedTimeOption && selectedTimeOption.surcharge > 0) {
           timeSurcharge = selectedTimeOption.surcharge;
           if (selectedTimeOption.value === "afternoon") {
-            timeSurchargeLabel = "ค่าบริการครึ่งวันบ่าย";
+            timeSurchargeLabel = getTranslation("afternoonSurchargeLabel", language);
           } else if (selectedTimeOption.value === "full_day") {
-            timeSurchargeLabel = "ค่าบริการเต็มวัน";
+            timeSurchargeLabel = getTranslation("fullDaySurchargeLabel", language);
           }
         }
       } else {
@@ -699,7 +703,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
             (state.period.includes("Full Day") || state.period.includes("เต็มวัน"))
             ? settings.fullDaySurcharge
             : 0;
-        if (timeSurcharge > 0) timeSurchargeLabel = "ค่าบริการเต็มวัน";
+        if (timeSurcharge > 0) timeSurchargeLabel = getTranslation("fullDaySurchargeLabel", language);
       }
 
       // Calculate subtotal before discounts - different for event type
@@ -719,10 +723,10 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
       if (state.dayType === "weekday") {
         if (selectedPackage?.budgetId === "budget4") {
           weekdayDiscount = settings.budget4WeekdayDiscount;
-          weekdayDiscountLabel = "ส่วนลดวันธรรมดา (฿40,000)";
+          weekdayDiscountLabel = getTranslation("weekdayDiscountBudget4Label", language);
         } else if (selectedPackage?.weekdayDiscountEligible === true) {
           weekdayDiscount = settings.weekdayDiscount;
-          weekdayDiscountLabel = "ส่วนลดวันธรรมดา (฿20,000)";
+          weekdayDiscountLabel = getTranslation("weekdayDiscountLabel", language);
         }
       }
 
@@ -837,30 +841,33 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
 
   // Get package name in correct language
   const getPackageName = () => {
-    if (!selectedPackage) return "ไม่ได้เลือกแพ็กเกจ";
+    if (!selectedPackage) return t.noPackageSelected || "No package selected";
     if (typeof selectedPackage.name === "object") {
       return (
         selectedPackage.name[language] ||
         selectedPackage.name.th ||
         selectedPackage.name.en ||
-        "ไม่ได้เลือกแพ็กเกจ"
+        t.noPackageSelected || "No package selected"
       );
     }
-    return selectedPackage.name || "ไม่ได้เลือกแพ็กเกจ";
+    return selectedPackage.name || t.noPackageSelected || "No package selected";
   };
 
   // Get maximum capacity for the selected package
   const getMaxCapacity = () => {
     if (!selectedPackage) return 0;
 
-    if (state.type === 'wedding' && selectedPackage.budgetId !== 'budget4') {
+    if (state.type === 'event') {
+      // For event packages, don't show max capacity section - they use minimum spending model
+      return 0;
+    } else if (state.type === 'wedding' && selectedPackage.budgetId !== 'budget4') {
       // For wedding packages (except budget4), return the food budget limit as the capacity
       const settings = getSettings();
       const weddingFoodLimits = settings.weddingFoodLimits;
       const budgetLimit = weddingFoodLimits?.[selectedPackage.budgetId];
       return budgetLimit?.limitGuests || 400; // Default to reasonable max if no limit found
     } else {
-      // For event, photo packages, and wedding budget4 packages, use existing capacity calculation
+      // For photo packages and wedding budget4 packages, use existing capacity calculation
       const capacityString = getPackageCapacity(
         state.type,
         state.packageId,
@@ -1993,12 +2000,12 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                           </span>
                         </div>
 
-                        {/*show this section when  number of guests is greater than max capacity*/}
-                        {state.people > getMaxCapacity() && (
+                        {/*show this section when number of guests is greater than max capacity and not event type*/}
+                        {state.type === 'wedding' && state.people > getMaxCapacity() && getMaxCapacity() > 0 && (
                           <div>
                             {language === "th"
-                              ? "รองรับสูงสุด: "
-                              : "Max capacity: "}
+                              ? "อาหารเบสิคไทยบุฟเฟ่ห์ : "
+                              : "Basic Thai Buffet capacity: "}
                             <span className="font-medium text-gray-700">
                               {getMaxCapacity()}{" "}
                               {language === "th" ? "ท่าน" : "people"}
@@ -2044,7 +2051,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                     <div className="mt-3 border-t pt-3">
                       <div className="flex justify-between items-center text-sm">
                         <span>
-                          แขกเพิ่มเติม ({extraGuestsCount} ท่าน × ฿
+                          คำนวณแขกเพิ่มเติม ({extraGuestsCount} ท่าน × ฿
                           {extraGuestUnitPrice.toLocaleString()})
                         </span>
                         <span>฿{extraGuestsCost.toLocaleString()}</span>

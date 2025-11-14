@@ -9,6 +9,7 @@ import {
 } from "../data";
 import {
   useTranslations,
+  getTranslation,
   getPackageCapacity,
   parseCapacityRange,
 } from "../i18n";
@@ -179,9 +180,9 @@ function calcTotal(
     if (selectedTimeOption && selectedTimeOption.surcharge > 0) {
       timeSurcharge = selectedTimeOption.surcharge;
       if (selectedTimeOption.value === "afternoon") {
-        timeSurchargeLabel = "ค่าบริการครึ่งวันบ่าย";
+        timeSurchargeLabel = getTranslation("afternoonSurchargeLabel", language);
       } else if (selectedTimeOption.value === "full_day") {
-        timeSurchargeLabel = "ค่าบริการเต็มวัน";
+        timeSurchargeLabel = getTranslation("fullDaySurchargeLabel", language);
       }
     }
   } else {
@@ -191,7 +192,7 @@ function calcTotal(
         ? settings.fullDaySurcharge
         : 0;
     if (timeSurcharge > 0) {
-      timeSurchargeLabel = "ค่าบริการเต็มวัน";
+      timeSurchargeLabel = getTranslation("fullDaySurchargeLabel", language);
     }
   }
 
@@ -203,11 +204,11 @@ function calcTotal(
     if (pkg?.budgetId === "budget4") {
       // Budget4 packages get flat ฿40,000 discount on weekdays
       weekdayDiscount = settings.budget4WeekdayDiscount;
-      weekdayDiscountLabel = "ส่วนลดวันธรรมดา (฿40,000)";
+      weekdayDiscountLabel = getTranslation("weekdayDiscountBudget4Label", language);
     } else if (pkg?.weekdayDiscountEligible === true) {
       // Other eligible packages get ฿20,000 discount
       weekdayDiscount = settings.weekdayDiscount;
-      weekdayDiscountLabel = "ส่วนลดวันธรรมดา (฿20,000)";
+      weekdayDiscountLabel = getTranslation("weekdayDiscountLabel", language);
     }
   }
 
@@ -712,13 +713,7 @@ export default function Summary() {
           {/* Time Surcharge */}
           {timeSurcharge > 0 && (
             <Row
-              label={
-                state.language === "th"
-                  ? timeSurchargeLabel
-                  : timeSurchargeLabel === "ค่าบริการครึ่งวันบ่าย"
-                  ? "Afternoon Surcharge"
-                  : "Full Day Surcharge"
-              }
+              label={timeSurchargeLabel}
               value={timeSurcharge}
             />
           )}

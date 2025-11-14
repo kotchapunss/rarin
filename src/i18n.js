@@ -22,22 +22,16 @@ export const getNestedTranslation = (path, language = 'en') => {
   const keys = path.split('.');
   let value = translations[language] || translations.en;
   
-  console.log(`getNestedTranslation: path=${path}, language=${language}`);
-  console.log('Starting with translations:', translations[language] ? 'found' : 'not found');
-  
   for (const key of keys) {
     if (value && typeof value === 'object' && key in value) {
       value = value[key];
-      console.log(`Found key "${key}":`, value);
     } else {
-      console.log(`Key "${key}" not found, falling back to English`);
       // Fallback to English
       value = translations.en;
       for (const fallbackKey of keys) {
         if (value && typeof value === 'object' && fallbackKey in value) {
           value = value[fallbackKey];
         } else {
-          console.log(`Fallback failed at key "${fallbackKey}"`);
           return null;
         }
       }
@@ -45,7 +39,6 @@ export const getNestedTranslation = (path, language = 'en') => {
     }
   }
   
-  console.log('Final result:', value);
   return value;
 };
 
@@ -59,15 +52,11 @@ export const getEventTypeDescription = (eventTypeId, language = 'en') => {
 };
 
 export const getBudgetRangeName = (budgetId, language = 'en') => {
-  const result = getNestedTranslation(`budgetRanges.${budgetId}.name`, language);
-  console.log(`getBudgetRangeName(${budgetId}, ${language}) =`, result);
-  return result;
+  return getNestedTranslation(`budgetRanges.${budgetId}.name`, language);
 };
 
 export const getBudgetRangeDescription = (budgetId, language = 'en') => {
-  const result = getNestedTranslation(`budgetRanges.${budgetId}.description`, language);
-  console.log(`getBudgetRangeDescription(${budgetId}, ${language}) =`, result);
-  return result;
+  return getNestedTranslation(`budgetRanges.${budgetId}.description`, language);
 };
 
 export const getTimeOptionLabel = (timeValue, language = 'en') => {
@@ -104,7 +93,7 @@ export const getPackageCapacity = (eventType, packageId, language) => {
 
 // Helper to parse capacity range from string like "20-60 guests" or "20-60 คน"
 export const parseCapacityRange = (capacityString) => {
-  if (!capacityString) return { min: 50, max: 999999 }; // Default
+  if (!capacityString) return { min: 50, max: 400 }; // Default fallback values
   
   // Extract numbers from string like "20-60 guests" or "20-60 คน"
   const match = capacityString.match(/(\d+)-(\d+)/);
@@ -115,7 +104,7 @@ export const parseCapacityRange = (capacityString) => {
     };
   }
   
-  return { min: 50, max: 999999 }; // Default fallback
+  return { min: 50, max: 400 }; // Default fallback values
 };
 
 // Get package detail arrays

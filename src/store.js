@@ -7,7 +7,7 @@ export const useStore = create((set) => ({
   type: 'wedding', // wedding | event | photo
   budget: null, // New budget selection
   packageId: null,
-  people: 0,
+  people: 20,
   period: 'morning', // morning | afternoon | evening
   dayType: 'weekend', // weekday | weekend
   addons: {},

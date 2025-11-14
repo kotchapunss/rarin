@@ -266,19 +266,19 @@ export default function DetailsInput() {
   }, [packageId, hasTimeSlots, period, setPeriod]) // Remove availableTimeSlots from dependencies
 
   // Set initial people count based on minimum capacity for event type
-  useEffect(() => {
-    if (type === 'event' && packageId && (people === 0 || people < minGuests)) {
-      setPeople(minGuests)
-    } else if (type === 'wedding' && packageId && people === 0) {
-      // For wedding, initialize to minimum guest count (50)
-      setPeople(minGuests)
-    } else if (type === 'photo') {
-      // For photo type, reset people count to 0 since it's not needed
-      if (people !== 0) {
-        setPeople(0)
-      }
-    }
-  }, [packageId, type, minGuests, people, setPeople])
+  // useEffect(() => {
+  //   if (type === 'event' && packageId) {
+  //     setPeople(0)
+  //   } else if (type === 'wedding' && packageId && people === 0) {
+  //     // For wedding, initialize to minimum guest count (50)
+  //     setPeople(minGuests)
+  //   } else if (type === 'photo') {
+  //     // For photo type, reset people count to 0 since it's not needed
+  //     if (people !== 0) {
+  //       setPeople(0)
+  //     }
+  //   }
+  // }, [packageId, type, minGuests, people, setPeople])
 
   // Get sub-description based on event type
   const getSubDescription = () => {
@@ -312,11 +312,10 @@ export default function DetailsInput() {
           </label>
           <div className="mb-4">
             <input
-              type="input"
+              type="number"
               value={people}
               // min={minGuests}
-              // max={maxGuests}
-              onChange={(e) => setPeople(parseInt(e.target.value || '0', 10))}
+              onChange={(e) => setPeople(parseInt(e.target.value , 10))}
               placeholder={language === 'th' ? 'ระบุจำนวนแขก' : 'Enter number of guests'}
               className={`w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2 text-lg transition-colors ${isValidPeople
                 ? 'border-stone-300 focus:ring-[#B8846B]'

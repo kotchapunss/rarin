@@ -18,6 +18,15 @@
   "shooting": "shooting",
   "teardown": "teardown",
   "hours": "hours",
+  "packageIncluded": "What's Included",
+  "packageDecoration": "Decor & Styling Inclusions",
+  "packageFood": "Catering",
+  "packageLimits": "Limitations ⚠️",
+  "afternoonSurchargeLabel": "Afternoon Service Fee",
+  "fullDaySurchargeLabel": "Full Day Service Fee",
+  "weekdayDiscountBudget4Label": "Weekday Discount (฿40,000)",
+  "weekdayDiscountLabel": "Weekday Discount (฿20,000)",
+  "noPackageSelected": "No package selected",
   "eventTypes": {
     "wedding": {
       "name": "Wedding 💍",

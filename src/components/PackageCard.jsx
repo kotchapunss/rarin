@@ -199,7 +199,7 @@ export default function PackageCard({ item, isPopular = false }) {
       {/* Features Section */}
       {packageInfo.features && packageInfo.features.length > 0 && (
         <div className="mb-4">
-          <h4 className="font-semibold text-gray-800 mb-3">สิ่งที่ได้รับรวม</h4>
+          <h4 className="font-semibold text-gray-800 mb-3">{t.packageIncluded}</h4>
           <ul className="space-y-1">
             {packageInfo.features.map((feature, index) => (
               <li key={index} className="flex items-start">
@@ -214,7 +214,7 @@ export default function PackageCard({ item, isPopular = false }) {
       {/* Equipment Services Section */}
       {packageInfo.equipmentServices.length > 0 && (
         <div className="mb-4">
-          <h4 className="font-semibold text-gray-800 mb-3">รายการตกแต่ง</h4>
+          <h4 className="font-semibold text-gray-800 mb-3">{t.packageDecoration}</h4>
           <ul className="space-y-1">
             {packageInfo.equipmentServices.map((service, index) => (
               <li key={index} className="flex items-start">
@@ -229,7 +229,7 @@ export default function PackageCard({ item, isPopular = false }) {
        {/* food Services Section */}
       {packageInfo.food.length > 0 && (
         <div className="mb-4">
-          <h4 className="font-semibold text-gray-800 mb-3">อาหาร</h4>
+          <h4 className="font-semibold text-gray-800 mb-3">{t.packageFood}</h4>
           <ul className="space-y-1">
             {packageInfo.food.map((foodItem, index) => (
               <li key={index} className="flex items-start">
@@ -244,7 +244,7 @@ export default function PackageCard({ item, isPopular = false }) {
       {/* limits Services Section */}
       {packageInfo.limits.length > 0 && (
         <div className="mb-4">
-          <h4 className="font-semibold text-gray-800 mb-3">ข้อจำกัด ⚠️</h4>
+          <h4 className="font-semibold text-gray-800 mb-3">{t.packageLimits}</h4>
           <ul className="space-y-1">
             {packageInfo.limits.map((limit, index) => (
               <li key={index} className="flex items-start">
