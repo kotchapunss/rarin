@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import StepNav from "./components/StepNav";
 import TypeSelector from "./components/Step0TypeSelector";
 import BudgetSelector from "./components/Step1BudgetSelector";
@@ -33,8 +33,13 @@ function Header() {
 }
 
 export default function App() {
-  const { step, type, budget } = useStore();
+  const { step, type, budget, language } = useStore();
   const [showIntro, setShowIntro] = useState(true);
+  
+  // Set language attribute on body for font switching
+  useEffect(() => {
+    document.body.setAttribute('data-language', language);
+  }, [language]);
   
   // For wedding type, use 4-step flow (or 5 for budget4), for others use 3-step flow (event has addons, photo doesn't)
   const isWeddingFlow = type === 'wedding';
