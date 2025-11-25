@@ -84,7 +84,7 @@ export default function PackageCard({ item, isPopular = false }) {
             <div className="flex items-center gap-4 text-sm text-gray-600">
               {type === 'event' ? (
                 <>
-                  <span>{language === 'th' ? 'ขั้นต่ำ' : 'Min'} ฿{item.minSpend?.toLocaleString() || '0'}</span>
+                  <span>{language === 'th' ? 'ใช้จ่ายขั้นต่ำเกิน' : 'Minimum spending over'} ฿{item.minSpend?.toLocaleString() || '0'}</span>
                   {packageInfo.capacity && (
                     <>
                       <span>•</span>

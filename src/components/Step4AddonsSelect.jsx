@@ -76,7 +76,6 @@ export default function AddonsSelect() {
             name: budget4Data.items.water_blessing.name,
             shortName: budget4Data.items.water_blessing.shortName,
             description: budget4Data.items.water_blessing.description,
-            minGuests: 50,
             price: 35000,
             type: "checkbox",
             details: budget4Data.items.water_blessing.details
@@ -86,7 +85,6 @@ export default function AddonsSelect() {
             name: budget4Data.items.monk_blessing.name,
             shortName: budget4Data.items.monk_blessing.shortName,
             description: budget4Data.items.monk_blessing.description,
-            minGuests: 30,
             price: 35000,
             type: "checkbox",
             details: budget4Data.items.monk_blessing.details
@@ -96,7 +94,6 @@ export default function AddonsSelect() {
             name: budget4Data.items.tea_ceremony.name,
             shortName: budget4Data.items.tea_ceremony.shortName,
             description: budget4Data.items.tea_ceremony.description,
-            minGuests: 30,
             price: 35000,
             type: "checkbox",
             details: budget4Data.items.tea_ceremony.details
@@ -106,7 +103,6 @@ export default function AddonsSelect() {
             name: budget4Data.items.vow_ceremony.name,
             shortName: budget4Data.items.vow_ceremony.shortName,
             description: budget4Data.items.vow_ceremony.description,
-            minGuests: 40,
             price: 35000,
             type: "checkbox",
             details: budget4Data.items.vow_ceremony.details
@@ -177,7 +173,7 @@ export default function AddonsSelect() {
             id: "western_thai_course_menu",
             name: budget4Data.items.western_thai_course_menu.name,
             description: budget4Data.items.western_thai_course_menu.description,
-            price: 1800,
+            price: 1890,
             type: "auto",
             unit: budget4Data.items.western_thai_course_menu.unit
           }

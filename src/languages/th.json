@@ -94,31 +94,31 @@
   "packagesData": {
     "wedding": {
       "w1": {
-        "name": "แพ็คเกจมินิมูนไลท์",
+        "name": "Mini Moonlight Package",
         "description": "สำหรับงานแต่งขนาดเล็กแขกไม่เกิน 50 คน",
         "area": "Moonlight Room",
         "capacity": "ไม่เกิน 50 คน"
       },
       "w2": {
-        "name": "แพ็คเกจคอซี่มอร์นิ่ง (ในร่ม)",
+        "name": "Cozy Morning Package (Indoor)",
         "description": "แพ็กเกจงานแต่งแขกไม่เกิน 100 คน",
         "area": "Moonlight Room / Ballad",
         "capacity": "50-100 คน"
       },
       "w3": {
-        "name": "แพ็คเกจซันเซ็ทการ์เด้น (กลางแจ้ง)",
+        "name": "Sunset Garden Package (Outdoor)",
         "description": "สแพ็กเกจงานแต่งแขกไม่เกิน 100 คน",
         "area": "Moonlight Room / Riverside Garden",
         "capacity": "50-100 คน"
       },
       "w4": {
-        "name": "แพ็คเกจบัลลาดริเวอร์ไซด์ (ในร่ม)",
+        "name": "Ballad Riverside Package (Indoor)",
         "description": "แพ็กเกจงานแต่งแขกไม่เกิน 100 คน",
         "area": "Moonlight Room / Ballad",
         "capacity": "50-100 คน"
       },
       "w5": {
-        "name": "แพ็คเกจเรนนี่ อินคลูซีฟ",
+        "name": "Rarin Inclusive Package",
         "description": "แพ็กเกจสถานที่ รวมงานพิธี งานตกแต่ง และ อาหาร 100 ท่าน",
         "area": "พื้นที่ทั้งหมด (Rarin Venue)",
         "capacity": "100-200 คน"
@@ -151,30 +151,30 @@
     "event": {
       "e1": {
         "name": "ขนาดเล็ก",
-        "description": "ขั้นต่ำในการใช้สถานที่ ฿30,000",
+        "description": "เมื่อใช้จ่ายอาหารและเครื่องดื่มถึงขั้นต่ำ ฿30,000 จะฟรีค่าสถานที่",
         "area": "Moonlight Room",
         "capacity": "20-60 คน",
         "maxCapacity": 60
       },
       "e2": {
         "name": "ขนาดกลาง",
-        "description": "ขั้นต่ำในการใช้สถานที่ ฿80,000",
+        "description": "เมื่อใช้จ่ายอาหารและเครื่องดื่มถึงขั้นต่ำ ฿80,000 จะฟรีค่าสถานที่",
         "area": "Ballad Riverside Restaurant",
         "capacity": "51-100 คน",
         "maxCapacity": 100
       },
       "e3": {
         "name": "ขนาดใหญ่",
-        "description": "ขั้นต่ำในการใช้สถานที่ ฿120,000",
+        "description": "เมื่อใช้จ่ายอาหารและเครื่องดื่มถึงขั้นต่ำ ฿120,000 จะฟรีค่าสถานที่",
         "area": "Rarin Hall",
         "capacity": "100-200 คน",
         "maxCapacity": 200
       },
       "e4": {
-        "name": "สถานที่ราริณ (ยกเว้น Ballad)",
-        "description": "เช่าสถานที่ขั้นต่ำ ฿200,000 (จันทร์-ศุกร์) / ฿250,000 (เสาร์-อาทิตย์)",
-        "area": "Rarin Venue (ยกเว้น Ballad)",
-        "capacity": "200-400 คน",
+        "name": "พื้นที่ลลิลทั้งหมด (ยกเว้น ร้านอาหาร Ballad / Rooftop Bar)",
+        "description": "เมื่อใช้จ่ายอาหารและเครื่องดื่มถึงขั้นต่ำ ฿200,000 หรือ ฿250,000 จะฟรีค่าสถานที่",
+        "area": "Rarin Venue (ยกเว้น Ballad Riverside Restaurant / Rooftop Bar)",
+        "capacity": "100-400 คน",
         "maxCapacity": 400
       }
     },
@@ -442,8 +442,7 @@
       },
       "e4": {
         "features": [
-          "พื้นที่ Rarin Venue ทั้งหมด (ยกเว้น Ballad Riverside Restaurant)"
-        ],
+          "พื้นที่ Rarin Venue ทั้งหมด (ยกเว้น Ballad Riverside Restaurant / Rooftop Bar)"        ],
         "equipmentServices": [],
         "limits": [
           "ขั้นต่ำในการใช้สถานที่ ฿200,000 วันจันทร์-ศุกร์",
@@ -646,116 +645,116 @@
   "addons": {
     "event": {
       "categories": {
-        "buffet": "อาหารบุฟเฟ่ต์ไทย / นานาชาติ",
-        "food_sets": "ชุดอาหาร / อาหารจานเดียว",
-        "course_menu": "เมนูคอร์ส / คอร์สรายบุคคล",
-        "coffee_break": "กาแฟ / ชาอาหารว่างบ่าย",
-        "cocktail": "ค็อกเทล & ซุ้มอาหาร",
+        "buffet": "Thai Buffet / International Buffet",
+        "food_sets": "Food Sets / Set Meals",
+        "course_menu": "Course Menu / Individual Serve",
+        "coffee_break": "Coffee Break / Afternoon Tea",
+        "cocktail": "Cocktail & Food Stall",
         "liquor": "LIQUOR"
       },
       "items": {
         "a1": {
-          "name": "อาหารบุฟเฟ่ต์ไทยราคาประหยัด",
+          "name": "Saver Thai Buffet",
           "description": "5 รายการ  (อาหาร 4 อย่าง,ของหวาน 1 ข้าวสวย เครื่องดื่ม 2 รายการ)"
         },
         "a2": {
-          "name": "อาหารบุฟเฟ่ต์ไทยพื้นฐาน",
+          "name": "Basic Thai Buffet",
           "description": "8 รายการ  (อาหาร 6 อย่าง,ของหวาน 2 ข้าวสวย เครื่องดื่ม 2 รายการ)"
         },
         "a3": {
-          "name": "อาหารบุฟเฟ่ต์ไทยสุดหรู",
+          "name": "Deluxe Thai Buffet",
           "description": "10 รายการ (อาหาร 7 อย่าง, ของหวาน 2, เครื่องดื่ม 3 รายการ)"
         },
         "a4": {
-          "name": "อาหารบุฟเฟ่ต์นานาชาติสุดหรูพิเศษ",
+          "name": "Deluxe International Buffet",
           "description": "9 รายการ  (อาหาร 7 อย่าง,ของหวาน 2 เครื่องดื่ม 3 รายการ)"
         },
         "a5": {
-          "name": "อาหารบุฟเฟ่ต์นานาชาติสุดหรู",
+          "name": "Stylish International Buffet",
           "description": "9 รายการ  (อาหาร 8 อย่าง,ของหวาน 1  และ เครื่องดื่ม 2 รายการ) นั่งโต๊ะละ 10 ท่าน"
         },
         "fs1": {
-          "name": "ชุดอาหารจีนพื้นฐาน",
+          "name": "Basic Chinese Set",
           "description": "8 รายการ  (อาหาร 7 อย่าง,ของหวาน 1  และ เครื่องดื่ม 2 รายการ)  นั่งโต๊ะละ 10 ท่าน"
         },
         "fs2": {
-          "name": "ชุดอาหารจีนคลาสสิก",
+          "name": "Classic Chinese Set",
           "description": "9 รายการ  (อาหาร 8 อย่าง,ของหวาน 1  และ เครื่องดื่ม 2 รายการ)  นั่งโต๊ะละ 10 ท่าน"
         },
         "fs3": {
-          "name": "ชุดอาหารจีนสุดหรู",
+          "name": "Deluxe Chinese Set",
           "description": "9 รายการ  (อาหาร 8 อย่าง,ของหวาน 1  และ เครื่องดื่ม 2 รายการ) นั่งโต๊ะละ 10 ท่าน"
         },
         "cm1": {
-          "name": "เมนูคอร์สไทย / ตะวันตก 4 คอร์ส",
+          "name": "4-Course Menu Western / Thai",
           "description": "Western / Thai - Appetizer / Soup / Main Dish / Dessert"
         },
         "cm2": {
-          "name": "เมนูคอร์สไทย / ตะวันตก 4 คอร์ส",
+          "name": "4-Course Menu Western / Thai",
           "description": "Western / Thai - Appetizer / Soup / Main Dish / Dessert"
         },
         "cm3": {
-          "name": "เมนูคอร์สไทย / ตะวันตก 5 คอร์ส",
+          "name": "5-Course Menu Western / Thai",
           "description": "Western / Thai - Appetizer / Soup / Main Dish / Dessert"
         },
         "cm4": {
-          "name": "เมนูคอร์สไทย / ตะวันตก 5 คอร์ส",
+          "name": "5-Course Menu Western / Thai",
           "description": "Western / Thai - Appetizer / Soup / Main Dish / Dessert"
         },
         "cm5": {
-          "name": "เมนูคอร์สไทย / ตะวันตก 5 คอร์ส",
+          "name": "Premium 5-Course Menu Western / Thai",
           "description": "Western / Thai - Appetizer / Soup / Main Dish / Dessert"
         },
         "cm6": {
-          "name": "เมนูคอร์สไทย / ตะวันตก 5 คอร์ส",
+          "name": "Premium 5-Course Menu Western / Thai",
           "description": "Western / Thai - Appetizer / Soup / Main Dish / Dessert"
         },
         "cb1": {
-          "name": "คอฟฟี่เบรคคลาสสิก 2 ขนม",
+          "name": "Classic 2 pastries",
           "description": "ขนม 2 รายการ ชา กาแฟ น้ำสมุนไพร"
         },
         "cb2": {
-          "name": "คอฟฟี่เบรคคลาสสิก 4 ขนม",
+          "name": "Classic 4 pastries",
           "description": "ขนม 4 รายการ ชา กาแฟ น้ำสมุนไพร"
         },
         "cb3": {
-          "name": "มินิบรันช์",
+          "name": "Mini Brunch",
           "description": "คานาเป้ 4 รายการ บุเฟ่ห์น้ำอัดลม"
         },
         "cb4": {
-          "name": "อาหารบุฟเฟ่ต์นานาชาติสุดหรู",
+          "name": "Premium Afternoon Tea",
           "description": "6 รายการ ชาผลไม้ ม็อคเทล"
         },
         "a6": {
-          "name": "ค็อกเทลพื้นฐาน",
+          "name": "Basic Cocktail",
           "description": "7 คานาเป้  และ บุฟเฟ่ห์น้ำอัดลม"
         },
         "a7": {
-          "name": "ค็อกเทลสุดหรู",
+          "name": "Delight Cocktail",
           "description": "10 คานาเป้  และ บุฟเฟ่ห์น้ำอัดลม"
         },
         "a8": {
-          "name": "ค็อกเทลหนักแน่นมีสไตล์",
+          "name": "Stylish Heavy Cocktail",
           "description": "14 รายการ  ( คานาเป้ 8 อย่าง,ของหวาน 2 ซุ้มอาหาร 4 รายการ ,เครื่องดื่ม 4 รายการ) พร้อม Napkin/Showplate"
         },
         "a9": {
-          "name": "ค็อกเทลหนักแน่นมีสไตล์",
+          "name": "Stylish Heavy Cocktail",
           "description": "14 รายการ  ( คานาเป้ 8 อย่าง,ของหวาน 2 ซุ้มอาหาร 4 รายการ ,เครื่องดื่ม 4 รายการ) พร้อม Napkin/Showplate"
         },
         "a11": {
-          "name": "เบียร์สด",
+          "name": "DRAUGHT BEER PACKAGE",
           "description": "LEO / CHANG / SIGHA ( นำเข้าแอลกอฮฮล์ไม่จำกัด เมื่อรับเบียร์สด 2 ถังขั้นต่ำ )"
         },
         "a12": {
-          "name": "ไวน์",
+          "name": "WINE",
           "description": "ไวน์ 750 ml 12 ขวดต่อเซ็ต"
         },
         "a13": {
-          "name": "วิสกี้",
+          "name": "WHISKEY",
           "description": "REGENCY 350 ml 12 ขวดต่อเซ็ต"
         },
         "a14": {
-          "name": "นำเข้าแอลกอฮล์ 24 ขวด",
+          "name": "Import Alcohol 24 bottles",
           "description": "24 ขวดต่อเซ็ต"
         }
       },
@@ -999,7 +998,7 @@
         "unit": "10 ท่าน"
       },
       "beer_singha": {
-        "name": "เบียร์สิงห์ / ลีโอ / ช้าง / อาซาฮี",
+        "name": "Singha / Leo / Change / Asahi",
         "description": "เบียร์ถัง 30 ลิตร รองรับ 60 แก้ว (นำเข้าแอลกอฮอล์ไม่จำกัด เมื่อรับเบียร์สด 2 ถังขั้นต่ำ)",
         "unit": "ถัง"
       },
@@ -1009,11 +1008,11 @@
         "unit": "100 แก้ว"
       },
       "collab_program": {
-        "name": "โปรแกรม Couple Collab",
+        "name": "Couple Collab Program",
         "description": "รับส่วนลด ฿20,000 กรณีให้ภาพใช้ทางการตลาด / ทำรีวิวร่วมกับ RARIN / รีวิวลง Platform Online ในList"
       },
       "social_media_collab": {
-        "name": "ร่วมโปรโมททางการตลาดกับลลิล",
+        "name": "Co-Marketing",
         "description": "ให้ภาพใช้ทางการตลาด / รีวิวลง Google Maps"
       }
     }

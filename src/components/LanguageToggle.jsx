@@ -1,5 +1,4 @@
 import React from 'react'
-import { Globe } from 'lucide-react'
 import { useStore } from '../store'
 import { useTranslations } from '../i18n'
 
@@ -9,14 +8,16 @@ export default function LanguageToggle() {
   
   return (
     <div className="relative">
-      <button 
-        onClick={() => setLanguage(language === 'en' ? 'th' : 'en')}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-white hover:bg-white/10 transition"
-        title={t.language}
-      >
-        <Globe className="w-4 h-4" />
-        <span>{language === 'en' ? 'EN' : 'TH'}</span>
-      </button>
+      <label className={`toggle-switch ${language}`} title={t.language}>
+        <span className="toggle-text en">EN</span>
+        <input 
+          type="checkbox" 
+          checked={language === 'th'} 
+          onChange={() => setLanguage(language === 'en' ? 'th' : 'en')} 
+        />
+        <span className="slider"></span>
+        <span className="toggle-text th">TH</span>
+      </label>
     </div>
   )
 }

@@ -94,7 +94,7 @@
   "packagesData": {
     "wedding": {
       "w1": {
-        "name": "Minimoon Light Package",
+        "name": "Mini Moonlight Package",
         "description": "For small wedding not over 50 guests",
         "area": "Moonlight Room",
         "capacity": "Up to 50 guests"
@@ -151,30 +151,30 @@
     "event": {
       "e1": {
         "name": "SMALL",
-        "description": "Minimum Spending ฿30,000",
+        "description": "When spending on food & beverage meets minimum ฿30,000, no venue rental fee applies.",
         "area": "Moonlight Room",
         "capacity": "20-60 guests",
         "maxCapacity": 60
       },
       "e2": {
         "name": "MEDIUM",
-        "description": "Minimum Spending ฿80,000",
+        "description": "When spending on food & beverage meets minimum ฿80,000, no venue rental fee applies.",
         "area": "Ballad Riverside Restaurant",
         "capacity": "51-100 guests",
         "maxCapacity": 100
       },
       "e3": {
         "name": "LARGE",
-        "description": "Minimum Spending ฿120,000",
+        "description": "When spending on food & beverage meets minimum ฿120,000, no venue rental fee applies.",
         "area": "Rarin Hall",
         "capacity": "100-200 guests",
         "maxCapacity": 200
       },
       "e4": {
-        "name": "RARIN VENUE (Except Ballad)",
-        "description": "Minimum Rental ฿200,000 (Mon-Fri) / ฿250,000 (Sat-Sun)",
-        "area": "Rarin Venue (Except Ballad)",
-        "capacity": "200-400 guests",
+        "name": "RARIN VENUE (Except Ballad Riverside Restaurant / Rooftop Bar)",
+        "description": "When spending on food & beverage meets minimum ฿200,000  or ฿250,000, no venue rental fee applies.",
+        "area": "Rarin Venue (Except Ballad Riverside Restaurant / Rooftop Bar)",
+        "capacity": "100-400 guests",
         "maxCapacity": 400
       }
     },
@@ -442,8 +442,7 @@
       },
       "e4": {
         "features": [
-          "Entire Rarin Venue (Except Ballad Riverside Restaurant)"
-        ],
+          "Entire Rarin Venue (Except Ballad Riverside Restaurant / Rooftop Bar)"        ],
         "equipmentServices": [],
         "limits": [
           "Minimum Spending ฿200,000 on Mon-Fri",
