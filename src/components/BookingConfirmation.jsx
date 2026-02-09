@@ -860,6 +860,33 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
     return selectedPackage.name || t.noPackageSelected || "No package selected";
   };
 
+  // Get period label in correct language
+  const getPeriodLabel = () => {
+    if (!state.period) return "-";
+    
+    // Check if budget4 package (which uses different time options)
+    const isBudget4 = selectedPackage?.budgetId === 'budget4';
+    
+    if (isBudget4) {
+      const budget4TimeOptions = getBudget4TimeOptions();
+      const periodOption = budget4TimeOptions[state.period];
+      if (periodOption) {
+        return language === 'th' ? periodOption.label : periodOption.label;
+      }
+    }
+    
+    // Use regular time options
+    const timeOptions = {
+      morning: { th: "ช่วงเช้า 06:00 - 14:00", en: "Morning 06:00 - 14:00" },
+      afternoon: { th: "บ่ายเวลา 13:00 - 22:00", en: "Afternoon 13:00 - 22:00" },
+      evening: { th: "ช่วงเย็น 18:00 - 22:00", en: "Evening 18:00 - 22:00" },
+      full_day: { th: "เต็มวัน 06:00 - 22:00", en: "Full Day 06:00 - 22:00" }
+    };
+    
+    const periodOption = timeOptions[state.period];
+    return periodOption ? periodOption[language] : state.period;
+  };
+
   // Get maximum capacity for the selected package
   const getMaxCapacity = () => {
     if (!selectedPackage) return 0;
@@ -1805,11 +1832,7 @@ PDF Status: ${pdfBase64 ? 'PDF attached' : 'No PDF generated'}
                 {state.type !== "photo" && (
                   <div>
                     <strong>ช่วงเวลา:</strong>{" "}
-                    {state.period === "morning"
-                      ? "ช่วงเช้า"
-                      : state.period === "afternoon"
-                        ? "บ่ายเวลา"
-                        : "เต็มวัน"}
+                    {getPeriodLabel()}
                   </div>
                 )}
                 {state.type !== "photo" && (
