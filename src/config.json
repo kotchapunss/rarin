@@ -15,13 +15,6 @@
     ],
     "budgetRanges": [
         {
-            "id": "budget1",
-            "range": {
-                "min": 0,
-                "max": 150000
-            }
-        },
-        {
             "id": "budget2",
             "range": {
                 "min": 150000,
